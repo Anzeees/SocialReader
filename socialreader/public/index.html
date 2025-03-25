@@ -8,9 +8,11 @@
   <title>SocialReader - Inicio</title>
   <link rel="shortcut icon" href="./assets/logos/IconoSocialReader.png" type="image/x-icon">
   <link rel="stylesheet" href="./styles/index.css">
+  <link rel="" href="">
 </head>
 
 <body>
+  <script src="js/actions.js" defer></script>
   <div class="izq">
     <img src="assets/logos/IconoSocialReader.png" alt="">
   </div>
@@ -31,5 +33,24 @@
       <button class="login">Iniciar sesión</button>
     </div>
   </div>
+  <div class="fondo"></div>
+  <div class="formulario" id="crear-cuenta">
+    <form action="" method="post">
+    <div class="cerrar">
+      <img src="assets/acciones/cerrar.png" alt="">
+    </div>
+    <div class="titulo">
+      <img src="assets/logos/IconoSocialReader.png" alt="">
+      <h1>SOCIAL READER</h1>
+    </div>
+      <input type="text" name="apodo" id="apodo" placeholder="Apodo" required>
+      <input type="email" name="mail" id="mail" placeholder="Correo electrónico" required>
+      <input type="password" name="contra" id="contra" placeholder="Contraseña" required>
+      <input type="password" name="contra2" id="contra2" placeholder="Repetir contraseña" required>
+      <br>
+      <button type="submit" class="crear-boton">Crear cuenta...</button>
+    </form>
+  </div>
 </body>
+
 </html>
