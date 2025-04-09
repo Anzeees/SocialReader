@@ -21,3 +21,27 @@
     width: 100vw;
     display: flex;
 }
+
+/* Estilo general del scrollbar */
+::-webkit-scrollbar {
+    width: 3px; /* ancho vertical */
+    height: 3px; /* alto horizontal */
+  }
+  
+  /* Parte de atrás del scrollbar */
+  ::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 3px;
+  }
+  
+  /* El "thumb" — la parte que se arrastra */
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-primario);
+    border-radius: 5px;
+  }
+  
+  /* Cuando pasas el mouse encima del thumb */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+    cursor: pointer;
+  }

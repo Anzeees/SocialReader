@@ -90,3 +90,4 @@ btnWrapper.addEventListener("click", () => {
 
 // Inicializar posición del toggle
 document.getElementById("toggle").style.left = "0%";
+
