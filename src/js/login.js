@@ -1,6 +1,5 @@
 console.log("JS cargado para la vista de login");
 
-// Función que controla la visibilidad de los elementos según el tamaño de la ventana
 function ajustarVista() {
   if (window.innerWidth <= 1000) {
     document.querySelector(".izq").style.display = "none";
@@ -9,7 +8,6 @@ function ajustarVista() {
     document.querySelector(".drch2").style.display = "none";
     document.querySelector(".movil").style.display = "flex";
   } else {
-    // Revertir cambios cuando el tamaño de la ventana es mayor a 1000px
     document.querySelector(".movil").style.display = "none";
     document.querySelector(".izq").style.display = "flex";
     document.querySelector(".drch").style.display = "flex";
@@ -18,10 +16,7 @@ function ajustarVista() {
   }
 }
 
-// Llamamos a la función de ajuste al cargar la página
 ajustarVista();
-
-// Escuchar los cambios de tamaño de la ventana para actualizar la visibilidad
 window.addEventListener("resize", ajustarVista);
 
 const btnRegistrarme = document.getElementById("btnRegistrarme");
@@ -53,41 +48,42 @@ if (btnIniciar) {
 const btnWrapper = document.querySelector(".switch-wrapper");
 let isLogin = true;
 btnWrapper.addEventListener("click", () => {
-    console.log("Toggle switch clicked");
-    const toggle = document.getElementById("toggle");
-    const login = document.getElementById("login");
-    const register = document.getElementById("register");
-    const formulario = document.getElementById("formularioMovil");
-  
-    if (isLogin) {
-      toggle.style.left = "50%";
-      login.classList.remove("active");
-      register.classList.add("active");
-  
-      formulario.innerHTML = ` 
+  const toggle = document.getElementById("toggle");
+  const login = document.getElementById("login");
+  const register = document.getElementById("register");
+  const contenedor = document.getElementById("formularioMovil");
+
+  if (isLogin) {
+    toggle.style.left = "50%";
+    login.classList.remove("active");
+    register.classList.add("active");
+
+    contenedor.innerHTML = `
+      <form id="formRegisterMovil">
         <h1>Únete a SocialReader</h1>
         <p>O regístrate con tu correo electrónico</p>
         <input type="text" name="nombre" placeholder="Nombre" required>
         <input type="email" name="correo" placeholder="Correo Electrónico" required>
         <input type="password" name="contra" placeholder="Contraseña" required>
         <input type="password" name="contra2" placeholder="Repetir Contraseña" required>
-        <input type="submit" value="REGISTRARME" class="boton">`;
-    } else {
-      toggle.style.left = "0%";
-      register.classList.remove("active");
-      login.classList.add("active");
-  
-      formulario.innerHTML = ` 
+        <input type="submit" value="REGISTRARME" class="boton">
+      </form>`;
+  } else {
+    toggle.style.left = "0%";
+    register.classList.remove("active");
+    login.classList.add("active");
+
+    contenedor.innerHTML = `
+      <form id="formLoginMovil">
         <h1>Vuelve a SocialReader</h1>
         <input type="email" name="correo" placeholder="Correo Electrónico" required>
         <input type="password" name="contra" placeholder="Contraseña" required>
         <p>¿Olvidaste tu contraseña?</p>
-        <input type="submit" value="INICIAR SESIÓN" class="boton">`;
-    }
-  
-    isLogin = !isLogin;
+        <input type="submit" value="INICIAR SESIÓN" class="boton">
+      </form>`;
+  }
+
+  isLogin = !isLogin;
 });
 
-// Inicializar posición del toggle
 document.getElementById("toggle").style.left = "0%";
-

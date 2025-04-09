@@ -2,78 +2,83 @@
 <div class="izq">
     <h1>Vuelve a SocialReader</h1>
     <div class="opciones">
-        <img src="./assets/img/actions/github.png">
-        <img src="./assets/img/actions/google.png">
-        <img src="./assets/img/actions/apple.png">
+      <img src="./assets/img/actions/github.png">
+      <img src="./assets/img/actions/google.png">
+      <img src="./assets/img/actions/apple.png">
     </div>
     <hr>
-    <form action="" method="get">
-        <p>O ingresa tu cuenta</p>
-        <input type="email" name="correo" id="correoinicio" placeholder="Correo Electrónico" required>
-        <input type="password" name="contra" id="contrainicio" placeholder="Contraseña" required>
-        <p>¿Olvidaste tu contraseña?</p>
-        <center><input type="submit" value="INICIAR SESIÓN" class="boton"></center>
+    <form id="formLogin" action="" method="get">
+      <p>O ingresa tu cuenta</p>
+      <input type="email" name="correo" id="correoinicio" placeholder="Correo Electrónico" required>
+      <input type="password" name="contra" id="contrainicio" placeholder="Contraseña" required>
+      <p>¿Olvidaste tu contraseña?</p>
+      <center><input type="submit" value="INICIAR SESIÓN" class="boton"></center>
     </form>
-</div>
-
-<div class="drch">
+  </div>
+  
+  <div class="drch">
     <img class="logo" src="./assets/img/logotipos/LogoBlanco.png">
     <h1>¡Hola, futuro lector!</h1>
     <p>Únete a SocialReader y comienza tu viaje con nosotros</p>
     <button class="boton" id="btnRegistrarme">REGISTRARME</button>
-</div>
-
-<!-- Nuevos contenedores debajo de los anteriores -->
-<div class="izq2" style="display: none;">
+  </div>
+  
+  <!-- NUEVOS CONTENEDORES -->
+  <div class="izq2" style="display: none;">
     <img class="logo" src="./assets/img/logotipos/LogoBlanco.png">
     <h1>¡Bienvenido de nuevo!</h1>
     <p>Para seguir compartiendo y descubriendo libros, inicia sesión con tus datos.</p>
     <button class="boton" id="btnIniciar">INICIAR SESIÓN</button>
-</div>
-
-<div class="drch2" style="display: none;">
+  </div>
+  
+  <div class="drch2" style="display: none;">
     <h1>Únete a SocialReader</h1>
     <div class="opciones">
-        <img src="./assets/img/actions/github.png">
-        <img src="./assets/img/actions/google.png">
-        <img src="./assets/img/actions/apple.png">
+      <img src="./assets/img/actions/github.png">
+      <img src="./assets/img/actions/google.png">
+      <img src="./assets/img/actions/apple.png">
     </div>
     <hr>
-    <form action="" method="get">
-        <p>O regístrate con tu correo electrónico</p>
-        <input type="text" name="nombre" id="nombre" placeholder="Nombre" required>
-        <input type="email" name="correo" id="correoregistro" placeholder="Correo Electrónico" required>
-        <input type="password" name="contra" id="contraregistro" placeholder="Contraseña" required>
-        <input type="password" name="contra2" id="contraregistro2" placeholder="Repetir Contraseña" required>
-        <center><input type="submit" value="REGISTRARME" class="boton"></center>
+    <form id="formRegister" action="" method="get">
+      <p>O regístrate con tu correo electrónico</p>
+      <input type="text" name="nombre" id="nombre" placeholder="Nombre" required>
+      <input type="email" name="correo" id="correoregistro" placeholder="Correo Electrónico" required>
+      <input type="password" name="contra" id="contraregistro" placeholder="Contraseña" required>
+      <input type="password" name="contra2" id="contraregistro2" placeholder="Repetir Contraseña" required>
+      <center><input type="submit" value="REGISTRARME" class="boton"></center>
     </form>
-</div>
-
-<div class="movil">
+  </div>
+  
+  <div class="movil">
     <img src="./assets/img/logotipos/LogoBlanco.png" alt="Logo SocialReader" class="logo">
     <div class="formularioinicio">
-        <div class="switch-wrapper">
-            <div class="switch-toggle" id="toggle"></div>
-            <div class="switch-options">
-                <div id="login" class="active">Iniciar Sesión</div>
-                <div id="register">Registrarme</div>
-            </div>
+      <div class="switch-wrapper">
+        <div class="switch-toggle" id="toggle"></div>
+        <div class="switch-options">
+          <div id="login" class="active">Iniciar Sesión</div>
+          <div id="register">Registrarme</div>
         </div>
-
-        <form id="formularioMovil" action="" method="get">
-            <h1>Vuelve a SocialReader</h1>
-            <input type="email" name="correo" placeholder="Correo Electrónico" required>
-            <input type="password" name="contra" placeholder="Contraseña" required>
-            <p>¿Olvidaste tu contraseña?</p>
-            <input type="submit" value="INICIAR SESIÓN" class="boton">
+      </div>
+  
+      <div id="formularioMovil">
+        <form id="formLoginMovil">
+          <h1>Vuelve a SocialReader</h1>
+          <input type="email" name="correo" placeholder="Correo Electrónico" required>
+          <input type="password" name="contra" placeholder="Contraseña" required>
+          <p>¿Olvidaste tu contraseña?</p>
+          <input type="submit" value="INICIAR SESIÓN" class="boton">
         </form>
-
-        <hr>
-
-        <div class="opciones">
-            <img src="./assets/img/actions/github.png" alt="GitHub">
-            <img src="./assets/img/actions/google.png" alt="Google">
-            <img src="./assets/img/actions/apple.png" alt="Apple">
-        </div>
+      </div>
+  
+      <hr>
+  
+      <div class="opciones">
+        <img src="./assets/img/actions/github.png" alt="GitHub">
+        <img src="./assets/img/actions/google.png" alt="Google">
+        <img src="./assets/img/actions/apple.png" alt="Apple">
+      </div>
     </div>
-</div>
+  </div>
+
+  <script type="module" src="./js/auth.js"></script>
+  
