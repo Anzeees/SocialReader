@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "target": "thesocialreader",
     "public": "src",
     "ignore": [
       "firebase.json",
