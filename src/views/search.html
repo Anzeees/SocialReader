@@ -5,6 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Buscar libros</title>
   <style>
+    * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            /* border: solid red 1px; */
+        }
     body {
       font-family: sans-serif;
       background-color: #f8f8f8;
@@ -165,19 +172,18 @@
         font-size: 16px;
       }
 
+      /* Ajustamos la disposición de la tarjeta */
       .card {
-        flex-direction: row-reverse; /* Imagen a la derecha */
+        flex-direction: row; /* Imagen a la izquierda, texto a la derecha */
         align-items: center;
         padding: 16px;
         text-align: left;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Sombra más suave */
       }
 
       .card img {
         width: 100%;
         max-width: 140px;
-        margin-left: 20px;
-        margin-bottom: 0; /* Eliminar el margen inferior */
+        margin-right: 20px; /* Añadir espacio entre la imagen y el contenido */
       }
 
       .info {
