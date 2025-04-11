@@ -1,0 +1,61 @@
+<div style="padding: 2%; width: 100%;">
+    <input type="text" id="busqueda" placeholder="Escribe el título de un libro..." style="padding: 10px; width: 60%; font-size: 1em;">
+    <button onclick="buscarLibro()" style="padding: 10px 20px; font-size: 1em; cursor: pointer;">Buscar</button>
+    
+    <div id="resultados" style="margin-top: 2%; display: flex; flex-wrap: wrap; gap: 20px;"></div>
+</div>
+<script>
+    // Función para realizar la búsqueda
+    async function buscarLibro() {
+            const query = document.getElementById('busqueda').value;
+            const contenedor = document.getElementById('resultados');
+            contenedor.innerHTML = 'Buscando...';
+    
+            try {
+                const respuesta = await fetch(`https://openlibrary.org/search.json?title=${encodeURIComponent(query)}`);
+                const datos = await respuesta.json();
+    
+                if (!datos.docs.length) {
+                    contenedor.innerHTML = 'No se encontraron resultados.';
+                    return;
+                }
+    
+                contenedor.innerHTML = ''; // Limpiar resultados anteriores
+    
+                datos.docs.slice(0, 10).forEach(libro => {
+                    const titulo = libro.title || 'Sin título';
+                    const autor = libro.author_name ? libro.author_name.join(', ') : 'Autor desconocido';
+                    const anio = libro.first_publish_year || 'Año desconocido';
+                    const portadaId = libro.cover_i;
+                    const portada = portadaId ? `https://covers.openlibrary.org/b/id/${portadaId}-M.jpg` : 'https://via.placeholder.com/150x200?text=Sin+Portada';
+    
+                    const card = document.createElement('div');
+                    card.style.width = '250px';
+                    // card.style.height = '400px';
+                    card.style.padding = '10px';
+                    card.style.backgroundColor = '#EFEFEF';
+                    card.style.borderRadius = '10px';
+                    card.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)';
+                    card.style.padding = '0';
+                    card.innerHTML = `
+                        <img src="${portada}" style="width: 100%; height: 60%; border-radius: 5px; margin-bottom: 10px;">
+                        <h3 style="font-size: 1em; margin-bottom: 5px;">${titulo}</h3>
+                        <p style="margin-bottom: 5px;"><strong>Autor:</strong> ${autor}</p>
+                        <p><strong>Año:</strong> ${anio}</p>
+                    `;
+    
+                    contenedor.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Error al buscar:', error);
+                contenedor.innerHTML = 'Ocurrió un error al buscar.';
+            }
+        }
+    
+        // Agregar evento para el botón y la tecla Enter
+        document.getElementById('busqueda').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                buscarLibro();
+            }
+        });
+</script>
