@@ -1,12 +1,5 @@
-// main.js
-import { cargarVista } from './router.js';
+// --- Importar router.js para que funcione el enrutador
+import { iniciarRouter } from "./router.js";
 
-window.addEventListener('DOMContentLoaded', () => {
-    const hash = location.hash.replace('#', '') || 'login';
-    cargarVista(hash);
-});
-
-window.addEventListener('hashchange', () => {
-    const hash = location.hash.replace('#', '') || 'login';
-    cargarVista(hash);
-});
+// --- Usamos funcion iniciarRouter() para iniciar el enrutador
+iniciarRouter();

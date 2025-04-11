@@ -1,37 +1,99 @@
-// router.js (Encargado de cargar las vistas)
+// --- Importar firebase auth
+import { auth } from "./firebase.js";
 
-// Función para cargar una vista HTML y su CSS
-export async function cargarVista(nombreVista) {
-    try {
-        const res = await fetch(`./views/${nombreVista}.html`);
-        if (!res.ok) throw new Error('Error al cargar la vista: ' + res.statusText);
+// --- Guardar el elemento app, estilo y js
+const app = document.getElementById('app');
+const styleLink = document.getElementById('vista-style');
+let scriptActual = null;
+// --- Definicion de las vistas
+const rutas = {
+  login: {
+    vista: 'login.html',
+    estilo: 'login.css',
+    script: 'login.js'
+  },
+  home: {
+    vista: 'home.html',
+    estilo: 'home.css',
+    script: 'home.js'
+  }
+};
 
-        // Extraer el HTML como texto
-        const html = await res.text();
-
-        // Insertar contenido en el contenedor app del index.html
-        const appElement = document.getElementById('app');
-        appElement.innerHTML = html;
-
-        // Cambiar el estilo (CSS) de la vista
-        const link = document.getElementById('vista-style');
-        link.setAttribute('href', `./styles/${nombreVista}.css`);
-
-        // Cargar el JS de la vista correspondiente
-        await cargarJSVista(nombreVista);
-    } catch (error) {
-        console.error('Error al cargar la vista:', error);
-        document.getElementById('app').innerHTML = '<h1>Error al cargar la vista</h1>';
-    }
+// --- Funciones para cargar vistas, scripts y estilos
+export function cargarVista(nombre) {
+  const ruta = rutas[nombre];
+  // Vista no definida
+  if (!ruta) {
+    app.innerHTML = `<h2>Vista no encontrada: ${nombre}</h2>`;
+    styleLink.href = '';
+    return;
+  }
+  // Cargar vista y script
+  fetch(`./views/${ruta.vista}`)
+    .then(res => res.text())
+    .then(html => {
+      app.innerHTML = html;
+      styleLink.href = `./styles/${ruta.estilo}`;
+      setTimeout(() => cargarScript(ruta.script), 0);
+    })
+    .catch(err => {
+      app.innerHTML = `<h2>Error cargando la vista.</h2>`;
+      console.error(err);
+    });
 }
 
-// Función para cargar el archivo JS correspondiente a la vista
-async function cargarJSVista(nombreVista) {
-    try {
-        // Cargar el archivo JS de la vista desde la carpeta js/
-        await import(`./${nombreVista}.js`);
-        console.log(`JS de ${nombreVista} cargado correctamente.`);
-    } catch (error) {
-        console.error('Error al cargar el JS de la vista:', error);
+//  --- Cargar script de la vista actual
+function cargarScript(nombreScript) {
+  if (scriptActual) {
+    scriptActual.remove();
+  }
+
+  const nuevoScript = document.createElement('script');
+  nuevoScript.type = 'module';
+  nuevoScript.src = `./js/${nombreScript}`;
+  document.body.appendChild(nuevoScript);
+  scriptActual = nuevoScript;
+}
+
+// --- Funcion iniciar router
+export function iniciarRouter() {
+  // Escuchar cambios en el estado de autenticación (Firebase)
+  auth.onAuthStateChanged(user => {
+    const hash = window.location.hash || "#login";
+    let vista = hash.replace("#", "");
+
+    if (user) {
+      // Usuario autenticado
+      if (vista === "login") {
+        window.location.hash = "#home";
+        vista = "home";
+      }
+    } else {
+      // Usuario NO autenticado
+      if (vista !== "login") {
+        window.location.hash = "#login";
+        vista = "login";
+      }
     }
+
+    cargarVista(vista);
+  });
+
+  // Reaccionar a cambios en la URL
+  window.addEventListener("hashchange", () => {
+    const vista = window.location.hash.replace("#", "");
+    const user = auth.currentUser;
+
+    if (!user && vista !== "login") {
+      window.location.hash = "#login";
+      return;
+    }
+
+    if (user && vista === "login") {
+      window.location.hash = "#home";
+      return;
+    }
+
+    cargarVista(vista);
+  });
 }

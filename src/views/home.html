@@ -1,340 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
+<section>
+<nav>
+    <div class="sombra" id="sombra"></div>
+    <img class="hamburguesa" src="./assets/img/interface/menu-hamburguesa.png" id="hamburguesa" alt="Menú">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-            /* border: solid red 1px; */
-        }
+    <img class="logo" src="./assets/img/logotipos/LogoClaro.png">
 
-        body {
-            display: flex;
-            flex-direction: column;
-            width: 100vw;
-            height: 100vh;
-        }
-
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 1%;
-            width: 100%;
-            height: 15vh;
-            background-color: #232323;
-            position: relative;
-        }
-
-        .sombra {
-            display: none;
-        }
-
-        .hamburguesa {
-            display: none;
-        }
-
-        .menu-hamburguesa {
-            display: none;
-        }
-
-        .logo {
-            height: 45%;
-        }
-
-        .menu-hamburguesa a {
-            text-decoration: none;
-            color: #EFEFEF;
-            margin: 10px 0;
-            font-size: 1.2em;
-        }
-
-        .menu-hamburguesa a:hover {
-            color: #FF3B3F;
-        }
-
-        .menu {
-            display: flex;
-            flex-grow: 1;
-            margin: 0 3%;
-            height: 100%;
-        }
-
-        .menu a {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.5em;
-            font-weight: bold;
-            text-decoration: none;
-            color: #EFEFEF;
-            height: 100%;
-            margin: 0 2%;
-            display: flex;
-            align-items: center;
-        }
-
-        .menu a:hover {
-            color: #FF3B3F;
-            border-bottom: solid #FF3B3F 3px;
-            border-top: solid #232323 3px;
-        }
-
-        .perfil {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 8%;
-            height: 100%;
-            position: relative;
-            cursor: pointer;
-        }
-
-        .perfil img.avatar {
-            width: 45%;
-            min-width: 47px;
-        }
-
-        img.flecha-perfil {
-            width: 30%;
-        }
-
-        .perfil-menu {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            background-color: #232323;
-            border-radius: 0 0 10px 10px;
-            display: none;
-            flex-direction: column;
-            width: 200px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            z-index: 10;
-        }
-
-        .perfil-menu a {
-            padding: 10px;
-            text-decoration: none;
-            color: #EFEFEF;
-            font-weight: 500;
-            margin-bottom: 2%;
-            font-weight: 700;
-        }
-
-        .perfil-menu a:hover {
-            color: #FF3B3F;
-        }
-
-        .perfil:hover .perfil-menu {
-            display: flex;
-        }
-
-        .perfil-menu a {
-            display: flex;
-            align-items: center;
-        }
-
-        .perfil-menu a img {
-            width: 13%;
-            margin-right: 8%;
-        }
-
-        @media (max-width: 1000px) {
-            nav {
-                padding: 0 5%;
-                justify-content: space-evenly;
-                align-items: center;
-            }
-
-            .logo {
-                height: 50%;
-            }
-
-            .hamburguesa {
-                height: 30%;
-                display: block;
-                cursor: pointer;
-                z-index: 15;
-            }
-
-            .menu-hamburguesa {
-                position: absolute;
-                top: 0;
-                left: 0;
-                height: 100vh;
-                width: 70vw;
-                max-width: 300px;
-                background-color: #232323;
-                z-index: 100;
-                flex-direction: column;
-                align-items: center;
-                justify-content: space-between;
-                padding: 3% 3%;
-                box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-            }
-
-            .menu-hamburguesa.show {
-                display: flex;
-            }
-
-            .menu {
-                display: none;
-            }
-
-            .perfil {
-                display: none;
-            }
-
-            .top {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                width: 100%;
-            }
-
-            .top .exit {
-                width: 10%;
-                height: 25px;
-            }
-
-            .top .logo {
-                width: 70%;
-                height: auto;
-            }
-
-            hr {
-                width: 100%;
-                height: 2px;
-                background-color: #a9a9a9;
-                border: 0;
-                margin: 3% 0;
-            }
-
-            .menumovil {
-                flex-grow: 1;
-                width: 100%;
-                display: flex;
-                flex-direction: column;
-            }
-
-            .perfil-movil {
-                display: flex;
-                flex-direction: column;
-            }
-
-            .perfil-movil * img, .perfil-movil img {
-                width: 10%;
-            }
-
-            .sombra {
-                display: none;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100vw;
-                height: 100vh;
-                background-color: rgba(35, 35, 35, 0.7);
-                z-index: 100;
-            }
-
-            .contenedor-perfil h3 {
-                color: white;
-                padding-left: 4%;
-            }
-
-            .contenedor-perfil img {
-                min-width: 30px;
-            }
-
-            .contenedor-perfil {
-                display: flex;
-                align-items: center;
-            }
-
-        }
-    </style>
-</head>
-
-<body>
-    <nav>
-        <div class="sombra" id="sombra"></div>
-        <img class="hamburguesa" src="../assets/img/interface/menu-hamburguesa.png" id="hamburguesa" alt="Menú">
-
-        <img class="logo" src="../assets/img/logotipos/LogoClaro.png">
-
-        <div class="menu-hamburguesa" id="menuHamburguesa">
-            <div class="top">
-                <img class="logo" src="../assets/img/logotipos/LogoClaro.png" alt="Logo">
-                <img class="exit" src="../assets/img/interface/cruz.png" id="exit" alt="Cerrar">
-            </div>
-            <hr>
-            <div class="menumovil">
-                <a href="#" id="inicioLink">Inicio</a>
-                <a href="#" id="buscarLink">Buscar Libros</a> <!-- Modificado -->
-            </div>
-            <div class="perfil-movil">
-                <hr>
-                <div class="contenedor-perfil">
-                    <img src="../assets/img/avatars/Avatar4.png" class="avatar">
-                    <h3>USER-00</h3>
-                </div>
-                <a href="#"><img src="../assets/img/interface/usuario.png" alt="Mi Perfil">Mi Perfil</a>
-                <a href="#"><img src="../assets/img/interface/salida.png" alt="Cerrar sesión">Cerrar Sesión</a>
-            </div>
+    <div class="menu-hamburguesa" id="menuHamburguesa">
+        <div class="top">
+            <img class="logo" src="./assets/img/logotipos/LogoClaro.png" alt="Logo">
+            <img class="exit" src="./assets/img/interface/cruz.png" id="exit" alt="Cerrar">
         </div>
-
-        <div class="menu">
+        <hr>
+        <div class="menumovil">
             <a href="#" id="inicioLink">Inicio</a>
-            <a href="#" id="buscarLink">Buscar Libros</a> <!-- Modificado -->
+            <a href="#" id="buscarLink">Buscar Libros</a>
         </div>
-
-        <div class="perfil">
-            <img src="../assets/img/avatars/Avatar4.png" class="avatar">
-            <img src="../assets/img/interface/flecha-perfil.png" class="flecha-perfil">
-            <div class="perfil-menu">
-                <a href="#"><img src="../assets/img/interface/usuario.png">Mi Perfil</a>
-                <a href="#"><img src="../assets/img/interface/salida.png">Cerrar Sesión</a>
+        <div class="perfil-movil">
+            <hr>
+            <div class="contenedor-perfil">
+                <img src="./assets/img/avatars/Avatar4.png" class="avatar">
+                <h3>USER-00</h3>
             </div>
+            <a href="#"><img src="./assets/img/interface/usuario.png" alt="Mi Perfil">Mi Perfil</a>
+            <a href="#"><img src="./assets/img/interface/salida.png" alt="Cerrar sesión">Cerrar Sesión</a>
         </div>
-    </nav>
+    </div>
 
-    <!-- Contenedor donde se cargará el contenido dinámico -->
-    <main id="mainContent">
-        <!-- El contenido dinámico de search.html se cargará aquí -->
-    </main>
+    <div class="menu">
+        <a href="#" id="inicioLink">Inicio</a>
+        <a href="#" id="buscarLink">Buscar Libros</a>
+    </div>
 
-    <script>
-        // Mostrar el menú hamburguesa al hacer clic
-        document.getElementById("hamburguesa").addEventListener("click", () => {
-            document.getElementById("menuHamburguesa").classList.toggle("show");
-            document.getElementById("sombra").style.display = "flex";
-        });
+    <div class="perfil">
+        <img src="./assets/img/avatars/Avatar4.png" class="avatar">
+        <img src="./assets/img/interface/flecha-perfil.png" class="flecha-perfil">
+        <div class="perfil-menu">
+            <a href="#"><img src="./assets/img/interface/usuario.png">Mi Perfil</a>
+            <a href="#"><img src="./assets/img/interface/salida.png">Cerrar Sesión</a>
+        </div>
+    </div>
+</nav>
 
-        // Cerrar el menú hamburguesa al hacer clic en la cruz
-        document.getElementById("exit").addEventListener("click", () => {
-            document.getElementById("menuHamburguesa").classList.remove("show");
-            document.getElementById("sombra").style.display = "none";
-        });
-
-        // Cargar contenido de search.html en el main cuando se hace clic en "Buscar Libros"
-        document.getElementById("buscarLink").addEventListener("click", () => {
-            alert('archivo cargado');
-            // Usamos fetch para cargar el contenido de search.html
-            fetch('search.html')
-                .then(response => response.text())  // Obtiene el contenido del archivo
-                .then(data => {
-                    // Inserta el contenido de search.html dentro del main
-                    document.getElementById('mainContent').innerHTML = data;
-                })
-                .catch(error => console.error('Error al cargar el contenido:', error));
-        });
-
-        // Opcionalmente, también puedes cargar el contenido inicial aquí si es necesario.
-    </script>
-</body>
-
-</html>
+<main id="mainContent" data-vista="inicio"></main>
+</section>
