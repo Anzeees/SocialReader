@@ -1,5 +1,6 @@
-// --- Importar router.js para que funcione el enrutador
 import { iniciarRouter } from "./router.js";
 
-// --- Usamos funcion iniciarRouter() para iniciar el enrutador
-iniciarRouter();
+// Iniciar router al cargar la app
+window.addEventListener("DOMContentLoaded", () => {
+  iniciarRouter();
+});

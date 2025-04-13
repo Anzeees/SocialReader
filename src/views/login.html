@@ -41,9 +41,9 @@
     <hr>
     <form id="formRegister">
         <p>O regístrate con tu correo electrónico</p>
-        <input type="text" name="nombre" id="nombre" placeholder="Nombre" required>
-        <input type="email" name="correo" id="correoregistro" placeholder="Correo Electrónico" required>
-        <input type="password" name="contra" id="contraregistro" placeholder="Contraseña" required>
+        <input type="text" name="nombre" id="nombre" placeholder="Nombre" title="Nombre no valido" required>
+        <input type="email" name="correo" id="correoregistro" placeholder="Correo Electrónico" title="Formato del correo incorrecto" required>
+        <input type="password" name="contra" id="contraregistro" placeholder="Contraseña" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$" title="La contraseña debe tener 8 digitos, mayúsculas, minúsculas, carácteres especiales y números" required>
         <input type="password" name="contra2" id="contraregistro2" placeholder="Repetir Contraseña" required>
         <center><input type="submit" value="REGISTRARME" class="boton"></center>
     </form>
@@ -79,3 +79,10 @@
         </div>
     </div>
 </div>
+
+<div id="modalError" class="modal-error oculto">
+    <div class="modal-contenido">
+      <p id="mensajeError">Error de autenticación</p>
+      <button id="btnCerrarModal">Aceptar</button>
+    </div>
+  </div>

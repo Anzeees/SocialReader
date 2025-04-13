@@ -1,11 +1,9 @@
-// --- Importar firebase auth
 import { auth } from "./firebase.js";
 
-// --- Guardar el elemento app, estilo y js
 const app = document.getElementById('app');
 const styleLink = document.getElementById('vista-style');
 let scriptActual = null;
-// --- Definicion de las vistas
+
 const rutas = {
   login: {
     vista: 'login.html',
@@ -19,16 +17,14 @@ const rutas = {
   }
 };
 
-// --- Funciones para cargar vistas, scripts y estilos
 export function cargarVista(nombre) {
   const ruta = rutas[nombre];
-  // Vista no definida
   if (!ruta) {
     app.innerHTML = `<h2>Vista no encontrada: ${nombre}</h2>`;
     styleLink.href = '';
     return;
   }
-  // Cargar vista y script
+
   fetch(`./views/${ruta.vista}`)
     .then(res => res.text())
     .then(html => {
@@ -42,34 +38,30 @@ export function cargarVista(nombre) {
     });
 }
 
-//  --- Cargar script de la vista actual
 function cargarScript(nombreScript) {
   if (scriptActual) {
-    scriptActual.remove();
+    scriptActual.remove(); // elimina el script anterior
+    scriptActual = null;
   }
 
-  const nuevoScript = document.createElement('script');
-  nuevoScript.type = 'module';
-  nuevoScript.src = `./js/${nombreScript}`;
+  const nuevoScript = document.createElement("script");
+  nuevoScript.type = "module";
+  nuevoScript.src = `./js/${nombreScript}?t=${Date.now()}`; // cache busting
   document.body.appendChild(nuevoScript);
   scriptActual = nuevoScript;
 }
 
-// --- Funcion iniciar router
 export function iniciarRouter() {
-  // Escuchar cambios en el estado de autenticación (Firebase)
   auth.onAuthStateChanged(user => {
     const hash = window.location.hash || "#login";
     let vista = hash.replace("#", "");
 
     if (user) {
-      // Usuario autenticado
       if (vista === "login") {
         window.location.hash = "#home";
         vista = "home";
       }
     } else {
-      // Usuario NO autenticado
       if (vista !== "login") {
         window.location.hash = "#login";
         vista = "login";
@@ -79,7 +71,6 @@ export function iniciarRouter() {
     cargarVista(vista);
   });
 
-  // Reaccionar a cambios en la URL
   window.addEventListener("hashchange", () => {
     const vista = window.location.hash.replace("#", "");
     const user = auth.currentUser;
