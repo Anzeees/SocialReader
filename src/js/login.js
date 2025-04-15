@@ -1,6 +1,9 @@
 import { auth } from "./firebase.js";
 import { crearPerfilUsuario } from "./firestoreService.js";
 
+// Estado para controlar errores anteriores de autenticación social
+let autenticacionCancelada = false;
+
 // --- Cargar vista login
 export function cargarVistaLogin() {
   ajustarVista();
@@ -16,31 +19,33 @@ export function cargarVistaLogin() {
 // --- Vista responsive
 function ajustarVista() {
   if (window.innerWidth <= 1000) {
-    document.querySelector(".izq")?.style.setProperty("display", "none");
-    document.querySelector(".drch")?.style.setProperty("display", "none");
-    document.querySelector(".izq2")?.style.setProperty("display", "none");
-    document.querySelector(".drch2")?.style.setProperty("display", "none");
-    document.querySelector(".movil")?.style.setProperty("display", "flex");
+    document.querySelector(".izq").style.setProperty("display", "none");
+    document.querySelector(".drch").style.setProperty("display", "none");
+    document.querySelector(".izq2").style.setProperty("display", "none");
+    document.querySelector(".drch2").style.setProperty("display", "none");
+    document.querySelector(".movil").style.setProperty("display", "flex");
   } else {
-    document.querySelector(".movil")?.style.setProperty("display", "none");
-    document.querySelector(".izq")?.style.setProperty("display", "flex");
-    document.querySelector(".drch")?.style.setProperty("display", "flex");
-    document.querySelector(".izq2")?.style.setProperty("display", "none");
-    document.querySelector(".drch2")?.style.setProperty("display", "none");
+    document.querySelector(".movil").style.setProperty("display", "none");
+    document.querySelector(".izq").style.setProperty("display", "flex");
+    document.querySelector(".drch").style.setProperty("display", "flex");
+    document.querySelector(".izq2").style.setProperty("display", "none");
+    document.querySelector(".drch2").style.setProperty("display", "none");
   }
 }
 
 // --- Eventos formularios escritorio
 function activarEventosEscritorio() {
-  document.getElementById("formLogin")?.addEventListener("submit", (e) => {
+  document.getElementById("formLogin").addEventListener("submit", (e) => {
     e.preventDefault();
+    autenticacionCancelada = false;
     const correo = document.getElementById("correoinicio").value.trim();
     const contra = document.getElementById("contrainicio").value.trim();
     manejarLogin(correo, contra);
   });
 
-  document.getElementById("formRegister")?.addEventListener("submit", (e) => {
+  document.getElementById("formRegister").addEventListener("submit", (e) => {
     e.preventDefault();
+    autenticacionCancelada = false;
     const nombre = document.getElementById("nombre").value.trim();
     const correo = document.getElementById("correoregistro").value.trim();
     const contra1 = document.getElementById("contraregistro").value;
@@ -48,7 +53,7 @@ function activarEventosEscritorio() {
     manejarRegistro(nombre, correo, contra1, contra2);
   });
 
-  document.getElementById("btnRegistrarme")?.addEventListener("click", () => {
+  document.getElementById("btnRegistrarme").addEventListener("click", () => {
     document.querySelector(".izq").style.display = "none";
     document.querySelector(".drch").style.display = "none";
     document.querySelector(".movil").style.display = "none";
@@ -56,7 +61,7 @@ function activarEventosEscritorio() {
     document.querySelector(".drch2").style.display = "flex";
   });
 
-  document.getElementById("btnIniciar")?.addEventListener("click", () => {
+  document.getElementById("btnIniciar").addEventListener("click", () => {
     document.querySelector(".izq").style.display = "flex";
     document.querySelector(".drch").style.display = "flex";
     document.querySelector(".movil").style.display = "none";
@@ -71,6 +76,7 @@ function agregarEventoLoginMovil() {
   if (!form) return;
   form.addEventListener("submit", function (e) {
     e.preventDefault();
+    autenticacionCancelada = false;
     const correo = form.correo.value.trim();
     const contra = form.contra.value.trim();
     manejarLogin(correo, contra);
@@ -82,6 +88,7 @@ function agregarEventoRegistroMovil() {
   if (!form) return;
   form.addEventListener("submit", function (e) {
     e.preventDefault();
+    autenticacionCancelada = false;
     const nombre = form.nombre.value.trim();
     const correo = form.correo.value.trim();
     const contra1 = form.contra.value;
@@ -112,10 +119,7 @@ function activarSwitchMovil() {
           <p>O regístrate con tu correo electrónico</p>
           <input type="text" name="nombre" id="nombre" placeholder="Nombre" required>
           <input type="email" name="correo" id="correoregistro" placeholder="Correo Electrónico" required>
-          <input type="password" name="contra" id="contraregistro" placeholder="Contraseña"
-            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z0-9]).{8,}$"
-            title="La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y símbolos"
-            required>
+          <input type="password" name="contra" id="contraregistro" placeholder="Contraseña" required>
           <input type="password" name="contra2" id="contraregistro2" placeholder="Repetir Contraseña" required>
           <input type="submit" value="REGISTRARME" class="boton">
         </form>`;
@@ -140,22 +144,24 @@ function activarSwitchMovil() {
   });
 }
 
-// --- Registro
+// --- Registro con validación
 function manejarRegistro(nombre, correo, contra1, contra2) {
-  if (nombre.trim().length < 3)
+  const patronSeguridad = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
+
+  if (nombre.length < 3)
     return mostrarModalError("El nombre debe tener al menos 3 caracteres");
+
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo))
     return mostrarModalError("Correo inválido");
-  if (contra1.length < 6)
-    return mostrarModalError("La contraseña debe tener al menos 6 caracteres");
+
+  if (!patronSeguridad.test(contra1))
+    return mostrarModalError("La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y un símbolo");
+
   if (contra1 !== contra2)
     return mostrarModalError("Las contraseñas no coinciden");
 
   auth.createUserWithEmailAndPassword(correo, contra1)
-    .then((userCredential) => {
-      const user = userCredential.user;
-      return crearPerfilUsuario(user, nombre);
-    })
+    .then((cred) => crearPerfilUsuario(cred.user, nombre))
     .then(() => {
       localStorage.setItem("usuarioAutenticado", "true");
       window.location.hash = "#home";
@@ -175,17 +181,16 @@ function manejarLogin(correo, contra) {
     return mostrarModalError("Contraseña muy corta");
 
   auth.signInWithEmailAndPassword(correo, contra)
-    .then((userCredential) => {
-      const user = userCredential.user;
+    .then(() => {
       localStorage.setItem("usuarioAutenticado", "true");
       window.location.hash = "#home";
       window.dispatchEvent(new HashChangeEvent("hashchange"));
     })
     .catch((error) => {
       if (error.code === "auth/user-not-found" || error.code === "auth/wrong-password") {
-        mostrarModalError("Correo o contraseña incorrectos. Verifica tus datos e intenta nuevamente.");
+        mostrarModalError("Correo o contraseña incorrectos.");
       } else {
-        console.error("Error al iniciar sesión:", error.code, error.message);
+        console.error(error.code, error.message);
         mostrarModalError("Error al iniciar sesión. Inténtalo más tarde.");
       }
     });
@@ -196,74 +201,58 @@ function activarRestablecer() {
   const parrafo = document.getElementById("restablecerContra");
   if (parrafo) {
     parrafo.addEventListener("click", () => {
-      const correo = prompt("Introduce tu correo electrónico para restablecer la contraseña:");
+      const correo = prompt("Introduce tu correo electrónico:");
       if (!correo || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) return;
       auth.sendPasswordResetEmail(correo)
-        .then(() => console.log("Correo de restablecimiento enviado"))
-        .catch((error) =>
-          console.error("Error al enviar el correo de restablecimiento:", error.code, error.message)
-        );
+        .then(() => alert("Correo de restablecimiento enviado"))
+        .catch((error) => console.error(error.code, error.message));
     });
   }
 }
 
-// --- Login social (Google, GitHub, Apple)
+// --- Login social
 function activarLoginSocial() {
-  // Google
-  document.querySelectorAll("#google").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider)
-        .then((result) => {
-          return crearPerfilUsuario(result.user);
-        })
-        .then(() => {
-          localStorage.setItem("usuarioAutenticado", "true");
-          window.location.hash = "#home";
-          window.dispatchEvent(new HashChangeEvent("hashchange"));
-        })
-        .catch((error) => {
-          if (error.code === "auth/account-exists-with-different-credential") {
-            mostrarModalError("Ya existe una cuenta con ese correo pero usando otro método. Inicia sesión con el método original.");
-          } else {
-            mostrarModalError("Error al iniciar sesión con Google.");
-          }
-        });
-    });
-  });
+  const iniciarSocial = (provider) => {
+    autenticacionCancelada = false;
 
-  // GitHub
-  document.querySelectorAll("#github").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const provider = new firebase.auth.GithubAuthProvider();
-      auth.signInWithPopup(provider)
-        .then((result) => {
-          return crearPerfilUsuario(result.user);
-        })
-        .then(() => {
-          localStorage.setItem("usuarioAutenticado", "true");
-          window.location.hash = "#home";
-          window.dispatchEvent(new HashChangeEvent("hashchange"));
-        })
-        .catch((error) => {
-          if (error.code === "auth/account-exists-with-different-credential") {
-            mostrarModalError("Ya existe una cuenta con ese correo pero usando otro método. Inicia sesión con el método original.");
-          } else {
-            mostrarModalError("Error al iniciar sesión con GitHub.");
-          }
-        });
-    });
-  });
+    auth.signInWithPopup(provider)
+      .then((result) => {
+        autenticacionCancelada = false;
+        return crearPerfilUsuario(result.user);
+      })
+      .then(() => {
+        localStorage.setItem("usuarioAutenticado", "true");
+        window.location.hash = "#home";
+        window.dispatchEvent(new HashChangeEvent("hashchange"));
+      })
+      .catch((error) => {
+        if (error.code === "auth/popup-closed-by-user") {
+          autenticacionCancelada = true;
+          console.warn("Popup cerrado por el usuario.");
+        } else if (error.code === "auth/account-exists-with-different-credential") {
+          mostrarModalError("Ya existe una cuenta con ese correo. Usa el método original.");
+        } else if (!autenticacionCancelada) {
+          mostrarModalError("Error al autenticar. Intenta más tarde.");
+        }
+      });
+  };
 
-  // Apple (no disponible)
-  document.querySelectorAll("#apple").forEach((btn) => {
+  document.querySelectorAll(".btn-google").forEach((btn) =>
+    btn.addEventListener("click", () => iniciarSocial(new firebase.auth.GoogleAuthProvider()))
+  );
+
+  document.querySelectorAll(".btn-github").forEach((btn) =>
+    btn.addEventListener("click", () => iniciarSocial(new firebase.auth.GithubAuthProvider()))
+  );
+
+  document.querySelectorAll(".btn-apple").forEach((btn) =>
     btn.addEventListener("click", () => {
-      mostrarModalError("Este servicio aún no está disponible. Pronto podrás iniciar sesión con Apple.");
-    });
-  });
+      mostrarModalError("Este servicio aún no está disponible.");
+    })
+  );
 }
 
-// --- Modal de error reutilizable
+// --- Modal de error
 function mostrarModalError(mensaje) {
   const modal = document.getElementById("modalError");
   const texto = document.getElementById("mensajeError");
@@ -274,8 +263,9 @@ function mostrarModalError(mensaje) {
 
   btnCerrar.onclick = () => {
     modal.classList.add("oculto");
+    autenticacionCancelada = false; // Reinicia el estado
   };
 }
 
-// --- Ejecutar automáticamente
+// --- Ejecutar al cargar
 cargarVistaLogin();

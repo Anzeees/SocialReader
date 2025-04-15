@@ -2,87 +2,90 @@
 <div class="izq">
     <h1>Vuelve a SocialReader</h1>
     <div class="opciones">
-        <img id="github" src="./assets/img/actions/github.png">
-        <img id="google" src="./assets/img/actions/google.png">
-        <img id="apple" src="./assets/img/actions/apple.png">
+      <img class="btn-github" src="./assets/img/actions/github.png">
+      <img class="btn-google" src="./assets/img/actions/google.png">
+      <img class="btn-apple" src="./assets/img/actions/apple.png">
     </div>
     <hr>
     <form id="formLogin">
-        <p>O ingresa tu cuenta</p>
-        <input type="email" name="correo" id="correoinicio" placeholder="Correo Electrónico" required>
-        <input type="password" name="contra" id="contrainicio" placeholder="Contraseña" required>
-        <p id="restablecerContra">¿Olvidaste tu contraseña?</p>
-        <center><input type="submit" value="INICIAR SESIÓN" class="boton"></center>
+      <p>O ingresa tu cuenta</p>
+      <input type="email" name="correo" id="correoinicio" placeholder="Correo Electrónico" required>
+      <input type="password" name="contra" id="contrainicio" placeholder="Contraseña" required>
+      <p id="restablecerContra">¿Olvidaste tu contraseña?</p>
+      <center><input type="submit" value="INICIAR SESIÓN" class="boton"></center>
     </form>
-</div>
-
-<div class="drch">
+  </div>
+  
+  <div class="drch">
     <img class="logo" src="./assets/img/logotipos/LogoBlanco.png">
     <h1>¡Hola, futuro lector!</h1>
     <p>Únete a SocialReader y comienza tu viaje con nosotros</p>
     <button class="boton" id="btnRegistrarme">REGISTRARME</button>
-</div>
-
-<!-- NUEVOS CONTENEDORES -->
-<div class="izq2" style="display: none;">
+  </div>
+  
+  <!-- NUEVOS CONTENEDORES -->
+  <div class="izq2" style="display: none;">
     <img class="logo" src="./assets/img/logotipos/LogoBlanco.png">
     <h1>¡Bienvenido de nuevo!</h1>
     <p>Para seguir compartiendo y descubriendo libros, inicia sesión con tus datos.</p>
     <button class="boton" id="btnIniciar">INICIAR SESIÓN</button>
-</div>
-
-<div class="drch2" style="display: none;">
+  </div>
+  
+  <div class="drch2" style="display: none;">
     <h1>Únete a SocialReader</h1>
     <div class="opciones">
-        <img id="github" src="./assets/img/actions/github.png">
-        <img id="google" src="./assets/img/actions/google.png">
-        <img id="apple" src="./assets/img/actions/apple.png">
+      <img class="btn-github" src="./assets/img/actions/github.png">
+      <img class="btn-google" src="./assets/img/actions/google.png">
+      <img class="btn-apple" src="./assets/img/actions/apple.png">
     </div>
     <hr>
     <form id="formRegister">
-        <p>O regístrate con tu correo electrónico</p>
-        <input type="text" name="nombre" id="nombre" placeholder="Nombre" title="Nombre no valido" required>
-        <input type="email" name="correo" id="correoregistro" placeholder="Correo Electrónico" title="Formato del correo incorrecto" required>
-        <input type="password" name="contra" id="contraregistro" placeholder="Contraseña" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$" title="La contraseña debe tener 8 digitos, mayúsculas, minúsculas, carácteres especiales y números" required>
-        <input type="password" name="contra2" id="contraregistro2" placeholder="Repetir Contraseña" required>
-        <center><input type="submit" value="REGISTRARME" class="boton"></center>
+      <p>O regístrate con tu correo electrónico</p>
+      <input type="text" name="nombre" id="nombre" placeholder="Nombre" title="Nombre no válido" required>
+      <input type="email" name="correo" id="correoregistro" placeholder="Correo Electrónico" required>
+      <input type="password" name="contra" id="contraregistro" placeholder="Contraseña"
+        title="La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y símbolos"
+        required>
+      <input type="password" name="contra2" id="contraregistro2" placeholder="Repetir Contraseña" required>
+      <center><input type="submit" value="REGISTRARME" class="boton"></center>
     </form>
-</div>
-
-<div class="movil">
+  </div>
+  
+  <div class="movil">
     <img src="./assets/img/logotipos/LogoBlanco.png" alt="Logo SocialReader" class="logo">
     <div class="formularioinicio">
-        <div class="switch-wrapper">
-            <div class="switch-toggle" id="toggle"></div>
-            <div class="switch-options">
-                <div id="login" class="active">Iniciar Sesión</div>
-                <div id="register">Registrarme</div>
-            </div>
+      <div class="switch-wrapper">
+        <div class="switch-toggle" id="toggle"></div>
+        <div class="switch-options">
+          <div id="login" class="active">Iniciar Sesión</div>
+          <div id="register">Registrarme</div>
         </div>
-
-        <div id="formularioMovil">
-            <form id="formLoginMovil">
-                <h1>Vuelve a SocialReader</h1>
-                <input type="email" name="correo" placeholder="Correo Electrónico" required>
-                <input type="password" name="contra" placeholder="Contraseña" required>
-                <p id="restablecerContra">¿Olvidaste tu contraseña?</p>
-                <input type="submit" value="INICIAR SESIÓN" class="boton">
-            </form>
-        </div>
-
-        <hr>
-
-        <div class="opciones">
-            <img id="github" src="./assets/img/actions/github.png">
-            <img id="google" src="./assets/img/actions/google.png">
-            <img id="apple" src="./assets/img/actions/apple.png">
-        </div>
+      </div>
+  
+      <div id="formularioMovil">
+        <form id="formLoginMovil">
+          <h1>Vuelve a SocialReader</h1>
+          <input type="email" name="correo" placeholder="Correo Electrónico" required>
+          <input type="password" name="contra" placeholder="Contraseña" required>
+          <p id="restablecerContra">¿Olvidaste tu contraseña?</p>
+          <input type="submit" value="INICIAR SESIÓN" class="boton">
+        </form>
+      </div>
+  
+      <hr>
+  
+      <div class="opciones">
+        <img class="btn-github" src="./assets/img/actions/github.png">
+        <img class="btn-google" src="./assets/img/actions/google.png">
+        <img class="btn-apple" src="./assets/img/actions/apple.png">
+      </div>
     </div>
-</div>
-
-<div id="modalError" class="modal-error oculto">
+  </div>
+  
+  <div id="modalError" class="modal-error oculto">
     <div class="modal-contenido">
       <p id="mensajeError">Error de autenticación</p>
       <button id="btnCerrarModal">Aceptar</button>
     </div>
   </div>
+  

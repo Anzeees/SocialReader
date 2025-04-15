@@ -105,7 +105,7 @@ input {
   padding: 0 3%;
   margin: 2% 0;
   background-color: var(--color-claro);
-  color: var(--color-complementario1);
+  color: var(--color-oscuro);
   border-radius: 5px;
   border: none;
 }
