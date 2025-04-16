@@ -1,5 +1,5 @@
 // home.js
-import { mostrarNombre, avatarUsuario } from "./firestoreService.js";
+import { mostrarNombre, avatarUsuario } from "./services/firestoreService.js";
 
 // --- Referencia al contenedor principal
 const mainContent = document.getElementById("mainContent");

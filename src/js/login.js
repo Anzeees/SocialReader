@@ -1,5 +1,5 @@
-import { auth } from "./firebase.js";
-import { crearPerfilUsuario } from "./firestoreService.js";
+import { auth } from "./services/firebase.js";
+import { crearPerfilUsuario } from "./services/firestoreService.js";
 
 // Estado para controlar errores anteriores de autenticación social
 let autenticacionCancelada = false;

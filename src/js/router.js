@@ -1,4 +1,4 @@
-import { auth } from "./firebase.js";
+import { auth } from "./services/firebase.js";
 
 const app = document.getElementById('app');
 const styleLink = document.getElementById('vista-style');
