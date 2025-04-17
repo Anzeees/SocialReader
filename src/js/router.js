@@ -14,6 +14,16 @@ const rutas = {
     vista: 'home.html',
     estilo: 'home.css',
     script: 'home.js'
+  },
+  search: {
+    vista: 'search.html',
+    estilo: 'search.css',
+    script: 'search.js'
+  },
+  profile: {
+    vista: 'profile.html',
+    estilo: 'profile.css',
+    script: 'profile.js'
   }
 };
 
