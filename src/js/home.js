@@ -1,8 +1,9 @@
-// home.js
 import { mostrarNombre, avatarUsuario } from "./services/firestoreService.js";
+import { obtenerLibrosPopulares, obtenerTopMasVendidos } from "./services/openlibrary.js";
 
-// --- Referencia al contenedor principal
+// --- Referencia al contenedor principal y loader
 const mainContent = document.getElementById("mainContent");
+const loader = document.getElementById("loader");
 
 // --- Abrir menú hamburguesa
 document.getElementById("hamburguesa").addEventListener("click", () => {
@@ -84,3 +85,47 @@ document.querySelector(".perfil-menu a[href='#profile']")?.addEventListener("cli
   e.preventDefault();
   window.location.hash = "#profile";
 });
+
+function crearCardLibro(libro) {
+  const card = document.createElement('div');
+  card.className = 'card-libro';
+  card.innerHTML = `
+    <img src="${libro.portada || './assets/img/logotipos/portadaDefault.png'}" alt="Portada">
+    <h3>${libro.titulo}</h3>
+    <p>${libro.autor}</p>
+  `;
+  return card;
+}
+
+async function cargarTopLibros() {
+  const contVendidos = document.getElementById('lista-vendidos');
+  const contGuardados = document.getElementById('lista-guardados');
+
+  const vendidos = await obtenerTopMasVendidos();
+  const guardados = await obtenerLibrosPopulares();
+
+  vendidos.forEach(libro => contVendidos.appendChild(crearCardLibro(libro)));
+  guardados.forEach(libro => contGuardados.appendChild(crearCardLibro(libro)));
+
+  // Ocultar loader y mostrar contenido principal solo cuando esté todo cargado
+  loader.style.display = "none";
+  mainContent.removeAttribute("hidden");
+  mainContent.classList.add("fade-in");
+}
+
+// --- Función para mover el carrusel con flechas
+window.moverCarrusel = function (btn, direccion) {
+  const contenedor = btn.parentElement.querySelector(".contenedor-cards");
+  const card = contenedor.querySelector(".card-libro");
+
+  if (!card) return;
+
+  const desplazamiento = card.offsetWidth + 16; // Ancho de la tarjeta + margen
+  contenedor.scrollBy({
+    left: direccion * desplazamiento,
+    behavior: "smooth"
+  });
+};
+
+// Ejecutar carga al iniciar
+cargarTopLibros();

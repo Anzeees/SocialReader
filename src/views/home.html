@@ -40,9 +40,24 @@
     </div>
   </nav>
 
-  <main id="mainContent" data-vista="inicio">
-    <h3>Más Populares - Según OpenLibrary</h3>
-    <div id="listaPopulares"></div>
-    <h3>Más Vendidos - Según OpenLibrary</h3>
+  <div id="loader" class="loader-container">
+    <div class="spinner"></div>
+    <p>Cargando libros...</p>
+  </div>
+
+  <main id="mainContent" data-vista="inicio" hidden>
+    <h2>Top más vendidos</h2>
+    <div class="carrusel">
+      <button class="btn-carrusel izquierda" onclick="moverCarrusel(this, -1)">❮</button>
+      <div id="lista-vendidos" class="contenedor-cards"></div>
+      <button class="btn-carrusel derecha" onclick="moverCarrusel(this, 1)">❯</button>
+    </div>
+
+    <h2>Top más populares</h2>
+    <div class="carrusel">
+      <button class="btn-carrusel izquierda" onclick="moverCarrusel(this, -1)">❮</button>
+      <div id="lista-guardados" class="contenedor-cards"></div>
+      <button class="btn-carrusel derecha" onclick="moverCarrusel(this, 1)">❯</button>
+    </div>
   </main>
 </section>
