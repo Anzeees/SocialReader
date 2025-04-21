@@ -1,6 +1,82 @@
-import {
-  mostrarNombre, avatarUsuario, agregarLibroFavorito, eliminarLibroFavorito, estaEnFavoritos, agregarMostrarMasTarde,
-  eliminarMostrarMasTarde, estaEnMostrarMasTarde } from "./services/firestoreService.js";
+import { mostrarNombre, avatarUsuario, agregarLibroFavorito, eliminarLibroFavorito,
+  estaEnFavoritos,
+  agregarMostrarMasTarde,
+  eliminarMostrarMasTarde,
+  estaEnMostrarMasTarde
+} from "./services/firestoreService.js";
+
+// Referencias
+const mainContent = document.getElementById("mainContent");
+const loader = document.getElementById("loader");
+
+document.getElementById("hamburguesa").addEventListener("click", () => {
+  document.getElementById("menuHamburguesa").classList.toggle("show");
+  document.getElementById("sombra").style.display = "flex";
+});
+
+function cerrarSesion() {
+  document.getElementById("menuHamburguesa").classList.remove("show");
+  document.getElementById("sombra").style.display = "none";
+  firebase.auth().signOut().then(() => {
+    localStorage.removeItem("usuarioAutenticado");
+    window.location.hash = "#login";
+    window.dispatchEvent(new HashChangeEvent("hashchange"));
+  });
+}
+
+["exitescritorio", "exitmovil"].forEach(id => {
+  const btn = document.getElementById(id);
+  if (btn) {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      cerrarSesion();
+    });
+  }
+});
+
+document.getElementById("exitMenu").addEventListener("click", (e) => {
+  e.preventDefault();
+  document.getElementById("menuHamburguesa").classList.remove("show");
+  document.getElementById("sombra").style.display = "none";
+});
+
+document.querySelector(".perfil").addEventListener("click", (e) => {
+  const menu = document.querySelector(".perfil-menu");
+  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+  e.stopPropagation();
+});
+
+document.addEventListener("click", (e) => {
+  const menu = document.querySelector(".perfil-menu");
+  const perfil = document.querySelector(".perfil");
+  if (!perfil.contains(e.target)) {
+    menu.style.display = "none";
+  }
+});
+
+firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    mostrarNombre(user.uid, (nombre) => {
+      const h5Usuario = document.querySelector(".perfil-movil h5");
+      if (h5Usuario) h5Usuario.textContent = nombre;
+    });
+    avatarUsuario(user.uid, (avatar) => {
+      const imgUsuario = document.querySelector(".perfil-movil img");
+      const imgUsuarioEscritorio = document.querySelector(".perfil img");
+      if (imgUsuarioEscritorio) imgUsuarioEscritorio.src = `./assets/img/avatars/${avatar}`;
+      if (imgUsuario) imgUsuario.src = `./assets/img/avatars/${avatar}`;
+    });
+  }
+});
+
+document.querySelector("#nombreUsuario")?.addEventListener("click", () => {
+  window.location.hash = "#profile";
+});
+
+document.querySelector(".perfil-menu a[href='#profile']")?.addEventListener("click", (e) => {
+  e.preventDefault();
+  window.location.hash = "#profile";
+});
 
 document.getElementById("botonBuscar").addEventListener("click", () => {
   const filtro = document.getElementById("filtroBusqueda").value;
@@ -57,18 +133,14 @@ function mostrarResultados(libros) {
     const ediciones = libro.edition_count || 1;
     const valoracion = Math.floor(Math.random() * 2) + 4;
     const resenas = Math.floor(Math.random() * 200) + 1;
-
     const keyLimpia = libro.key.replace("/works/", "");
+
     let favIcon = "./assets/img/interface/favdes.png";
     let mostrarIcon = "./assets/img/interface/marcdes.png";
 
     if (user) {
-      if (await estaEnFavoritos(user.uid, keyLimpia)) {
-        favIcon = "./assets/img/interface/favact.png";
-      }
-      if (await estaEnMostrarMasTarde(user.uid, keyLimpia)) {
-        mostrarIcon = "./assets/img/interface/marcact.png";
-      }
+      if (await estaEnFavoritos(user.uid, keyLimpia)) favIcon = "./assets/img/interface/favact.png";
+      if (await estaEnMostrarMasTarde(user.uid, keyLimpia)) mostrarIcon = "./assets/img/interface/marcact.png";
     }
 
     const item = document.createElement("div");
@@ -96,6 +168,10 @@ function mostrarResultados(libros) {
         <button class="resena"><img src="./assets/img/interface/nueva-resena.png" alt="Reseña"> Nueva Reseña</button>
       </div>
     `;
+
+    item.addEventListener("click", () => {
+      mostrarDetalleLibro(keyLimpia);
+    });
 
     contenedor.appendChild(item);
   });
@@ -144,3 +220,35 @@ document.addEventListener("click", async (e) => {
     img.src = "./assets/img/interface/marcact.png";
   }
 });
+
+// Vista de detalle del libro
+function mostrarDetalleLibro(key) {
+  mainContent.innerHTML = `
+    <div class="spinner-busqueda">
+      <div class="spinner"></div>
+      <p>Cargando detalles del libro...</p>
+    </div>
+  `;
+
+  fetch(`https://openlibrary.org/works/${key}.json`)
+    .then(res => res.json())
+    .then(libro => {
+      const titulo = libro.title || "Título desconocido";
+      const descripcion = typeof libro.description === "string"
+        ? libro.description
+        : libro.description?.value || "Sin descripción";
+      const tema = libro.subjects?.slice(0, 5).join(", ") || "No especificado";
+
+      mainContent.innerHTML = `
+        <div class="detalle-libro">
+          <h2>${titulo}</h2>
+          <p><strong>Temas:</strong> ${tema}</p>
+          <p><strong>Descripción:</strong></p>
+          <p>${descripcion}</p>
+        </div>
+      `;
+    })
+    .catch(() => {
+      mainContent.innerHTML = "<p>Error al cargar los detalles del libro.</p>";
+    });
+}

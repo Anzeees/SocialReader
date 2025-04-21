@@ -24,8 +24,8 @@
 
 /* Estilo general del scrollbar */
 ::-webkit-scrollbar {
-    width: 3px; /* ancho vertical */
-    height: 3px; /* alto horizontal */
+    width: 3px;
+    height: 3px;
   }
   
   /* Parte de atrás del scrollbar */

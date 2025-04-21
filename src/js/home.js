@@ -1,33 +1,25 @@
 import { mostrarNombre, avatarUsuario } from "./services/firestoreService.js";
 import { obtenerLibrosPopulares, obtenerTopMasVendidos } from "./services/openlibrary.js";
 
-// --- Referencia al contenedor principal y loader
+// Referencias
 const mainContent = document.getElementById("mainContent");
 const loader = document.getElementById("loader");
 
-// --- Abrir menú hamburguesa
 document.getElementById("hamburguesa").addEventListener("click", () => {
   document.getElementById("menuHamburguesa").classList.toggle("show");
-  document.getElementById("sombra").style.setProperty("display", "flex");
+  document.getElementById("sombra").style.display = "flex";
 });
 
-// --- Función única para cerrar sesión
 function cerrarSesion() {
   document.getElementById("menuHamburguesa").classList.remove("show");
-  document.getElementById("sombra").style.setProperty("display", "none");
-
-  firebase.auth().signOut()
-    .then(() => {
-      localStorage.removeItem("usuarioAutenticado");
-      window.location.hash = "#login";
-      window.dispatchEvent(new HashChangeEvent("hashchange"));
-    })
-    .catch((error) => {
-      console.error("Error al cerrar sesión:", error);
-    });
+  document.getElementById("sombra").style.display = "none";
+  firebase.auth().signOut().then(() => {
+    localStorage.removeItem("usuarioAutenticado");
+    window.location.hash = "#login";
+    window.dispatchEvent(new HashChangeEvent("hashchange"));
+  });
 }
 
-// --- Eventos cerrar sesión
 ["exitescritorio", "exitmovil"].forEach(id => {
   const btn = document.getElementById(id);
   if (btn) {
@@ -38,21 +30,18 @@ function cerrarSesion() {
   }
 });
 
-// --- Cerrar el menú hamburguesa con el botón de cerrar (X)
 document.getElementById("exitMenu").addEventListener("click", (e) => {
   e.preventDefault();
   document.getElementById("menuHamburguesa").classList.remove("show");
-  document.getElementById("sombra").style.setProperty("display", "none");
+  document.getElementById("sombra").style.display = "none";
 });
 
-// --- Mostrar/ocultar menú del perfil con clic
 document.querySelector(".perfil").addEventListener("click", (e) => {
   const menu = document.querySelector(".perfil-menu");
   menu.style.display = menu.style.display === "flex" ? "none" : "flex";
   e.stopPropagation();
 });
 
-// --- Cerrar el menú si se hace clic fuera de él
 document.addEventListener("click", (e) => {
   const menu = document.querySelector(".perfil-menu");
   const perfil = document.querySelector(".perfil");
@@ -61,7 +50,6 @@ document.addEventListener("click", (e) => {
   }
 });
 
-// --- Personalización del home por usuario
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
     mostrarNombre(user.uid, (nombre) => {
@@ -87,13 +75,21 @@ document.querySelector(".perfil-menu a[href='#profile']")?.addEventListener("cli
 });
 
 function crearCardLibro(libro) {
-  const card = document.createElement('div');
-  card.className = 'card-libro';
+  const card = document.createElement("div");
+  card.className = "card-libro";
   card.innerHTML = `
     <img src="${libro.portada || './assets/img/logotipos/portadaDefault.png'}" alt="Portada">
     <h3>${libro.titulo}</h3>
     <p>${libro.autor}</p>
   `;
+
+  card.addEventListener("click", () => {
+    const key = libro.clave || libro.key?.replace("/works/", "");
+    if (key) {
+      mostrarDetalleLibro(key);
+    }
+  });
+
   return card;
 }
 
@@ -107,25 +103,51 @@ async function cargarTopLibros() {
   vendidos.forEach(libro => contVendidos.appendChild(crearCardLibro(libro)));
   guardados.forEach(libro => contGuardados.appendChild(crearCardLibro(libro)));
 
-  // Ocultar loader y mostrar contenido principal solo cuando esté todo cargado
   loader.style.display = "none";
   mainContent.removeAttribute("hidden");
   mainContent.classList.add("fade-in");
 }
 
-// --- Función para mover el carrusel con flechas
 window.moverCarrusel = function (btn, direccion) {
   const contenedor = btn.parentElement.querySelector(".contenedor-cards");
   const card = contenedor.querySelector(".card-libro");
-
   if (!card) return;
-
-  const desplazamiento = card.offsetWidth + 16; // Ancho de la tarjeta + margen
+  const desplazamiento = card.offsetWidth + 16;
   contenedor.scrollBy({
     left: direccion * desplazamiento,
     behavior: "smooth"
   });
 };
 
-// Ejecutar carga al iniciar
+function mostrarDetalleLibro(key) {
+  mainContent.innerHTML = `
+    <div class="spinner-busqueda">
+      <div class="spinner"></div>
+      <p>Cargando detalles del libro...</p>
+    </div>
+  `;
+
+  fetch(`https://openlibrary.org/works/${key}.json`)
+    .then(res => res.json())
+    .then(libro => {
+      const titulo = libro.title || "Título desconocido";
+      const descripcion = typeof libro.description === 'string'
+        ? libro.description
+        : libro.description?.value || "Sin descripción";
+      const tema = libro.subjects?.slice(0, 5).join(", ") || "No especificado";
+
+      mainContent.innerHTML = `
+        <div class="detalle-libro">
+          <h2>${titulo}</h2>
+          <p><strong>Temas:</strong> ${tema}</p>
+          <p><strong>Descripción:</strong></p>
+          <p>${descripcion}</p>
+        </div>
+      `;
+    })
+    .catch(() => {
+      mainContent.innerHTML = "<p>Error al cargar los detalles del libro.</p>";
+    });
+}
+
 cargarTopLibros();

@@ -24,6 +24,11 @@ const rutas = {
     vista: 'profile.html',
     estilo: 'profile.css',
     script: 'profile.js'
+  },
+  detalles: {
+    vista: 'detalles.html',
+    estilo: 'detalles.css',
+    script: 'detalles.js'
   }
 };
 
