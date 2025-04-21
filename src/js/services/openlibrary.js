@@ -90,7 +90,7 @@ async function obtenerNombreAutor(autorKey) {
   //--- Función para obtener el top de libros más vendidos (por tema)
   export async function obtenerTopMasVendidos() {
     try {
-      const res = await fetch('https://openlibrary.org/subjects/bestsellers.json?limit=10');
+      const res = await fetch('https://openlibrary.org/subjects/fantasy.json?limit=10');
       const data = await res.json();
       return Promise.all(data.works.map(libro => {
         const id = libro.key.split('/').pop();
@@ -102,24 +102,44 @@ async function obtenerNombreAutor(autorKey) {
     }
   }
   
-  // --- Función alternativa para obtener libros populares
-  export async function obtenerLibrosPopulares() {
-    try {
-      const res = await fetch('https://openlibrary.org/search.json?q=the&sort=editions&limit=10');
-      const data = await res.json();
-      return data.docs.map(libro => ({
-        id: libro.key.split('/').pop(),
-        titulo: libro.title,
-        autor: libro.author_name ? libro.author_name[0] : 'Autor desconocido',
-        portada: libro.cover_i
-          ? `https://covers.openlibrary.org/b/id/${libro.cover_i}-M.jpg`
-          : './assets/img/logotipos/portadaDefault.png',
-      }));
-    } catch (error) {
-      console.error('Error al obtener libros populares:', error);
-      return [];
-    }
-}
+// --- Función alternativa para obtener libros populares
+export async function obtenerLibrosPopulares() {
+  const urls = [
+    'https://openlibrary.org/search.json?q=libro&limit=10', // Búsqueda más segura
+    'https://openlibrary.org/subjects/fantasy.json?limit=10' // Alternativa por temática
+  ];
 
-// ------------------------------------------------------
-// --- 
+  for (const url of urls) {
+    try {
+      const res = await fetch(url);
+
+      const tipo = res.headers.get("content-type") || "";
+      if (!res.ok || !tipo.includes("application/json")) {
+        console.warn(`Respuesta no válida desde ${url}`);
+        continue;
+      }
+
+      const data = await res.json();
+      const libros = data.docs || data.works; // depende del endpoint
+
+      return libros.map(libro => {
+        const id = libro.key.split('/').pop();
+        return {
+          id,
+          titulo: libro.title,
+          autor: libro.author_name?.[0] || libro.authors?.[0]?.name || 'Autor desconocido',
+          portada: libro.cover_i
+            ? `https://covers.openlibrary.org/b/id/${libro.cover_i}-M.jpg`
+            : libro.cover_id
+              ? `https://covers.openlibrary.org/b/id/${libro.cover_id}-M.jpg`
+              : './assets/img/logotipos/portadaDefault.png',
+        };
+      });
+    } catch (error) {
+      console.error(`Error al intentar cargar desde ${url}:`, error);
+    }
+  }
+
+  console.error("No se pudieron obtener libros populares desde ninguna fuente.");
+  return [];
+}

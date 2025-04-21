@@ -7,6 +7,7 @@ export function crearPerfilUsuario(user, nombrePantalla = null) {
   const correo = user.email;
   const nombre = nombrePantalla || user.displayName || "Usuario sin nombre";
   const avatar = "Avatar1.png";
+  const fechaAlta = firebase.firestore.FieldValue.serverTimestamp(); // Fecha de alta
 
   return db.collection("usuarios").doc(uid).set({
     uid,
@@ -16,7 +17,8 @@ export function crearPerfilUsuario(user, nombrePantalla = null) {
     librosFavoritos: [],
     mostrarMasTarde: [],
     amigos: [],
-    resenas: []
+    resenas: [],
+    fechaAlta
   });
 }
 
@@ -58,7 +60,6 @@ export function avatarUsuario(uid, callback) {
 
 // === FAVORITOS ===
 
-// Añadir libro a favoritos
 export async function agregarLibroFavorito(uid, claveLibro) {
   try {
     const docRef = db.collection("usuarios").doc(uid);
@@ -70,7 +71,6 @@ export async function agregarLibroFavorito(uid, claveLibro) {
   }
 }
 
-// Quitar libro de favoritos
 export async function eliminarLibroFavorito(uid, claveLibro) {
   try {
     const docRef = db.collection("usuarios").doc(uid);
@@ -82,7 +82,6 @@ export async function eliminarLibroFavorito(uid, claveLibro) {
   }
 }
 
-// Consultar si un libro está en favoritos
 export async function estaEnFavoritos(uid, claveLibro) {
   try {
     const docSnap = await db.collection("usuarios").doc(uid).get();
@@ -96,7 +95,6 @@ export async function estaEnFavoritos(uid, claveLibro) {
 
 // === MOSTRAR MÁS TARDE ===
 
-// Añadir libro a mostrar más tarde
 export async function agregarMostrarMasTarde(uid, claveLibro) {
   try {
     const docRef = db.collection("usuarios").doc(uid);
@@ -108,7 +106,6 @@ export async function agregarMostrarMasTarde(uid, claveLibro) {
   }
 }
 
-// Quitar libro de mostrar más tarde
 export async function eliminarMostrarMasTarde(uid, claveLibro) {
   try {
     const docRef = db.collection("usuarios").doc(uid);
@@ -120,7 +117,6 @@ export async function eliminarMostrarMasTarde(uid, claveLibro) {
   }
 }
 
-// Consultar si un libro está en mostrar más tarde
 export async function estaEnMostrarMasTarde(uid, claveLibro) {
   try {
     const docSnap = await db.collection("usuarios").doc(uid).get();
@@ -129,5 +125,22 @@ export async function estaEnMostrarMasTarde(uid, claveLibro) {
   } catch (error) {
     console.error("Error al consultar mostrar más tarde:", error);
     return false;
+  }
+}
+
+// Obtener documento completo del usuario
+export async function obtenerDocumentoUsuario(uid) {
+  try {
+    const ref = db.collection("usuarios").doc(uid);
+    const snapshot = await ref.get();
+    if (snapshot.exists) {
+      return snapshot.data();
+    } else {
+      console.warn("No se encontró el documento del usuario");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error obteniendo documento del usuario:", error);
+    return null;
   }
 }

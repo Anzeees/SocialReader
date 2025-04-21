@@ -1,4 +1,5 @@
 import { mostrarNombre, avatarUsuario } from "./services/firestoreService.js";
+import { obtenerDetallesLibro } from "./services/openlibrary.js";
 
 // --- Abrir menú hamburguesa
 document.getElementById("hamburguesa").addEventListener("click", () => {
@@ -80,3 +81,45 @@ document.querySelector(".perfil-menu a[href='#profile']")?.addEventListener("cli
   e.preventDefault();
   window.location.hash = "#profile";
 });
+// --- Obtener el workId desde la URL
+function obtenerWorkIdDesdeHash() {
+  const hash = window.location.hash; // Ej: "#detalle/OL123456W"
+  const partes = hash.split("/");
+  return partes.length === 2 ? partes[1] : null;
+}
+
+const workId = obtenerWorkIdDesdeHash();
+const main = document.getElementById("mainContent");
+
+if (workId && main) {
+  main.hidden = false;
+  main.innerHTML = `
+    <div class="loader-container">
+      <div class="spinner"></div>
+      <p>Cargando detalles del libro...</p>
+    </div>
+  `;
+
+  obtenerDetallesLibro(workId).then(libro => {
+    if (!libro) {
+      main.innerHTML = "<p>Error al cargar el libro.</p>";
+      return;
+    }
+
+    main.innerHTML = `
+      <div class="detalle-libro">
+        <img src="${libro.portada}" alt="Portada del libro">
+        <h2>${libro.titulo}</h2>
+        <p><strong>Autor:</strong> ${libro.autor}</p>
+        <p><strong>Año:</strong> ${libro.añoPublicacion}</p>
+        <p><strong>Editorial:</strong> ${libro.editorial}</p>
+        <p><strong>Idiomas:</strong> ${libro.idiomas.join(", ")}</p>
+        <p><strong>Géneros:</strong> ${libro.generos.join(", ")}</p>
+        <p><strong>Páginas:</strong> ${libro.paginas}</p>
+        <p><strong>Sinopsis:</strong> ${libro.sinopsis}</p>
+      </div>
+    `;
+  });
+} else {
+  main.innerHTML = "<p>No se ha especificado ningún libro.</p>";
+}

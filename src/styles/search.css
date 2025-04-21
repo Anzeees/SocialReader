@@ -4,7 +4,6 @@
   align-items: center;
   margin: 1rem 0;
 }
-
 .spinner {
   width: 40px;
   height: 40px;
@@ -13,18 +12,15 @@
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
-
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
-
 .spinner-busqueda p {
   margin-top: 0.5rem;
   font-weight: bold;
   color: #333;
 }
-
 .oculto {
   display: none !important;
 }
@@ -52,14 +48,8 @@ main {
   flex-grow: 1;
 }
 
-.sombra {
-  display: none;
-}
-
-.hamburguesa {
-  display: none;
-}
-
+.sombra,
+.hamburguesa,
 .menu-hamburguesa {
   display: none;
 }
@@ -216,13 +206,15 @@ img.flecha-perfil {
   margin-right: 10px;
 }
 
+/* MAIN DE BÚSQUEDA */
 #mainContent {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
   width: 95%;
+  max-width: 1200px;
   align-self: center;
-  margin: 3% 3% 0 3%;
+  margin: 3% auto 0 auto;
 }
 
 .busqueda-avanzada {
@@ -283,13 +275,13 @@ img.flecha-perfil {
   opacity: 1;
 }
 
+/* Tarjetas resultado */
 .resultados {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   padding-bottom: 2rem;
-  width: 70%;
-  min-width: 500px;
+  width: 100%;
   align-self: center;
 }
 
@@ -299,21 +291,26 @@ img.flecha-perfil {
   justify-content: space-between;
   border: 2px solid #dcdcdc;
   border-radius: 10px;
-  height: 150px;
-  background-color: #fdfdfd;
-  gap: 1rem;
-  padding-right: 2%;
+  padding: 0 1rem 0 0;
+  background-color: #fff;
+  transition: all 0.2s ease-in-out;
+}
+
+.resultado-libro:hover {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
 }
 
 .resultado-libro .portada {
-  width: 112px;
+  width: 100px;
   height: 100%;
+  object-fit: cover;
   border-radius: 5px 0 0 5px;
 }
 
 .info-libro {
   flex-grow: 1;
-  padding: 2%;
+  padding: 0 1rem;
 }
 
 .info-libro h4 {
@@ -343,8 +340,8 @@ img.flecha-perfil {
 
 .acciones-libro {
   display: flex;
-  align-items: flex-end;
   gap: 0.4rem;
+  align-items: flex-end;
 }
 
 .acciones-libro .accion {
@@ -381,172 +378,112 @@ img.flecha-perfil {
   height: 18px;
 }
 
-/* Responsive */
+/* Vista móvil */
 @media (max-width: 1000px) {
-  nav {
-    padding: 0 5%;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    height: 9vh;
-    min-height: 40px;
-  }
-
-  .logo {
-    height: 50%;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
-  }
-
-  .hamburguesa {
-    height: 30%;
-    display: block;
-    cursor: pointer;
-    position: absolute;
-    left: 5%;
-    z-index: 15;
-  }
-
-  .menu {
-    display: none;
-  }
-
-  .perfil {
-    display: none;
-  }
-
-  .menu-hamburguesa {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 70vw;
-    max-width: 300px;
-    background-color: #232323;
-    z-index: 100;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    padding: 3% 3%;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-  }
-
-  .menu-hamburguesa.show {
-    display: flex;
-  }
-
-  hr {
-    width: 100%;
-    height: 2px;
-    background-color: #a9a9a9;
-    border: 0;
-    margin: 5% 0;
-  }
-
-  .menumovil {
-    flex-grow: 1;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .perfil-movil {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .perfil-movil img.avatar {
-    width: 20%;
-  }
-
-  .perfil-movil img:not(#exitmovil img) {
-    width: 10%;
-  }
-
-  .sombra {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(35, 35, 35, 0.7);
-    z-index: 100;
-  }
-
-  .contenedor-perfil h5 {
-    color: white;
-    padding-left: 4%;
-  }
-
-  .contenedor-perfil img {
-    min-width: 30px;
-  }
-
-  .contenedor-perfil {
-    display: flex;
-    align-items: center;
-  }
-
-  h3 {
-    align-self: center;
-  }
-
   .resultados {
-    width: 90%;
-    min-width: unset;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 95%;
+    margin: 0 auto;
   }
 
   .resultado-libro {
-    flex-direction: column;
+    display: flex;
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
-    height: auto;
-    padding: 1rem;
-    text-align: center;
-  }
-
-  .resultado-libro .portada {
-    width: 60%;
-    height: auto;
+    justify-content: space-between;
+    gap: 0.8rem;
+    border: 2px solid #dcdcdc;
     border-radius: 10px;
-    object-fit: cover;
-  }
-
-  .info-libro {
-    padding: 1rem 0.5rem;
+    background-color: #fdfdfd;
+    padding: 0.7rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     width: 100%;
   }
 
-  .acciones-libro {
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 0.6rem;
+  .resultado-libro .portada {
+    width: 80px;
+    height: 100px;
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
   }
 
-  .acciones-libro button,
-  .acciones-libro .resena {
-    flex: 1 1 40%;
-    max-width: 130px;
+  .info-libro {
+    flex-grow: 1;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size: 0.9rem;
   }
 
   .info-libro h4 {
     font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
   }
 
   .info-libro p {
+    margin: 0.2rem 0;
     font-size: 0.85rem;
+    color: #333;
   }
 
   .valoracion {
-    justify-content: center;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
     font-size: 0.85rem;
+    margin-top: 0.3rem;
   }
 
   .valoracion span {
     font-size: 0.8rem;
+    color: #555;
+  }
+
+  .acciones-libro {
+    display: flex;
+    flex-direction: row;
+    gap: 0.4rem;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.4rem;
+    flex-wrap: nowrap;
+  }
+
+  .acciones-libro .accion {
+    background-color: #f2f2f2;
+    border: none;
+    padding: 0.3rem;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+
+  .acciones-libro .accion img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .acciones-libro .resena {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .acciones-libro .resena img {
+    width: 18px;
+    height: 18px;
   }
 }

@@ -25,17 +25,17 @@ const rutas = {
     estilo: 'profile.css',
     script: 'profile.js'
   },
-  detalles: {
+  detalle: {
     vista: 'detalles.html',
     estilo: 'detalles.css',
     script: 'detalles.js'
   }
 };
 
-export function cargarVista(nombre) {
-  const ruta = rutas[nombre];
+export function cargarVista(nombreRuta, parametro = null) {
+  const ruta = rutas[nombreRuta];
   if (!ruta) {
-    app.innerHTML = `<h2>Vista no encontrada: ${nombre}</h2>`;
+    app.innerHTML = `<h2>Vista no encontrada: ${nombreRuta}</h2>`;
     styleLink.href = '';
     return;
   }
@@ -45,7 +45,7 @@ export function cargarVista(nombre) {
     .then(html => {
       app.innerHTML = html;
       styleLink.href = `./styles/${ruta.estilo}`;
-      setTimeout(() => cargarScript(ruta.script), 0);
+      setTimeout(() => cargarScript(ruta.script, parametro), 0);
     })
     .catch(err => {
       app.innerHTML = `<h2>Error cargando la vista.</h2>`;
@@ -53,7 +53,7 @@ export function cargarVista(nombre) {
     });
 }
 
-function cargarScript(nombreScript) {
+function cargarScript(nombreScript, parametro = null) {
   if (scriptActual) {
     scriptActual.remove(); // elimina el script anterior
     scriptActual = null;
@@ -62,6 +62,9 @@ function cargarScript(nombreScript) {
   const nuevoScript = document.createElement("script");
   nuevoScript.type = "module";
   nuevoScript.src = `./js/${nombreScript}?t=${Date.now()}`; // cache busting
+  if (parametro) {
+    nuevoScript.setAttribute("data-param", parametro);
+  }
   document.body.appendChild(nuevoScript);
   scriptActual = nuevoScript;
 }
@@ -69,25 +72,25 @@ function cargarScript(nombreScript) {
 export function iniciarRouter() {
   auth.onAuthStateChanged(user => {
     const hash = window.location.hash || "#login";
-    let vista = hash.replace("#", "");
+    const [vista, param] = hash.replace("#", "").split("/");
 
     if (user) {
       if (vista === "login") {
         window.location.hash = "#home";
-        vista = "home";
+        cargarVista("home");
+      } else {
+        cargarVista(vista, param);
       }
     } else {
       if (vista !== "login") {
         window.location.hash = "#login";
-        vista = "login";
       }
+      cargarVista("login");
     }
-
-    cargarVista(vista);
   });
 
   window.addEventListener("hashchange", () => {
-    const vista = window.location.hash.replace("#", "");
+    const [vista, param] = window.location.hash.replace("#", "").split("/");
     const user = auth.currentUser;
 
     if (!user && vista !== "login") {
@@ -100,6 +103,6 @@ export function iniciarRouter() {
       return;
     }
 
-    cargarVista(vista);
+    cargarVista(vista, param);
   });
 }

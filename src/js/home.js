@@ -1,39 +1,36 @@
 import { mostrarNombre, avatarUsuario } from "./services/firestoreService.js";
 import { obtenerLibrosPopulares, obtenerTopMasVendidos } from "./services/openlibrary.js";
 
-// Referencias
 const mainContent = document.getElementById("mainContent");
 const loader = document.getElementById("loader");
+
+function cerrarMenuHamburguesa() {
+  document.getElementById("menuHamburguesa").classList.remove("show");
+  document.getElementById("sombra").style.display = "none";
+}
 
 document.getElementById("hamburguesa").addEventListener("click", () => {
   document.getElementById("menuHamburguesa").classList.toggle("show");
   document.getElementById("sombra").style.display = "flex";
 });
 
-function cerrarSesion() {
-  document.getElementById("menuHamburguesa").classList.remove("show");
-  document.getElementById("sombra").style.display = "none";
-  firebase.auth().signOut().then(() => {
-    localStorage.removeItem("usuarioAutenticado");
-    window.location.hash = "#login";
-    window.dispatchEvent(new HashChangeEvent("hashchange"));
-  });
-}
+document.getElementById("exitMenu").addEventListener("click", (e) => {
+  e.preventDefault();
+  cerrarMenuHamburguesa();
+});
 
 ["exitescritorio", "exitmovil"].forEach(id => {
   const btn = document.getElementById(id);
   if (btn) {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
-      cerrarSesion();
+      firebase.auth().signOut().then(() => {
+        localStorage.removeItem("usuarioAutenticado");
+        window.location.hash = "#login";
+        window.dispatchEvent(new HashChangeEvent("hashchange"));
+      });
     });
   }
-});
-
-document.getElementById("exitMenu").addEventListener("click", (e) => {
-  e.preventDefault();
-  document.getElementById("menuHamburguesa").classList.remove("show");
-  document.getElementById("sombra").style.display = "none";
 });
 
 document.querySelector(".perfil").addEventListener("click", (e) => {
@@ -82,14 +79,12 @@ function crearCardLibro(libro) {
     <h3>${libro.titulo}</h3>
     <p>${libro.autor}</p>
   `;
-
   card.addEventListener("click", () => {
-    const key = libro.clave || libro.key?.replace("/works/", "");
+    const key = libro.id || libro.clave || libro.key?.replace("/works/", "");
     if (key) {
-      mostrarDetalleLibro(key);
+      window.location.hash = `#detalle/${key}`;
     }
   });
-
   return card;
 }
 
@@ -126,7 +121,6 @@ function mostrarDetalleLibro(key) {
       <p>Cargando detalles del libro...</p>
     </div>
   `;
-
   fetch(`https://openlibrary.org/works/${key}.json`)
     .then(res => res.json())
     .then(libro => {

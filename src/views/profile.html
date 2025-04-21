@@ -1,47 +1,78 @@
 <section>
-    <nav>
-      <div class="sombra" id="sombra"></div>
-      <img class="hamburguesa" src="./assets/img/interface/menu-hamburguesa.png" id="hamburguesa" alt="Menú">
-      <img class="logo" src="./assets/img/logotipos/LogoClaro.png">
-  
-      <div class="menu-hamburguesa" id="menuHamburguesa">
-        <div class="top">
-          <img class="logo" src="./assets/img/logotipos/LogoClaro.png" alt="Logo">
-          <img class="exit" src="./assets/img/interface/cruz.png" id="exitMenu" alt="Cerrar">
+  <nav>
+    <div class="sombra" id="sombra"></div>
+    <img class="hamburguesa" src="./assets/img/interface/menu-hamburguesa.png" id="hamburguesa" alt="Menú">
+    <img class="logo" src="./assets/img/logotipos/LogoClaro.png">
+
+    <div class="menu-hamburguesa" id="menuHamburguesa">
+      <div class="top">
+        <img class="logo" src="./assets/img/logotipos/LogoClaro.png" alt="Logo">
+        <img class="exit" src="./assets/img/interface/cruz.png" id="exitMenu" alt="Cerrar">
+      </div>
+      <hr>
+      <div class="perfil-movil">
+        <div class="contenedor-perfil">
+          <img src="./assets/img/avatars/Avatar1.png" class="avatar" id="avatarMovil">
+          <h5 id="nombreUsuarioMovil">Usuario</h5>
         </div>
         <hr>
-        <div class="perfil-movil">
-          <div class="contenedor-perfil">
-            <img src="./assets/img/avatars/Avatar4.png" class="avatar">
-            <h5 id="nombreUsuario">USER-00</h5>
+      </div>
+      <div class="menumovil">
+        <a href="#home" id="inicioLinkMovil">Inicio</a>
+        <a href="#search" id="buscarLinkMovil">Buscar Libros</a>
+      </div>
+      <hr>
+      <a id="exitmovil" class="exitmovil"><img src="./assets/img/interface/salida.png"> Cerrar Sesión</a>
+    </div>
+
+    <div class="menu">
+      <a href="#home" id="inicioLink">Inicio</a>
+      <a href="#search" id="buscarLink">Buscar Libros</a>
+    </div>
+
+    <div class="perfil">
+      <img src="./assets/img/avatars/Avatar1.png" class="avatar" id="avatarEscritorio">
+      <img src="./assets/img/interface/flecha-perfil.png" class="flecha-perfil">
+      <div class="perfil-menu">
+        <a href="#profile"><img src="./assets/img/interface/usuario.png">Mi Perfil</a>
+        <a id="exitescritorio"><img src="./assets/img/interface/salida.png">Cerrar Sesión</a>
+      </div>
+    </div>
+  </nav>
+
+  <main id="mainContent">
+    <div style="display: flex; gap: 2rem;">
+      <aside class="panel-lateral">
+        <img id="avatarGrande" class="avatar-grande" src="./assets/img/avatars/Avatar1.png" alt="Avatar">
+        <h3 id="nombrePerfil">Cargando...</h3>
+        <p id="correoPerfil">-</p>
+        <small id="fechaAlta">-</small>
+      </aside>
+  
+      <section class="panel-principal">
+        <div class="tabs">
+          <button class="tab activo" data-tab="mis-listas">Mis listas</button>
+          <button class="tab" data-tab="mis-resenas">Mis reseñas</button>
+          <button class="tab" data-tab="valoraciones">Valoraciones</button>
+          <button class="tab" data-tab="mis-amigos">Mis amigos</button>
+        </div>
+  
+        <div class="contenido-tabs">
+          <div id="mis-listas">
+            <h4>Libros favoritos</h4>
+            <div class="contenedor-libros" id="contenedor-favoritos"></div>
+  
+            <h4>Mostrar más tarde</h4>
+            <div class="contenedor-libros" id="contenedor-mas-tarde"></div>
           </div>
-          <hr>
+  
+          <div id="mis-resenas" style="display: none;">Aquí van tus reseñas...</div>
+          <div id="valoraciones" style="display: none;">Aquí van tus valoraciones...</div>
+          <div id="mis-amigos" style="display: none;">Aquí van tus amigos...</div>
         </div>
-        <div class="menumovil">
-          <a href="#home" id="inicioLinkMovil">Inicio</a>
-          <a href="#search" id="buscarLinkMovil">Buscar Libros</a>
-        </div>
-        <hr>
-        <a id="exitmovil" class="exitmovil"><img src="./assets/img/interface/salida.png"> Cerrar Sesión</a>
-      </div>
+      </section>
+    </div>
+  </main>
   
-      <div class="menu">
-        <a href="#home" id="inicioLink">Inicio</a>
-        <a href="#search" id="buscarLink">Buscar Libros</a>
-      </div>
   
-      <div class="perfil">
-        <img src="./assets/img/avatars/Avatar4.png" class="avatar">
-        <img src="./assets/img/interface/flecha-perfil.png" class="flecha-perfil">
-        <div class="perfil-menu">
-          <a href="#profile"><img src="./assets/img/interface/usuario.png">Mi Perfil</a>
-          <a id="exitescritorio"><img src="./assets/img/interface/salida.png">Cerrar Sesión</a>
-        </div>
-      </div>
-    </nav>
-  
-    <main id="mainContent" data-vista="inicio">
-      <h3>Perfil</h3>
-    </main>
-  </section>
-  
+</section>

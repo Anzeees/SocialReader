@@ -110,7 +110,7 @@ img.flecha-perfil {
 }
 
 .perfil-menu a:hover {
-  color: #ff3b3f;
+  cursor: pointer;
 }
 
 .perfil-menu a img {
@@ -125,21 +125,12 @@ img.flecha-perfil {
   display: none;
 }
 
-.menu-hamburguesa {
-  display: none;
-}
-
 .menu-hamburguesa a {
   text-decoration: none;
   color: #efefef;
   margin: 10px 0;
   font-size: 1.2em;
   cursor: pointer;
-}
-
-.menu-hamburguesa a:hover {
-  color: #ff3b3f;
-  border-bottom: solid #ff3b3f 3px;
 }
 
 .top {
@@ -181,12 +172,6 @@ img.flecha-perfil {
   color: #efefef;
   width: 100%;
   text-decoration: none;
-}
-
-#exitmovil:hover {
-  color: #ff3b3f;
-  border-bottom: solid #ff3b3f 3px;
-  border-top: solid #232323 3px;
 }
 
 #exitmovil img {

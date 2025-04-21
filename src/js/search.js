@@ -1,13 +1,15 @@
-import { mostrarNombre, avatarUsuario, agregarLibroFavorito, eliminarLibroFavorito,
+import {
+  mostrarNombre,
+  avatarUsuario,
+  agregarLibroFavorito,
+  eliminarLibroFavorito,
   estaEnFavoritos,
   agregarMostrarMasTarde,
   eliminarMostrarMasTarde,
   estaEnMostrarMasTarde
 } from "./services/firestoreService.js";
 
-// Referencias
 const mainContent = document.getElementById("mainContent");
-const loader = document.getElementById("loader");
 
 document.getElementById("hamburguesa").addEventListener("click", () => {
   document.getElementById("menuHamburguesa").classList.toggle("show");
@@ -169,15 +171,16 @@ function mostrarResultados(libros) {
       </div>
     `;
 
-    item.addEventListener("click", () => {
-      mostrarDetalleLibro(keyLimpia);
+    item.addEventListener("click", (e) => {
+      const esBoton = e.target.closest(".accion") || e.target.closest(".resena");
+      if (esBoton) return;
+      window.location.hash = `#detalle/${keyLimpia}`;
     });
 
     contenedor.appendChild(item);
   });
 }
 
-// Favoritos
 document.addEventListener("click", async (e) => {
   const btn = e.target.closest(".btn-fav");
   if (!btn) return;
@@ -199,7 +202,6 @@ document.addEventListener("click", async (e) => {
   }
 });
 
-// Mostrar Más Tarde
 document.addEventListener("click", async (e) => {
   const btn = e.target.closest(".btn-mostrar");
   if (!btn) return;
@@ -220,35 +222,3 @@ document.addEventListener("click", async (e) => {
     img.src = "./assets/img/interface/marcact.png";
   }
 });
-
-// Vista de detalle del libro
-function mostrarDetalleLibro(key) {
-  mainContent.innerHTML = `
-    <div class="spinner-busqueda">
-      <div class="spinner"></div>
-      <p>Cargando detalles del libro...</p>
-    </div>
-  `;
-
-  fetch(`https://openlibrary.org/works/${key}.json`)
-    .then(res => res.json())
-    .then(libro => {
-      const titulo = libro.title || "Título desconocido";
-      const descripcion = typeof libro.description === "string"
-        ? libro.description
-        : libro.description?.value || "Sin descripción";
-      const tema = libro.subjects?.slice(0, 5).join(", ") || "No especificado";
-
-      mainContent.innerHTML = `
-        <div class="detalle-libro">
-          <h2>${titulo}</h2>
-          <p><strong>Temas:</strong> ${tema}</p>
-          <p><strong>Descripción:</strong></p>
-          <p>${descripcion}</p>
-        </div>
-      `;
-    })
-    .catch(() => {
-      mainContent.innerHTML = "<p>Error al cargar los detalles del libro.</p>";
-    });
-}

@@ -22,7 +22,7 @@
         <a href="#search" id="buscarLinkMovil">Buscar Libros</a>
       </div>
       <hr>
-      <a id="exitmovil" class="exitmovil"><img src="./assets/img/interface/salida.png"> Cerrar Sesión</a>
+      <a id="exitmovil" class="exitmovil"><img src="./assets/img/interface/salida.png" alt=""> Cerrar Sesión</a>
     </div>
 
     <div class="menu">
@@ -48,16 +48,16 @@
   <main id="mainContent" data-vista="inicio" hidden>
     <h2>Top más vendidos</h2>
     <div class="carrusel">
-      <button class="btn-carrusel izquierda" onclick="moverCarrusel(this, -1)">❮</button>
+      <button class="btn-carrusel izquierda" aria-label="Anterior" onclick="moverCarrusel(this, -1)">❮</button>
       <div id="lista-vendidos" class="contenedor-cards"></div>
-      <button class="btn-carrusel derecha" onclick="moverCarrusel(this, 1)">❯</button>
+      <button class="btn-carrusel derecha" aria-label="Siguiente" onclick="moverCarrusel(this, 1)">❯</button>
     </div>
 
     <h2>Top más populares</h2>
     <div class="carrusel">
-      <button class="btn-carrusel izquierda" onclick="moverCarrusel(this, -1)">❮</button>
+      <button class="btn-carrusel izquierda" aria-label="Anterior" onclick="moverCarrusel(this, -1)">❮</button>
       <div id="lista-guardados" class="contenedor-cards"></div>
-      <button class="btn-carrusel derecha" onclick="moverCarrusel(this, 1)">❯</button>
+      <button class="btn-carrusel derecha" aria-label="Siguiente" onclick="moverCarrusel(this, 1)">❯</button>
     </div>
   </main>
 </section>
