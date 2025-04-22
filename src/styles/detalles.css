@@ -1,6 +1,95 @@
-  
+#mainContent {
+  padding: 3em;
+}
+
+.detalle-libro {
+  display: flex;
+  /* flex-direction: column; */
+}
+
+.colizq {
+  width: 16%;
+  margin-right: 2%;
+  min-width: 250px;
+  align-items: center;
+}
+
+.coldrch {
+  flex-grow: 1;
+}
+
+.boton-volver {
+  position: float;
+  top: 0;
+  background-color: var(--color-primario);
+  width: 45px;
+  height: 45px;
+  padding: 0;
+  margin: 10px;
+  border-radius: 50%;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.boton-volver img {
+  width: 30px;
+  filter: brightness(0) invert(1);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.boton-volver img:hover {
+  transform: scale(1.1);
+}
+
+.portada {
+  width: 100%;
+  margin-bottom: 4%;
+}
+
+button.accion.btn-mostrar, button.accion.btn-fav, button.resena {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 40px;
+  margin: 3% 0;
+  border-radius: 100px;
+  font-weight: 700;
+  padding: 0 20% 0 20%;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+button.accion.btn-mostrar:hover, button.accion.btn-fav:hover, button.resena:hover {
+  transform: scale(1.1);
+}
+
+button.accion.btn-mostrar {
+  background-color: #BCD8DD;
+  border: solid #115662 2px;
+  color: #115662;
+}
+
+button.accion.btn-fav {
+  background-color: #E5AFB1;
+  border: solid var(--color-complementario2) 2px;
+  color: var(--color-complementario2);
+}
+
+button.resena {
+  background-color: #6C84FF;
+  border: solid #008CFF 2px;
+  color: white;
+}
+
+.accion img, .resena img {
+  height: 60%;
+} 
+
   /* RESPONSIVE */
   @media (max-width: 1000px) {
     
   }
-  

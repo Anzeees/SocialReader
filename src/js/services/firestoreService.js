@@ -7,7 +7,7 @@ export function crearPerfilUsuario(user, nombrePantalla = null) {
   const correo = user.email;
   const nombre = nombrePantalla || user.displayName || "Usuario sin nombre";
   const avatar = "Avatar1.png";
-  const fechaAlta = firebase.firestore.FieldValue.serverTimestamp(); // Fecha de alta
+  const fechaAlta = firebase.firestore.FieldValue.serverTimestamp();
 
   return db.collection("usuarios").doc(uid).set({
     uid,
@@ -46,7 +46,7 @@ export function avatarUsuario(uid, callback) {
     .then((doc) => {
       if (doc.exists) {
         const datos = doc.data();
-        callback(datos.avatar);
+        callback(datos.avatar || "Avatar1.png");
       } else {
         console.warn("No se encontró el perfil del usuario en Firestore.");
         callback("Avatar1.png");
@@ -143,4 +143,109 @@ export async function obtenerDocumentoUsuario(uid) {
     console.error("Error obteniendo documento del usuario:", error);
     return null;
   }
+}
+
+// Obtener usuarios por correo
+export async function obtenerUidPorCorreo(correo) {
+  try {
+    const snapshot = await db.collection("usuarios")
+      .where("correo", "==", correo)
+      .get();
+
+    if (snapshot.empty) {
+      console.log("No se encontró ningún usuario con ese correo.");
+      return [];
+    }
+
+    const uids = [];
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      uids.push(data.uid);
+    });
+
+    return uids;
+  } catch (error) {
+    console.error("Error al buscar usuarios por correo:", error);
+    return [];
+  }
+}
+
+// Obtener amigos del usuario
+export function obtenerAmigos(uid, callback) {
+  db.collection("usuarios").doc(uid).get()
+    .then(doc => {
+      if (doc.exists) {
+        const datos = doc.data();
+        const amigos = datos.amigos || [];
+        callback(amigos);
+      } else {
+        callback([]);
+      }
+    })
+    .catch(err => {
+      console.error("Error al obtener amigos:", err);
+      callback([]);
+    });
+}
+
+// Obtener usuarios por nombre (usando un rango de búsqueda)
+export async function obtenerUsuariosPorNombre(nombreBusqueda, uidActual) {
+  try {
+    const snapshot = await db.collection("usuarios")
+      .orderBy("nombrePantalla")
+      .startAt(nombreBusqueda)
+      .endAt(nombreBusqueda + "\uf8ff")
+      .get();
+
+    const usuarios = [];
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      if (doc.id !== uidActual) {
+        usuarios.push({ ...data, uid: doc.id });
+      }
+    });
+
+    return usuarios;
+  } catch (error) {
+    console.error("Error al buscar usuarios por nombre:", error);
+    return [];
+  }
+}
+
+// Agregar amigo
+export function agregarAmigo(uid, uidAmigo) {
+  const usuarioRef = db.collection("usuarios").doc(uid);
+  const amigoRef = db.collection("usuarios").doc(uidAmigo);
+
+  amigoRef.get().then((docAmigo) => {
+    if (!docAmigo.exists) return;
+
+    const datosAmigo = docAmigo.data();
+    const amigoObj = {
+      uid: uidAmigo,
+      nombrePantalla: datosAmigo.nombrePantalla,
+      correo: datosAmigo.correo,
+      avatar: datosAmigo.avatar || "Avatar1.png",
+    };
+
+    usuarioRef.update({
+      amigos: firebase.firestore.FieldValue.arrayUnion(amigoObj),
+    }).then(() => {
+      console.log("Amigo agregado");
+
+      db.collection("usuarios").doc(uid).get().then((docUsuario) => {
+        const datosUsuario = docUsuario.data();
+        const yo = {
+          uid: uid,
+          nombrePantalla: datosUsuario.nombrePantalla,
+          correo: datosUsuario.correo,
+          avatar: datosUsuario.avatar || "Avatar1.png",
+        };
+
+        amigoRef.update({
+          amigos: firebase.firestore.FieldValue.arrayUnion(yo),
+        });
+      });
+    });
+  });
 }

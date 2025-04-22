@@ -106,9 +106,26 @@ if (workId && main) {
       return;
     }
 
+    let favIcon = "./assets/img/interface/favact.png";
+    let mostrarIcon = "./assets/img/interface/marcdetails.png";
+
     main.innerHTML = `
       <div class="detalle-libro">
-        <img src="${libro.portada}" alt="Portada del libro">
+      <div class="colizq">
+      <img src="${libro.portada}" class="portada" alt="Portada del libro">
+      <div class="acciones-libro">
+      <button class="accion btn-mostrar" data-id="${libro.key}">
+        <img src="${mostrarIcon}" alt="Guardar para más tarde"> Leer más tarde
+      </button>
+      <button class="accion btn-fav" data-id="${libro.key}">
+        <img src="${favIcon}" alt="Favorito"> Mis Favoritos
+      </button>
+      <button class="resena">
+      <img src="./assets/img/interface/nueva-resena.png" alt="Reseña"> Nueva Reseña
+      </button>
+  </div>
+      </div>
+      <div class="coldrch">
         <h2>${libro.titulo}</h2>
         <p><strong>Autor:</strong> ${libro.autor}</p>
         <p><strong>Año:</strong> ${libro.añoPublicacion}</p>
@@ -118,8 +135,19 @@ if (workId && main) {
         <p><strong>Páginas:</strong> ${libro.paginas}</p>
         <p><strong>Sinopsis:</strong> ${libro.sinopsis}</p>
       </div>
+      </div>
     `;
   });
 } else {
   main.innerHTML = "<p>No se ha especificado ningún libro.</p>";
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  const btnVolver = document.getElementById("btnVolver");
+
+  if (btnVolver) {
+    btnVolver.addEventListener("click", () => {
+      window.history.back();
+    });
+  }
+});

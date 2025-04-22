@@ -20,6 +20,7 @@
   text-align: center;
   border-right: 1px solid #ddd;
   padding-right: 1rem;
+  padding-top: 2rem;
 }
 
 .panel-lateral .avatar-grande {
@@ -165,4 +166,62 @@ padding: 0.5rem;
 
 .libro-item:hover .overlay {
 opacity: 1;
+}
+
+.barra-busqueda {
+  display: flex;
+  width: 90%;
+  max-width: 700px;
+  border: 1px solid #ddd;
+  border-radius: 30px;
+  overflow: hidden;
+  background-color: white;
+}
+
+.barra-busqueda input {
+  flex-grow: 1;
+  border: none;
+  padding: 10px 15px;
+  font-size: 1em;
+  outline: none;
+}
+
+.barra-busqueda button {
+  border: none;
+  background-color: transparent;
+  padding: 10px 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.barra-busqueda button img {
+  width: 18px;
+  height: 18px;
+  opacity: 0.6;
+}
+
+.barra-busqueda button:hover img {
+  opacity: 1;
+}
+
+.btn-agregar {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 8px;
+  font-weight: bold;
+}
+
+.btn-agregar:disabled {
+  background-color: #9E9E9E;
+  cursor: default;
+}
+
+.btn-agregado {
+  background-color: #4caf50; 
 }

@@ -53,7 +53,6 @@
         <div class="tabs">
           <button class="tab activo" data-tab="mis-listas">Mis listas</button>
           <button class="tab" data-tab="mis-resenas">Mis reseñas</button>
-          <button class="tab" data-tab="valoraciones">Valoraciones</button>
           <button class="tab" data-tab="mis-amigos">Mis amigos</button>
         </div>
   
@@ -66,13 +65,22 @@
             <div class="contenedor-libros" id="contenedor-mas-tarde"></div>
           </div>
   
-          <div id="mis-resenas" style="display: none;">Aquí van tus reseñas...</div>
-          <div id="valoraciones" style="display: none;">Aquí van tus valoraciones...</div>
-          <div id="mis-amigos" style="display: none;">Aquí van tus amigos...</div>
+          <div id="mis-resenas" style="display: none;"></div>
+          <div id="mis-amigos" style="display: none;">
+            <div class="busqueda-avanzada">
+              <div class="barra-busqueda">
+                <input type="text" id="campoBusqueda" placeholder="Introduzca el nombre del usuario...">
+                <button id="botonBuscar">
+                  <img src="./assets/img/interface/lupa.png" alt="Buscar">
+                </button>
+              </div>
+            </div>
+            <div class="contenedor-amigos" id="contenedor-nuevos-amigos"></div>
+            <h4>Mis amigos</h4>
+            <div class="contenedor-amigos" id="contenedor-mis-amigos"></div>
+          </div>
         </div>
       </section>
     </div>
   </main>
-  
-  
 </section>
