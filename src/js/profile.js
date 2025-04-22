@@ -2,11 +2,8 @@ import {
   mostrarNombre,
   avatarUsuario,
   obtenerDocumentoUsuario,
-  obtenerUidPorCorreo,
-  obtenerUsuariosPorNombre,
-  agregarAmigo,
-  obtenerAmigos,
-  buscarUsuariosPorCorreo
+  buscarUsuariosPorCorreo,
+  obtenerAmigos
 } from "./services/firestoreService.js";
 import { obtenerResumenLibro } from "./services/openlibrary.js";
 
@@ -162,92 +159,3 @@ document.querySelectorAll(".tab").forEach((tab) => {
     }
   });
 });
-
-// Búsqueda de nuevos amigos
-document.addEventListener("DOMContentLoaded", () => {
-  const campoBusqueda = document.getElementById("campoBusqueda");
-  const botonBuscar = document.getElementById("botonBuscar");
-  const contenedor = document.getElementById("contenedor-nuevos-amigos");
-
-  if (!campoBusqueda || !botonBuscar || !contenedor) {
-    console.error("Faltan elementos necesarios para la búsqueda.");
-    return;
-  }
-
-  const realizarBusqueda = async () => {
-    const termino = campoBusqueda.value.trim().toLowerCase();
-    contenedor.innerHTML = "";
-
-    if (!termino) return;
-
-    try {
-      let usuarios = [];
-      const esCorreo = termino.includes("@");
-
-      if (esCorreo) {
-        usuarios = await buscarUsuariosPorCorreo(termino);
-      } else {
-        usuarios = await obtenerUsuariosPorNombre(termino);
-      }
-
-      mostrarUsuariosEnContenedor(usuarios, contenedor);
-    } catch (err) {
-      console.error("Error al buscar usuarios:", err);
-      contenedor.innerHTML = "<p>Error al buscar usuarios.</p>";
-    }
-  };
-
-  botonBuscar.addEventListener("click", (e) => {
-    e.preventDefault();
-    realizarBusqueda();
-  });
-
-  campoBusqueda.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      realizarBusqueda();
-    }
-  });
-});
-
-function mostrarUsuariosEnContenedor(usuarios, contenedor) {
-  if (!usuarios || usuarios.length === 0) {
-    contenedor.innerHTML = "<p>No se encontraron usuarios.</p>";
-    return;
-  }
-
-  contenedor.innerHTML = "";
-
-  usuarios.forEach(usuario => {
-    const div = document.createElement("div");
-    div.className = "amigo";
-    div.innerHTML = `
-      <img src="./assets/img/avatars/${usuario.avatar || 'Avatar1.png'}">
-      <div class="info">
-        <p class="nombre">${usuario.nombrePantalla}</p>
-        <p class="correo">${usuario.correo}</p>
-      </div>
-      <button class="btn-agregar" data-uid="${usuario.uid}">Agregar</button>
-    `;
-    contenedor.appendChild(div);
-  });
-
-  document.querySelectorAll(".btn-agregar").forEach(btn => {
-    btn.addEventListener("click", async () => {
-      const uidAmigo = btn.getAttribute("data-uid");
-      const user = firebase.auth().currentUser;
-
-      if (!user) return;
-
-      try {
-        await agregarAmigo(user.uid, uidAmigo);
-        btn.textContent = "Agregado";
-        btn.disabled = true;
-        btn.classList.add("btn-agregado");
-      } catch (err) {
-        console.error("Error al agregar amigo:", err);
-        alert("No se pudo agregar el usuario.");
-      }
-    });
-  });
-}

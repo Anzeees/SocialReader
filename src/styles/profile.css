@@ -225,3 +225,8 @@ opacity: 1;
 .btn-agregado {
   background-color: #4caf50; 
 }
+
+.amigo .estado:hover {
+  filter: brightness(1.2);
+  transition: filter 0.2s;
+}
