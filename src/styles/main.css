@@ -1,47 +1,301 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    /* border: solid 1px red; */
-    font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* VARIABLES */
 :root {
-    --color-primario: #BCD8DD;
-    --color-complementario1: #A9A9A9;
-    --color-complementario2: #FF3B3F;
-    --color-oscuro: #232323;
-    --color-claro: #EFEFEF;
+  --color-primario: #BCD8DD;
+  --color-complementario1: #A9A9A9;
+  --color-complementario2: #FF3B3F;
+  --color-oscuro: #232323;
+  --color-claro: #EFEFEF;
 }
 
+/* BASE */
 #app {
-    height: 100vh;
-    width: 100vw;
-    display: flex;
+  height: 100vh;
+  width: 100%;
+  display: flex;
 }
 
-/* Estilo general del scrollbar */
+section {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+}
+
+/* SCROLLBAR */
 ::-webkit-scrollbar {
-    width: 3px;
-    height: 3px;
+  width: 3px;
+  height: 3px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-primario);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+  cursor: pointer;
+}
+
+/* NAV */
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1%;
+  width: 100%;
+  height: 15vh;
+  max-height: 112px;
+  background-color: var(--color-oscuro);
+  position: relative;
+}
+
+.logo {
+  height: 45%;
+}
+
+.menu {
+  display: flex;
+  flex-grow: 1;
+  margin: 0 3%;
+  height: 100%;
+}
+.menu a {
+  font-size: 1.5em;
+  font-weight: bold;
+  text-decoration: none;
+  color: var(--color-claro);
+  height: 100%;
+  margin: 0 2%;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.menu a:hover {
+  color: var(--color-complementario2);
+  border-bottom: solid var(--color-complementario2) 3px;
+  border-top: solid var(--color-oscuro) 3px;
+}
+
+/* PERFIL */
+.perfil {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 8%;
+  height: 100%;
+  position: relative;
+  cursor: pointer;
+}
+.perfil img.avatar {
+  width: 40%;
+  min-width: 47px;
+}
+img.flecha-perfil {
+  width: 26%;
+}
+.perfil-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: var(--color-oscuro);
+  border-radius: 0 0 10px 10px;
+  display: none;
+  flex-direction: column;
+  width: 200px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+.perfil:hover .perfil-menu {
+  display: flex;
+}
+.perfil-menu a {
+  padding: 10px;
+  text-decoration: none;
+  color: var(--color-claro);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.perfil-menu a img {
+  width: 13%;
+  margin-right: 8%;
+}
+
+/* MENÚ HAMBURGUESA */
+.sombra, .hamburguesa, .menu-hamburguesa {
+  display: none;
+}
+.menu-hamburguesa a {
+  text-decoration: none;
+  color: var(--color-claro);
+  margin: 10px 0;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+.menu-hamburguesa.show {
+  display: flex;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 5%;
+}
+.top .logo {
+  width: 50%;
+  height: auto;
+  align-items: center;
+}
+.top .exit {
+  width: 8%;
+  height: auto;
+  cursor: pointer;
+}
+
+.perfil-movil a {
+  display: flex;
+}
+.perfil-movil a img {
+  width: 10%;
+  margin-right: 5%;
+}
+.perfil-movil img.avatar {
+  width: 20%;
+}
+.perfil-movil img:not(#exitmovil img) {
+  width: 10%;
+}
+
+#exitmovil {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 8px 12px;
+  font-size: 1em;
+  font-weight: bold;
+  color: var(--color-claro);
+  width: 100%;
+  text-decoration: none;
+}
+#exitmovil img {
+  width: 18px;
+  height: auto;
+  margin-right: 10px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1000px) {
+  nav {
+    padding: 0 5%;
+    justify-content: center;
+    height: 9vh;
+    min-height: 70px;
   }
-  
-  /* Parte de atrás del scrollbar */
-  ::-webkit-scrollbar-track {
-    background: transparent;
-    border-radius: 3px;
+
+  .logo {
+    height: 50%;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
   }
-  
-  /* El "thumb" — la parte que se arrastra */
-  ::-webkit-scrollbar-thumb {
-    background: var(--color-primario);
-    border-radius: 5px;
-  }
-  
-  /* Cuando pasas el mouse encima del thumb */
-  ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+
+  .hamburguesa {
+    height: 30%;
+    display: block;
+    position: absolute;
+    left: 5%;
+    z-index: 15;
     cursor: pointer;
   }
+
+  .menu, .perfil {
+    display: none;
+  }
+
+  .menu-hamburguesa {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 70vw;
+    max-width: 300px;
+    background-color: var(--color-oscuro);
+    z-index: 100;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 3% 3%;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .sombra {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(35, 35, 35, 0.7);
+    z-index: 100;
+  }
+
+  hr {
+    width: 100%;
+    height: 2px;
+    background-color: var(--color-complementario1);
+    border: 0;
+    margin: 5% 0;
+  }
+
+  .menumovil {
+    flex-grow: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .perfil-movil {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .contenedor-perfil {
+    display: flex;
+    align-items: center;
+  }
+
+  .contenedor-perfil h5 {
+    color: white;
+    padding-left: 4%;
+  }
+
+  .contenedor-perfil img {
+    min-width: 30px;
+  }
+
+  #nombreUsuario {
+    cursor: pointer;
+  }
+}

@@ -133,7 +133,7 @@ function mostrarResultados(libros) {
       : "Sin categoría";
     const anio = libro.first_publish_year || "N/A";
     const ediciones = libro.edition_count || 1;
-    const valoracion = Math.floor(Math.random() * 2) + 4;
+    const valoracion = Math.floor(Math.random() * 6);
     const resenas = Math.floor(Math.random() * 200) + 1;
     const keyLimpia = libro.key.replace("/works/", "");
 
@@ -149,27 +149,33 @@ function mostrarResultados(libros) {
     item.className = "resultado-libro";
 
     item.innerHTML = `
-      <img src="${portada}" alt="Portada" class="portada">
-      <div class="info-libro">
-        <h4>${libro.title}</h4>
-        <p class="autor">Autor: ${autores}</p>
-        <p class="categoria">Categorías: ${categoria}</p>
-        <p class="publicacion"><strong>Primera publicación en ${anio} - ${ediciones} ediciones</strong></p>
-        <div class="valoracion">
-          ${"★".repeat(valoracion)}${"☆".repeat(5 - valoracion)}
-          <span>${valoracion} - ${resenas} reseñas</span>
-        </div>
-      </div>
-      <div class="acciones-libro">
-        <button class="accion btn-mostrar" data-id="${libro.key}">
-          <img src="${mostrarIcon}" alt="Guardar para más tarde">
-        </button>
-        <button class="accion btn-fav" data-id="${libro.key}">
-          <img src="${favIcon}" alt="Favorito">
-        </button>
-        <button class="resena"><img src="./assets/img/interface/nueva-resena.png" alt="Reseña"> Nueva Reseña</button>
-      </div>
-    `;
+  <img src="${portada}" alt="Portada" class="portada">
+  <div class="info-libro">
+    <h4>${libro.title}</h4>
+    <p class="autor">Autor: ${autores}</p>
+    <p class="categoria">Categorías: ${categoria}</p>
+    <p class="publicacion"><strong>Primera publicación en ${anio} - ${ediciones} ediciones</strong></p>
+    <div class="valoracion">
+      ${Array.from({ length: 5 }, (_, i) => `
+        <img 
+          src="./assets/img/interface/${i < valoracion ? 'estrellaact' : 'estrellades'}.png" 
+          alt="${i < valoracion ? 'Estrella activa' : 'Estrella desactivada'}" 
+          style="width: 20px; height: 20px; margin-right: 2px;"
+        >`
+    ).join('')}
+      <span>${valoracion} - ${resenas} reseñas</span>
+    </div>
+  </div>
+  <div class="acciones-libro">
+    <button class="accion btn-mostrar" data-id="${libro.key}">
+      <img src="${mostrarIcon}" alt="Guardar para más tarde">
+    </button>
+    <button class="accion btn-fav" data-id="${libro.key}">
+      <img src="${favIcon}" alt="Favorito">
+    </button>
+    <button class="resena"><img src="./assets/img/interface/nueva-resena.png" alt="Reseña"> Nueva Reseña</button>
+  </div>
+`;
 
     item.addEventListener("click", (e) => {
       const esBoton = e.target.closest(".accion") || e.target.closest(".resena");
