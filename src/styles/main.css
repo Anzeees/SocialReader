@@ -1,3 +1,6 @@
+/* MAIN.CSS -- ÁNGEL MARTÍNEZ ORDIALES */
+
+/* === FUENTES Y RESET === */
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 * {
@@ -12,7 +15,7 @@ html, body {
   overflow-x: hidden;
 }
 
-/* VARIABLES */
+/* === VARIABLES === */
 :root {
   --color-primario: #BCD8DD;
   --color-complementario1: #A9A9A9;
@@ -21,7 +24,7 @@ html, body {
   --color-claro: #EFEFEF;
 }
 
-/* BASE */
+/* === ESTRUCTURA BASE === */
 #app {
   height: 100vh;
   width: 100%;
@@ -35,7 +38,7 @@ section {
   height: 100vh;
 }
 
-/* SCROLLBAR */
+/* === SCROLL PERSONALIZADO === */
 ::-webkit-scrollbar {
   width: 3px;
   height: 3px;
@@ -53,7 +56,7 @@ section {
   cursor: pointer;
 }
 
-/* NAV */
+/* === NAVBAR PRINCIPAL === */
 nav {
   display: flex;
   justify-content: space-between;
@@ -93,7 +96,7 @@ nav {
   border-top: solid var(--color-oscuro) 3px;
 }
 
-/* PERFIL */
+/* === PERFIL (ESCRITORIO) === */
 .perfil {
   display: flex;
   align-items: center;
@@ -139,7 +142,7 @@ img.flecha-perfil {
   margin-right: 8%;
 }
 
-/* MENÚ HAMBURGUESA */
+/* === MENÚ HAMBURGUESA (MÓVIL) === */
 .sombra, .hamburguesa, .menu-hamburguesa {
   display: none;
 }
@@ -164,7 +167,6 @@ img.flecha-perfil {
 .top .logo {
   width: 50%;
   height: auto;
-  align-items: center;
 }
 .top .exit {
   width: 8%;
@@ -172,6 +174,7 @@ img.flecha-perfil {
   cursor: pointer;
 }
 
+/* === PERFIL EN MENÚ HAMBURGUESA === */
 .perfil-movil a {
   display: flex;
 }
@@ -186,6 +189,7 @@ img.flecha-perfil {
   width: 10%;
 }
 
+/* === CIERRE DE SESIÓN MÓVIL === */
 #exitmovil {
   display: flex;
   align-items: center;
@@ -203,7 +207,7 @@ img.flecha-perfil {
   margin-right: 10px;
 }
 
-/* RESPONSIVE */
+/* === RESPONSIVE (MÓVIL) === */
 @media (max-width: 1000px) {
   nav {
     padding: 0 5%;
