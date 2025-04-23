@@ -1,3 +1,5 @@
+/* PROFILE.CSS -- ÁNGEL MARTÍNEZ ORDIALES */
+/* === ESTRUCTURA GENERAL DEL MAIN === */
 #mainContent {
   display: flex;
   flex-direction: row;
@@ -10,10 +12,7 @@
   overflow-x: hidden;
 }
 
-.principal {
-  width: 100%;
-}
-
+/* === PANEL LATERAL DE PERFIL === */
 .panel-lateral {
   width: 25%;
   min-width: 220px;
@@ -46,6 +45,7 @@
   color: #666;
 }
 
+/* === PANEL PRINCIPAL CON TABS === */
 .panel-principal {
   flex-grow: 1;
   background-color: #f2f2f2;
@@ -55,6 +55,7 @@
   border: 1px solid #ccc;
 }
 
+/* === TABS DE SECCIONES === */
 .tabs {
   display: flex;
   gap: 1.5rem;
@@ -77,10 +78,12 @@
   border-color: #e74c3c;
 }
 
+/* === CONTENIDO DE LAS PESTAÑAS === */
 .contenido-tabs {
   padding-top: 1rem;
 }
 
+/* === LISTADO DE AMIGOS (tarjetas) === */
 .amigo {
   display: flex;
   align-items: center;
@@ -121,6 +124,12 @@
   border-radius: 50%;
 }
 
+.amigo .estado:hover {
+  filter: brightness(1.2);
+  transition: filter 0.2s;
+}
+
+/* === CONTENEDORES DE LIBROS (Favoritos / Más tarde) === */
 .contenedor-libros {
 display: flex;
 flex-wrap: wrap;
@@ -168,6 +177,7 @@ padding: 0.5rem;
 opacity: 1;
 }
 
+/* === BARRA DE BÚSQUEDA DE AMIGOS === */
 .barra-busqueda {
   display: flex;
   width: 90%;
@@ -206,6 +216,8 @@ opacity: 1;
   opacity: 1;
 }
 
+/* === BOTÓN PARA AGREGAR AMIGOS === */
+
 .btn-agregar {
   background-color: #4CAF50;
   color: white;
@@ -224,9 +236,4 @@ opacity: 1;
 
 .btn-agregado {
   background-color: #4caf50; 
-}
-
-.amigo .estado:hover {
-  filter: brightness(1.2);
-  transition: filter 0.2s;
 }

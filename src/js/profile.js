@@ -1,56 +1,45 @@
-import {
-  mostrarNombre,
-  avatarUsuario,
-  obtenerDocumentoUsuario,
-} from "./services/firestoreService.js";
+// PROFILE.JS -- ÁNGEL MARTÍNEZ ORDIALES
+
+// === IMPORTACIONES ===
+// --- Servicios de Firebase y OpenLibrary
+import { mostrarNombre, avatarUsuario, obtenerDocumentoUsuario } from "./services/firestoreService.js";
 import { obtenerResumenLibro } from "./services/openlibrary.js";
 
+// === VARIABLES GLOBALES ===
 const mainContent = document.getElementById("mainContent");
 
+// === MENÚ HAMBURGUESA: Mostrar/Ocultar ===
 document.getElementById("hamburguesa").addEventListener("click", () => {
   document.getElementById("menuHamburguesa").classList.toggle("show");
   document.getElementById("sombra").style.setProperty("display", "flex");
 });
-
-function cerrarSesion() {
-  document.getElementById("menuHamburguesa").classList.remove("show");
-  document.getElementById("sombra").style.setProperty("display", "none");
-
-  firebase
-    .auth()
-    .signOut()
-    .then(() => {
-      localStorage.removeItem("usuarioAutenticado");
-      window.location.hash = "#login";
-      window.dispatchEvent(new HashChangeEvent("hashchange"));
-    })
-    .catch((error) => {
-      console.error("Error al cerrar sesión:", error);
-    });
-}
-
-["exitescritorio", "exitmovil"].forEach((id) => {
-  const btn = document.getElementById(id);
-  if (btn) {
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      cerrarSesion();
-    });
-  }
-});
-
 document.getElementById("exitMenu").addEventListener("click", (e) => {
   e.preventDefault();
   document.getElementById("menuHamburguesa").classList.remove("show");
   document.getElementById("sombra").style.setProperty("display", "none");
 });
 
+// === CIERRE DE SESIÓN: Escritorio y móvil ===
+["exitescritorio", "exitmovil"].forEach(id => {
+  const btn = document.getElementById(id);
+  if (btn) {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      firebase.auth().signOut().then(() => {
+        localStorage.removeItem("usuarioAutenticado");
+        window.location.hash = "#login";
+        window.dispatchEvent(new HashChangeEvent("hashchange"));
+      });
+    });
+  }
+});
+
+// === MENÚ PERFIL: Mostrar/Ocultar (escritorio) ===
 document.querySelector(".perfil").addEventListener("click", (e) => {
   const menu = document.querySelector(".perfil-menu");
   menu.style.display = menu.style.display === "flex" ? "none" : "flex";
   e.stopPropagation();
 });
-
 document.addEventListener("click", (e) => {
   const menu = document.querySelector(".perfil-menu");
   const perfil = document.querySelector(".perfil");
@@ -59,42 +48,47 @@ document.addEventListener("click", (e) => {
   }
 });
 
-firebase.auth().onAuthStateChanged(async (user) => {
-  if (user) {
-    mostrarNombre(user.uid, (nombre) => {
-      const h5Usuario = document.querySelector(".perfil-movil h5");
-      if (h5Usuario) h5Usuario.textContent = nombre;
-    });
-
-    avatarUsuario(user.uid, (avatar) => {
-      const imgUsuario = document.querySelector(".perfil-movil img");
-      const imgUsuarioEscritorio = document.querySelector(".perfil img");
-      if (imgUsuarioEscritorio)
-        imgUsuarioEscritorio.src = `./assets/img/avatars/${avatar}`;
-      if (imgUsuario)
-        imgUsuario.src = `./assets/img/avatars/${avatar}`;
-    });
-
-    const datos = await obtenerDocumentoUsuario(user.uid);
-    if (!datos) return;
-
-    document.getElementById("nombrePerfil").textContent =
-      datos.nombrePantalla || "Sin nombre";
-    document.getElementById("correoPerfil").textContent =
-      datos.correo || "-";
-    document.getElementById("fechaAlta").textContent = formatearFecha(
-      datos.fechaAlta
-    );
-    document.getElementById("avatarGrande").src = `./assets/img/avatars/${
-      datos.avatar || "Avatar1.png"
-    }`;
-
-    await mostrarLibrosUsuario(datos.librosFavoritos, "contenedor-favoritos");
-    await mostrarLibrosUsuario(datos.mostrarMasTarde, "contenedor-mas-tarde");
-    await mostrarAmigos(user.uid, datos.amigos, "contenedor-mis-amigos");
-  }
+// === REDIRECCIÓN AL PERFIL (móvil y escritorio) ===
+document.querySelector("#nombreUsuario")?.addEventListener("click", () => {
+  window.location.hash = "#profile";
+});
+document.querySelector(".perfil-menu a[href='#profile']")?.addEventListener("click", (e) => {
+  e.preventDefault();
+  window.location.hash = "#profile";
 });
 
+// === CARGA DE DATOS DE USUARIO AUTENTICADO ===
+firebase.auth().onAuthStateChanged(async (user) => {
+  if (!user) return;
+
+  // Mostrar nombre y avatar en menú superior (escritorio y móvil)
+  mostrarNombre(user.uid, (nombre) => {
+    const h5Usuario = document.querySelector(".perfil-movil h5");
+    if (h5Usuario) h5Usuario.textContent = nombre;
+  });
+  avatarUsuario(user.uid, (avatar) => {
+    const imgUsuario = document.querySelector(".perfil-movil img");
+    const imgUsuarioEscritorio = document.querySelector(".perfil img");
+    if (imgUsuarioEscritorio) imgUsuarioEscritorio.src = `./assets/img/avatars/${avatar}`;
+    if (imgUsuario) imgUsuario.src = `./assets/img/avatars/${avatar}`;
+  });
+
+  // Obtener y mostrar datos del perfil
+  const datos = await obtenerDocumentoUsuario(user.uid);
+  if (!datos) return;
+
+  document.getElementById("nombrePerfil").textContent = datos.nombrePantalla || "Sin nombre";
+  document.getElementById("correoPerfil").textContent = datos.correo || "-";
+  document.getElementById("fechaAlta").textContent = formatearFecha(datos.fechaAlta);
+  document.getElementById("avatarGrande").src = `./assets/img/avatars/${datos.avatar || "Avatar1.png"}`;
+
+  // Cargar libros y amigos
+  await mostrarLibrosUsuario(datos.librosFavoritos, "contenedor-favoritos");
+  await mostrarLibrosUsuario(datos.mostrarMasTarde, "contenedor-mas-tarde");
+  await mostrarAmigos(user.uid, datos.amigos, "contenedor-mis-amigos");
+});
+
+// === FORMATEO DE FECHA DE ALTA ===
 function formatearFecha(timestamp) {
   if (!timestamp || typeof timestamp.toDate !== "function") return "Sin fecha";
   const fecha = timestamp.toDate();
@@ -105,30 +99,27 @@ function formatearFecha(timestamp) {
   });
 }
 
+// === MOSTRAR LIBROS EN CADA LISTA (Favoritos / Más tarde) ===
 async function mostrarLibrosUsuario(lista, contenedorId) {
   const contenedor = document.getElementById(contenedorId);
   if (!contenedor || !Array.isArray(lista)) return;
-
   contenedor.innerHTML = "";
 
   for (const clave of lista) {
     try {
       const datos = await obtenerResumenLibro(clave);
       const titulo = datos.titulo || "Sin título";
-      const portada =
-        datos.portada || "./assets/img/interface/placeholder-libro.png";
+      const portada = datos.portada || "./assets/img/interface/placeholder-libro.png";
 
       const div = document.createElement("div");
       div.className = "libro-item";
       div.addEventListener("click", () => {
         window.location.hash = `#detalle/${clave}`;
       });
-
       div.innerHTML = `
         <img src="${portada}" alt="${titulo}">
         <div class="overlay">${titulo}</div>
       `;
-
       contenedor.appendChild(div);
     } catch (err) {
       console.warn("No se pudo obtener datos para:", clave, err);
@@ -136,16 +127,14 @@ async function mostrarLibrosUsuario(lista, contenedorId) {
   }
 }
 
+// === MOSTRAR AMIGOS DEL USUARIO ===
 async function mostrarAmigos(uidUsuario, listaUids, contenedorId) {
-  console.log("UID del usuario:", uidUsuario);
   const contenedor = document.getElementById(contenedorId);
   contenedor.innerHTML = "";
 
   for (let uid of listaUids) {
     try {
-      // Elimina comillas duplicadas si están presentes
       uid = uid.replaceAll('"', '').trim();
-
       if (!uid) continue;
 
       const amigo = await obtenerDocumentoUsuario(uid);
@@ -161,7 +150,6 @@ async function mostrarAmigos(uidUsuario, listaUids, contenedorId) {
         </div>
         <div class="estado"></div>
       `;
-
       contenedor.appendChild(div);
     } catch (error) {
       console.warn("No se pudo cargar amigo con UID:", uid, error);
@@ -169,6 +157,7 @@ async function mostrarAmigos(uidUsuario, listaUids, contenedorId) {
   }
 }
 
+// === NAVEGACIÓN POR PESTAÑAS ===
 document.querySelectorAll(".tab").forEach((tab) => {
   tab.addEventListener("click", () => {
     document.querySelectorAll(".tab").forEach((t) => t.classList.remove("activo"));
