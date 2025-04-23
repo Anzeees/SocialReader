@@ -1,9 +1,15 @@
+// HOME.JS -- ÁNGEL MARTÍNEZ ORDIALES
+
+// === IMPORTACIONES ===
+// --- Importacion servicios de Firebase y OpenLibraryAPI
 import { mostrarNombre, avatarUsuario } from "./services/firestoreService.js";
 import { obtenerLibrosPopulares, obtenerTopMasVendidos } from "./services/openlibrary.js";
 
+// === VARIABLES DEL DOM ===
 const mainContent = document.getElementById("mainContent");
 const loader = document.getElementById("loader");
 
+// === GESTIÓN DE INTERFAZ: MENÚ HAMBURGUESA ===
 function cerrarMenuHamburguesa() {
   document.getElementById("menuHamburguesa").classList.remove("show");
   document.getElementById("sombra").style.display = "none";
@@ -19,6 +25,7 @@ document.getElementById("exitMenu").addEventListener("click", (e) => {
   cerrarMenuHamburguesa();
 });
 
+// === GESTIÓN DE SESIÓN (Cerrar sesión escritorio y móvil) ===
 ["exitescritorio", "exitmovil"].forEach(id => {
   const btn = document.getElementById(id);
   if (btn) {
@@ -33,6 +40,7 @@ document.getElementById("exitMenu").addEventListener("click", (e) => {
   }
 });
 
+// === GESTIÓN DE MENÚ PERFIL (escritorio) ===
 document.querySelector(".perfil").addEventListener("click", (e) => {
   const menu = document.querySelector(".perfil-menu");
   menu.style.display = menu.style.display === "flex" ? "none" : "flex";
@@ -47,6 +55,17 @@ document.addEventListener("click", (e) => {
   }
 });
 
+// === REDIRECCIÓN A PERFIL (escritorio y móvil) ===
+document.querySelector("#nombreUsuario")?.addEventListener("click", () => {
+  window.location.hash = "#profile";
+});
+
+document.querySelector(".perfil-menu a[href='#profile']")?.addEventListener("click", (e) => {
+  e.preventDefault();
+  window.location.hash = "#profile";
+});
+
+// === CARGA DE DATOS DEL USUARIO AUTENTICADO ===
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
     mostrarNombre(user.uid, (nombre) => {
@@ -62,15 +81,7 @@ firebase.auth().onAuthStateChanged((user) => {
   }
 });
 
-document.querySelector("#nombreUsuario")?.addEventListener("click", () => {
-  window.location.hash = "#profile";
-});
-
-document.querySelector(".perfil-menu a[href='#profile']")?.addEventListener("click", (e) => {
-  e.preventDefault();
-  window.location.hash = "#profile";
-});
-
+// === CREACIÓN DE TARJETAS DE LIBROS PARA EL CARRUSEL ===
 function crearCardLibro(libro) {
   const card = document.createElement("div");
   card.className = "card-libro";
@@ -88,6 +99,7 @@ function crearCardLibro(libro) {
   return card;
 }
 
+// === CARGA DE LOS TOPS: MÁS VENDIDOS Y MÁS POPULARES ===
 async function cargarTopLibros() {
   const contVendidos = document.getElementById('lista-vendidos');
   const contGuardados = document.getElementById('lista-guardados');
@@ -103,6 +115,7 @@ async function cargarTopLibros() {
   mainContent.classList.add("fade-in");
 }
 
+// === MOVIMIENTO DEL CARRUSEL ===
 window.moverCarrusel = function (btn, direccion) {
   const contenedor = btn.parentElement.querySelector(".contenedor-cards");
   const card = contenedor.querySelector(".card-libro");
@@ -114,34 +127,5 @@ window.moverCarrusel = function (btn, direccion) {
   });
 };
 
-function mostrarDetalleLibro(key) {
-  mainContent.innerHTML = `
-    <div class="spinner-busqueda">
-      <div class="spinner"></div>
-      <p>Cargando detalles del libro...</p>
-    </div>
-  `;
-  fetch(`https://openlibrary.org/works/${key}.json`)
-    .then(res => res.json())
-    .then(libro => {
-      const titulo = libro.title || "Título desconocido";
-      const descripcion = typeof libro.description === 'string'
-        ? libro.description
-        : libro.description?.value || "Sin descripción";
-      const tema = libro.subjects?.slice(0, 5).join(", ") || "No especificado";
-
-      mainContent.innerHTML = `
-        <div class="detalle-libro">
-          <h2>${titulo}</h2>
-          <p><strong>Temas:</strong> ${tema}</p>
-          <p><strong>Descripción:</strong></p>
-          <p>${descripcion}</p>
-        </div>
-      `;
-    })
-    .catch(() => {
-      mainContent.innerHTML = "<p>Error al cargar los detalles del libro.</p>";
-    });
-}
-
+// === INICIALIZACIÓN: CARGAR CONTENIDO DE LA VISTA ===
 cargarTopLibros();
