@@ -2,7 +2,7 @@
 
 // === IMPORTACIONES ===
 // --- Servicios de Firebase y OpenLibrary
-import { mostrarNombre, avatarUsuario, obtenerDocumentoUsuario } from "./services/firestoreService.js";
+import { mostrarNombre, avatarUsuario, obtenerDocumentoUsuario, obtenerTodosUsuarios, agregarAmigo, eliminarAmigo } from "./services/firestoreService.js";
 import { obtenerResumenLibro } from "./services/openlibrary.js";
 
 // === VARIABLES GLOBALES ===
@@ -61,7 +61,6 @@ document.querySelector(".perfil-menu a[href='#profile']")?.addEventListener("cli
 firebase.auth().onAuthStateChanged(async (user) => {
   if (!user) return;
 
-  // Mostrar nombre y avatar en menú superior (escritorio y móvil)
   mostrarNombre(user.uid, (nombre) => {
     const h5Usuario = document.querySelector(".perfil-movil h5");
     if (h5Usuario) h5Usuario.textContent = nombre;
@@ -73,8 +72,11 @@ firebase.auth().onAuthStateChanged(async (user) => {
     if (imgUsuario) imgUsuario.src = `./assets/img/avatars/${avatar}`;
   });
 
-  // Obtener y mostrar datos del perfil
-  const datos = await obtenerDocumentoUsuario(user.uid);
+  cargarDatosUsuario(user.uid);
+});
+
+async function cargarDatosUsuario(uid) {
+  const datos = await obtenerDocumentoUsuario(uid);
   if (!datos) return;
 
   document.getElementById("nombrePerfil").textContent = datos.nombrePantalla || "Sin nombre";
@@ -82,13 +84,12 @@ firebase.auth().onAuthStateChanged(async (user) => {
   document.getElementById("fechaAlta").textContent = formatearFecha(datos.fechaAlta);
   document.getElementById("avatarGrande").src = `./assets/img/avatars/${datos.avatar || "Avatar1.png"}`;
 
-  // Cargar libros y amigos
   await mostrarLibrosUsuario(datos.librosFavoritos, "contenedor-favoritos");
   await mostrarLibrosUsuario(datos.mostrarMasTarde, "contenedor-mas-tarde");
-  await mostrarAmigos(user.uid, datos.amigos, "contenedor-mis-amigos");
-});
+  await mostrarAmigos(uid, datos.amigos, "contenedor-mis-amigos");
+  await mostrarNuevosAmigos(uid, datos.amigos);
+}
 
-// === FORMATEO DE FECHA DE ALTA ===
 function formatearFecha(timestamp) {
   if (!timestamp || typeof timestamp.toDate !== "function") return "Sin fecha";
   const fecha = timestamp.toDate();
@@ -99,7 +100,6 @@ function formatearFecha(timestamp) {
   });
 }
 
-// === MOSTRAR LIBROS EN CADA LISTA (Favoritos / Más tarde) ===
 async function mostrarLibrosUsuario(lista, contenedorId) {
   const contenedor = document.getElementById(contenedorId);
   if (!contenedor || !Array.isArray(lista)) return;
@@ -127,7 +127,6 @@ async function mostrarLibrosUsuario(lista, contenedorId) {
   }
 }
 
-// === MOSTRAR AMIGOS DEL USUARIO ===
 async function mostrarAmigos(uidUsuario, listaUids, contenedorId) {
   const contenedor = document.getElementById(contenedorId);
   contenedor.innerHTML = "";
@@ -148,12 +147,40 @@ async function mostrarAmigos(uidUsuario, listaUids, contenedorId) {
           <p class="nombre">${amigo.nombrePantalla || "Usuario"}</p>
           <p class="correo">${amigo.correo || "-"}</p>
         </div>
-        <div class="estado"></div>
+        <div class="estado verde" data-uid="${uid}"></div>
       `;
+      div.querySelector(".estado").addEventListener("click", async () => {
+        await eliminarAmigo(uidUsuario, uid);
+        cargarDatosUsuario(uidUsuario);
+      });
       contenedor.appendChild(div);
     } catch (error) {
       console.warn("No se pudo cargar amigo con UID:", uid, error);
     }
+  }
+}
+
+async function mostrarNuevosAmigos(uidUsuario, listaAmigos) {
+  const contenedor = document.getElementById("contenedor-nuevos-amigos");
+  contenedor.innerHTML = "";
+  const todos = await obtenerTodosUsuarios();
+  for (const usuario of todos) {
+    if (!usuario.uid || usuario.uid === uidUsuario || listaAmigos.includes(usuario.uid)) continue;
+    const div = document.createElement("div");
+    div.className = "amigo";
+    div.innerHTML = `
+      <img src="./assets/img/avatars/${usuario.avatar || 'Avatar1.png'}" alt="Avatar">
+      <div class="info">
+        <p class="nombre">${usuario.nombrePantalla || "Usuario"}</p>
+        <p class="correo">${usuario.correo || "-"}</p>
+      </div>
+      <div class="estado" data-uid="${usuario.uid}"></div>
+    `;
+    div.querySelector(".estado").addEventListener("click", async () => {
+      await agregarAmigo(uidUsuario, usuario.uid);
+      cargarDatosUsuario(uidUsuario);
+    });
+    contenedor.appendChild(div);
   }
 }
 
@@ -173,4 +200,38 @@ document.querySelectorAll(".tab").forEach((tab) => {
       seccionActiva.style.display = "block";
     }
   });
+});
+
+// === SELECCIÓN DE AVATAR ===
+let avatarSeleccionado = null;
+
+document.getElementById("avatarGrande").addEventListener("click", () => {
+  document.getElementById("selectorAvatar").classList.toggle("oculto");
+});
+
+document.querySelectorAll(".grid-avatars img").forEach(img => {
+  img.addEventListener("click", () => {
+    document.querySelectorAll(".grid-avatars img").forEach(i => i.classList.remove("seleccionado"));
+    img.classList.add("seleccionado");
+    avatarSeleccionado = img.dataset.avatar;
+  });
+});
+
+document.getElementById("guardarAvatar").addEventListener("click", async () => {
+  if (!avatarSeleccionado) return document.getElementById("selectorAvatar").classList.add("oculto");
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+
+  // Guardar avatar en Firestore
+  await firebase.firestore().collection("usuarios").doc(user.uid).update({
+    avatar: avatarSeleccionado
+  });
+
+  // Actualizar en pantalla
+  document.getElementById("avatarGrande").src = `./assets/img/avatars/${avatarSeleccionado}`;
+  document.querySelector(".perfil-movil img").src = `./assets/img/avatars/${avatarSeleccionado}`;
+  document.querySelector(".perfil img").src = `./assets/img/avatars/${avatarSeleccionado}`;
+
+  document.getElementById("selectorAvatar").classList.add("oculto");
+  avatarSeleccionado = null;
 });

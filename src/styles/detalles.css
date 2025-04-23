@@ -1,87 +1,167 @@
 /* DETALLES.CSS -- ÁNGEL MARTÍNEZ ORDIALES */
-/*  === ESTILO GENERAL DEM MAIN === */
+
 #mainContent {
   padding: 3em;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  background-color: #fdfdfd;
+  box-sizing: border-box;
 }
 
 /* === CONTENEDOR PRINCIPAL DE DETALLES DEL LIBRO === */
 .detalle-libro {
   display: flex;
+  flex-direction: row;
+  max-width: 1000px;
+  width: 100%;
+  gap: 2rem;
+  margin: 0 auto;
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
 }
 
-/* === COLUMNA IZUIERDA: PORTADA Y ACCIONES */
+/* === COLUMNA IZQUIERDA: PORTADA Y ACCIONES === */
 .colizq {
   width: 16%;
-  margin-right: 2%;
   min-width: 250px;
-  align-items: center;
+  text-align: center;
 }
 
 .portada {
   width: 100%;
-  margin-bottom: 4%;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
 }
 
-/* === BOTONES DE ACCIÓN: LEER MÁS TARDE / FAVORITOS / NUEVA RESEÑA === */
+.portada:hover {
+  transform: scale(1.03);
+}
 
-button.accion.btn-mostrar, button.accion.btn-fav, button.resena {
+.acciones-libro {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+button.accion.btn-mostrar,
+button.accion.btn-fav,
+button.resena {
+  display: flex;
+  justify-content: center;
   align-items: center;
   width: 100%;
-  height: 40px;
-  margin: 3% 0;
-  border-radius: 100px;
-  font-weight: 700;
-  padding: 0 20% 0 20%;
+  height: 42px;
+  border-radius: 999px;
+  font-weight: 600;
+  padding: 0 1rem;
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: none;
 }
 
-button.accion.btn-mostrar:hover, button.accion.btn-fav:hover, button.resena:hover {
-  transform: scale(1.1);
+button.accion.btn-mostrar:hover,
+button.accion.btn-fav:hover,
+button.resena:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 button.accion.btn-mostrar {
-  background-color: var(--color-primario);
-  border: solid #115662 2px;
+  background-color: #e0f7f9;
   color: #115662;
+  border: solid 1px #115662;
 }
 
 button.accion.btn-fav {
-  background-color: #e5afb1;
-  border: solid var(--color-complementario2) 2px;
-  color: var(--color-complementario2);
+  background-color: #fce4ec;
+  color: #c2185b;
+  border: solid 1px #c2185b;
 }
 
 button.resena {
   background-color: #6c84ff;
-  border: solid #008cff 2px;
   color: white;
+  border: solid 1px #008cff;
 }
 
-.accion img, .resena img {
+.accion img,
+.resena img {
   height: 60%;
+  margin-right: 0.5rem;
 }
 
-/* === COLUMNA DERECHA: DETELLES DEL LIBRO */
+/* === COLUMNA DERECHA: DETALLES === */
 .coldrch {
   flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .coldrch h2 {
-  margin-bottom: 0.5em;
-  font-size: 1.5em;
+  font-size: 1.8rem;
   color: #115662;
+  margin-bottom: 0.8rem;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 0.5rem;
 }
 
 .coldrch p {
-  margin: 0.5em 0;
-  font-size: 1em;
-  color: var(--color-oscuro);
+  margin: 0.4rem 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #444;
+}
+
+/* === SPINNER DE CARGA === */
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem;
+  padding: 2rem;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 6px solid #e0e0e0;
+  border-top: 6px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* === RESPONSIVE === */
 @media (max-width: 1000px) {
-  /* Espacio reservado para ajustes en pantallas pequeñas */
+  .detalle-libro {
+    flex-direction: column;
+    padding: 1.5rem;
+  }
+
+  .colizq {
+    width: 100%;
+    margin-bottom: 1.5rem;
+  }
+
+  .coldrch h2 {
+    font-size: 1.5rem;
+  }
+
+  .coldrch p {
+    font-size: 0.95rem;
+  }
 }

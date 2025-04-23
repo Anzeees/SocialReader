@@ -1,15 +1,23 @@
 // DETALLES.JS -- ÁNGEL MARTÍNEZ ORDIALES
 
-//  === IMPORTACIONES ===
-// --- Importacion servicios de Firebase y OpenLibraryAPI
-import { mostrarNombre, avatarUsuario, agregarLibroFavorito, eliminarLibroFavorito, estaEnFavoritos, agregarMostrarMasTarde, eliminarMostrarMasTarde, estaEnMostrarMasTarde } from "./services/firestoreService.js";
+import {
+  mostrarNombre,
+  avatarUsuario,
+  agregarLibroFavorito,
+  eliminarLibroFavorito,
+  estaEnFavoritos,
+  agregarMostrarMasTarde,
+  eliminarMostrarMasTarde,
+  estaEnMostrarMasTarde
+} from "./services/firestoreService.js";
+
 import { obtenerDetallesLibro } from "./services/openlibrary.js";
 
 // === VARIABLES DEL DOM ===
 const mainContent = document.getElementById("mainContent");
 const loader = document.getElementById("loader");
 
-// === GESTIÓN DE INTERFAZ: MENÚ HAMBURGUESA ===
+// === GESTIÓN DE MENÚ HAMBURGUESA ===
 function cerrarMenuHamburguesa() {
   document.getElementById("menuHamburguesa").classList.remove("show");
   document.getElementById("sombra").style.display = "none";
@@ -25,7 +33,7 @@ document.getElementById("exitMenu").addEventListener("click", (e) => {
   cerrarMenuHamburguesa();
 });
 
-// === GESTIÓN DE SESIÓN (Cerrar sesión escritorio y móvil) ===
+// === CIERRE DE SESIÓN ===
 ["exitescritorio", "exitmovil"].forEach(id => {
   const btn = document.getElementById(id);
   if (btn) {
@@ -40,7 +48,7 @@ document.getElementById("exitMenu").addEventListener("click", (e) => {
   }
 });
 
-// === GESTIÓN DE MENÚ PERFIL (escritorio) ===
+// === MENÚ PERFIL ===
 document.querySelector(".perfil").addEventListener("click", (e) => {
   const menu = document.querySelector(".perfil-menu");
   menu.style.display = menu.style.display === "flex" ? "none" : "flex";
@@ -55,7 +63,7 @@ document.addEventListener("click", (e) => {
   }
 });
 
-// === REDIRECCIÓN A PERFIL (escritorio y móvil) ===
+// === REDIRECCIÓN A PERFIL ===
 document.querySelector("#nombreUsuario")?.addEventListener("click", () => {
   window.location.hash = "#profile";
 });
@@ -81,30 +89,25 @@ firebase.auth().onAuthStateChanged((user) => {
   }
 });
 
-// === UTILIDAD: OBTENER WORK ID DESDE EL HASH ===
-// Esta función obtiene el workId del hash de la URL. Se espera que el hash tenga el formato #/workId
+// === OBTENER ID DEL LIBRO DESDE EL HASH ===
 function obtenerWorkIdDesdeHash() {
   const hash = window.location.hash;
   const partes = hash.split("/");
   return partes.length === 2 ? partes[1] : null;
 }
 
-// === CARGA DE DETALLES DEL LIBRO ===
+// === CARGAR DETALLES DEL LIBRO ===
 const workId = obtenerWorkIdDesdeHash();
-const main = document.getElementById("mainContent");
 
-if (workId && main) {
-  main.hidden = false;
-  main.innerHTML = `
-    <div class="loader-container">
-      <div class="spinner"></div>
-      <p>Cargando detalles del libro...</p>
-    </div>
-  `;
+if (workId && mainContent) {
+  mainContent.hidden = false;
+  loader.style.display = "flex"; // Mostrar spinner
 
   obtenerDetallesLibro(workId).then(async libro => {
+    loader.style.display = "none"; // Ocultar spinner
+
     if (!libro) {
-      main.innerHTML = "<p>Error al cargar el libro.</p>";
+      mainContent.innerHTML = "<p>Error al cargar los detalles del libro.</p>";
       return;
     }
 
@@ -114,13 +117,11 @@ if (workId && main) {
     let mostrarIcon = "./assets/img/interface/marcdes.png";
 
     if (user) {
-      const estaFav = await estaEnFavoritos(user.uid, clave);
-      const estaMostrar = await estaEnMostrarMasTarde(user.uid, clave);
-      if (estaFav) favIcon = "./assets/img/interface/favact.png";
-      if (estaMostrar) mostrarIcon = "./assets/img/interface/marcdetails.png";
+      if (await estaEnFavoritos(user.uid, clave)) favIcon = "./assets/img/interface/favact.png";
+      if (await estaEnMostrarMasTarde(user.uid, clave)) mostrarIcon = "./assets/img/interface/marcdetails.png";
     }
 
-    main.innerHTML = `
+    mainContent.innerHTML = `
       <div class="detalle-libro">
         <div class="colizq">
           <img src="${libro.portada}" class="portada" alt="Portada del libro">
@@ -139,22 +140,21 @@ if (workId && main) {
         <div class="coldrch">
           <h2>${libro.titulo}</h2>
           <p><strong>Autor:</strong> ${libro.autor}</p>
-          ${libro.biografiaAutor ? `<p><strong>Biografía:</strong> ${libro.biografiaAutor}</p>` : ""}
-          <p><strong>Año:</strong> ${libro.añoPublicacion}</p>
           <p><strong>Editorial:</strong> ${libro.editorial}</p>
-          <p><strong>Idiomas:</strong> ${libro.idiomas.join(", ")}</p>
-          <p><strong>Géneros:</strong> ${libro.generos.join(", ")}</p>
+          <p><strong>Año de publicación:</strong> ${libro.añoPublicacion}</p>
           <p><strong>Páginas:</strong> ${libro.paginas}</p>
+          <p><strong>Idioma:</strong> ${libro.idiomas.join(", ")}</p>
+          <p><strong>Géneros:</strong> ${libro.generos.join(", ")}</p>
           <p><strong>Sinopsis:</strong> ${libro.sinopsis}</p>
         </div>
       </div>
     `;
 
-    // === EVENTOS: BOTONES DE ACCIÓN "Favorito" y "Leer más tarde" ===
+    // === BOTONES FAVORITO Y MOSTRAR MÁS TARDE ===
     const btnFav = document.querySelector(".btn-fav");
     const btnMostrar = document.querySelector(".btn-mostrar");
 
-    if (user && btnFav && btnMostrar) {
+    if (user) {
       btnFav.addEventListener("click", async (e) => {
         e.stopPropagation();
         const esta = await estaEnFavoritos(user.uid, clave);
@@ -181,5 +181,5 @@ if (workId && main) {
     }
   });
 } else {
-  main.innerHTML = "<p>No se ha especificado ningún libro.</p>";
+  mainContent.innerHTML = "<p>No se ha especificado ningún libro.</p>";
 }

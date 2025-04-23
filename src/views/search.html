@@ -61,12 +61,14 @@
     <!-- Barra de búsqueda avanzada con filtros -->
     <div class="busqueda-avanzada">
       <div class="barra-busqueda">
-        <select id="filtroBusqueda">
-          <option value="q">Todo</option>
-          <option value="title">Título</option>
-          <option value="author">Autor</option>
-          <option value="subject">Temática</option>
-        </select>
+        <div class="select-wrapper">
+          <select id="filtroBusqueda">
+            <option value="q">Todo</option>
+            <option value="title">Título</option>
+            <option value="author">Autor</option>
+            <option value="subject">Temática</option>
+          </select>
+        </div>
         <input type="text" id="campoBusqueda" placeholder="Introduzca su búsqueda...">
         <button id="botonBuscar">
           <img src="./assets/img/interface/lupa.png" alt="Buscar">

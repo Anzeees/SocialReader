@@ -143,3 +143,40 @@ export async function obtenerDocumentoUsuario(uid) {
     return null;
   }
 }
+
+// firestoreService.js
+
+// Agregar amigo al array
+export async function agregarAmigo(uidUsuario, uidNuevoAmigo) {
+  try {
+    const usuarioRef = db.collection("usuarios").doc(uidUsuario);
+    await usuarioRef.update({
+      amigos: firebase.firestore.FieldValue.arrayUnion(uidNuevoAmigo)
+    });
+  } catch (error) {
+    console.error("Error al agregar amigo:", error);
+  }
+}
+
+// Eliminar amigo del array
+export async function eliminarAmigo(uidUsuario, uidAmigo) {
+  try {
+    const usuarioRef = db.collection("usuarios").doc(uidUsuario);
+    await usuarioRef.update({
+      amigos: firebase.firestore.FieldValue.arrayRemove(uidAmigo)
+    });
+  } catch (error) {
+    console.error("Error al eliminar amigo:", error);
+  }
+}
+
+// Obtener todos los usuarios
+export async function obtenerTodosUsuarios() {
+  try {
+    const snapshot = await db.collection("usuarios").get();
+    return snapshot.docs.map(doc => doc.data());
+  } catch (error) {
+    console.error("Error al obtener usuarios:", error);
+    return [];
+  }
+}

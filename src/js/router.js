@@ -1,9 +1,15 @@
+// ROUTER.JS -- ÁNGEL MARTÍNEZ ORDIALES
+
+// === IMPORTACIONES ===
+// --- Importación del servicio de autenticación de Firebase
 import { auth } from "./services/firebase.js";
 
+// === VARIABLES GLOBALES ===
 const app = document.getElementById('app');
 const styleLink = document.getElementById('vista-style');
 let scriptActual = null;
 
+// === DEFINICIÓN DE RUTAS DISPONIBLES EN LA APP ===
 const rutas = {
   login: {
     vista: 'login.html',
@@ -32,8 +38,10 @@ const rutas = {
   }
 };
 
+// === FUNCIÓN PRINCIPAL PARA CARGAR UNA VISTA ===
 export function cargarVista(nombreRuta, parametro = null) {
   const ruta = rutas[nombreRuta];
+
   if (!ruta) {
     app.innerHTML = `<h2>Vista no encontrada: ${nombreRuta}</h2>`;
     styleLink.href = '';
@@ -53,9 +61,10 @@ export function cargarVista(nombreRuta, parametro = null) {
     });
 }
 
+// === FUNCIÓN AUXILIAR PARA CARGAR UN SCRIPT ===
 function cargarScript(nombreScript, parametro = null) {
   if (scriptActual) {
-    scriptActual.remove(); // elimina el script anterior
+    scriptActual.remove(); // elimina el script anterior si existe
     scriptActual = null;
   }
 
@@ -65,10 +74,12 @@ function cargarScript(nombreScript, parametro = null) {
   if (parametro) {
     nuevoScript.setAttribute("data-param", parametro);
   }
+
   document.body.appendChild(nuevoScript);
   scriptActual = nuevoScript;
 }
 
+// === INICIALIZACIÓN Y GESTIÓN DEL ENRUTADOR (router) ===
 export function iniciarRouter() {
   auth.onAuthStateChanged(user => {
     const hash = window.location.hash || "#login";

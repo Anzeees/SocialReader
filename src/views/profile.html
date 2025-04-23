@@ -2,22 +2,17 @@
 <section>
   <!-- === BARRA DE NAVEGACIÓN GENERAL (ESCRITORIO Y MÓVIL) === -->
   <nav>
-    <!-- Sombra de fondo para el menú homburguesa (visible al abrir el menú movil) -->
     <div class="sombra" id="sombra"></div>
-    <!-- Icono del menú hamburguesa para vista móvil -->
     <img class="hamburguesa" src="./assets/img/interface/menu-hamburguesa.png" id="hamburguesa" alt="Menú">
-    <!-- Logo principal de la aplicación -->
     <img class="logo" src="./assets/img/logotipos/LogoClaro.png">
 
     <!-- === MENÚ HAMBURGUESA (SOLO MÓVIL) === -->
     <div class="menu-hamburguesa" id="menuHamburguesa">
-      <!-- Encabezado del menú con logo y botón de cerrar -->
       <div class="top">
         <img class="logo" src="./assets/img/logotipos/LogoClaro.png" alt="Logo">
         <img class="exit" src="./assets/img/interface/cruz.png" id="exitMenu" alt="Cerrar">
       </div>
       <hr>
-      <!-- Perfil del usuario mostrado en el menú móvil -->
       <div class="perfil-movil">
         <div class="contenedor-perfil">
           <img src="./assets/img/avatars/Avatar1.png" class="avatar" id="avatarMovil">
@@ -25,13 +20,11 @@
         </div>
         <hr>
       </div>
-      <!-- Enlaces de navegación en menú móvil -->
       <div class="menumovil">
         <a href="#home" id="inicioLinkMovil">Inicio</a>
         <a href="#search" id="buscarLinkMovil">Buscar Libros</a>
       </div>
       <hr>
-      <!-- Botón para cerrar sesión en menú móvil -->
       <a id="exitmovil" class="exitmovil"><img src="./assets/img/interface/salida.png"> Cerrar Sesión</a>
     </div>
 
@@ -43,11 +36,8 @@
 
     <!-- === PERFIL USUARIO (ESCRITORIO) === -->
     <div class="perfil">
-      <!-- Avatar del usuario -->
       <img src="./assets/img/avatars/Avatar1.png" class="avatar" id="avatarEscritorio">
-      <!-- Flecha para desplegar el submenú -->
       <img src="./assets/img/interface/flecha-perfil.png" class="flecha-perfil">
-      <!-- Submenú de perfil con enlaces a perfil y cerrar sesión -->
       <div class="perfil-menu">
         <a href="#profile"><img src="./assets/img/interface/usuario.png">Mi Perfil</a>
         <a id="exitescritorio"><img src="./assets/img/interface/salida.png">Cerrar Sesión</a>
@@ -57,48 +47,51 @@
 
   <!-- === CONTENIDO PRINCIPAL (PERFIL) === -->
   <main id="mainContent">
-    <div class="panel-principal" style="display: flex; gap: 2rem;">
-      <!-- === PANEL LATERAL (perfil del usuario) === -->
-      <aside class="panel-lateral">
-        <img id="avatarGrande" class="avatar-grande" src="./assets/img/avatars/Avatar1.png" alt="Avatar">
-        <h3 id="nombrePerfil">Cargando...</h3>
-        <p id="correoPerfil">-</p>
-        <small id="fechaAlta">-</small>
-      </aside>
-      <!-- === PANEL PRINCIPAÑ CON TABS === -->
-      <section class="panel-principal">
-        <!-- Pestañas para navegar entre secciones -->
-        <div class="tabs">
-          <button class="tab activo" data-tab="mis-listas">Mis listas</button>
-          <button class="tab" data-tab="mis-resenas">Mis reseñas</button>
-          <button class="tab" data-tab="mis-amigos">Mis amigos</button>
+    <div class="panel-lateral">
+      <img id="avatarGrande" class="avatar-grande" src="./assets/img/avatars/Avatar1.png" alt="Avatar">
+
+      <!-- Selector emergente de avatar -->
+      <div id="selectorAvatar" class="emergente-avatar oculto">
+        <h4>Selecciona tu avatar</h4>
+        <div class="grid-avatars">
+          <img src="./assets/img/avatars/Avatar1.png" data-avatar="Avatar1.png">
+          <img src="./assets/img/avatars/Avatar2.png" data-avatar="Avatar2.png">
+          <img src="./assets/img/avatars/Avatar3.png" data-avatar="Avatar3.png">
+          <img src="./assets/img/avatars/Avatar4.png" data-avatar="Avatar4.png">
+          <img src="./assets/img/avatars/Avatar5.png" data-avatar="Avatar5.png">
+          <img src="./assets/img/avatars/Avatar6.png" data-avatar="Avatar6.png">
         </div>
-        <!-- Contenedor dinámico de contenido de las pestañas -->
-        <div class="contenido-tabs">
-          <!-- === TAB: MIS LISTAS === -->
-          <div id="mis-listas">
-            <h4>Libros favoritos</h4>
-            <div class="contenedor-libros" id="contenedor-favoritos"></div>
-            <h4>Mostrar más tarde</h4>
-            <div class="contenedor-libros" id="contenedor-mas-tarde"></div>
-          </div>
-          <!-- === TAB: MIS RESEÑAS === -->
-          <div id="mis-resenas" style="display: none;"></div>
-          <!-- === TAB: MIS AMIGOS === -->
-          <div id="mis-amigos" style="display: none;">
-            <!-- Buscador de usuarios -->
-            <div class="barra-busqueda">
-              <input type="text" id="campoBusqueda" placeholder="Introduzca el nombre del usuario...">
-              <button id="botonBuscar"><img src="./assets/img/interface/lupa.png" alt="Buscar"></button>
-            </div>
-            <!-- Usuarios que coinciden con lo buscado -->
-            <div class="contenedor-amigos" id="contenedor-nuevos-amigos"></div>
-            <!-- Lista de amigos del usuario -->
-            <h4>Mis amigos</h4>
-            <div class="contenedor-amigos" id="contenedor-mis-amigos"></div>
-          </div>
-        </div>
-      </section>
+        <button id="guardarAvatar">Guardar</button>
+      </div>
+
+      <h3 id="nombrePerfil">Cargando...</h3>
+      <p id="correoPerfil">-</p>
+      <small id="fechaAlta">-</small>
     </div>
+
+    <section class="panel-derecho">
+      <div class="tabs">
+        <button class="tab activo" data-tab="mis-listas">Mis listas</button>
+        <button class="tab" data-tab="mis-resenas">Mis reseñas</button>
+        <button class="tab" data-tab="mis-amigos">Mis amigos</button>
+      </div>
+      <div class="contenido-tabs">
+        <div id="mis-listas">
+          <h4>Libros favoritos</h4>
+          <div class="contenedor-libros" id="contenedor-favoritos"></div>
+          <h4>Mostrar más tarde</h4>
+          <div class="contenedor-libros" id="contenedor-mas-tarde"></div>
+        </div>
+
+        <div id="mis-resenas" style="display: none;"></div>
+
+        <div id="mis-amigos" style="display: none;">
+          <h4>Otros usuarios</h4>
+          <div class="contenedor-amigos" id="contenedor-nuevos-amigos"></div>
+          <h4>Mis amigos</h4>
+          <div class="contenedor-amigos" id="contenedor-mis-amigos"></div>
+        </div>
+      </div>
+    </section>
   </main>
 </section>
