@@ -4,7 +4,6 @@
 
 .detalle-libro {
   display: flex;
-  /* flex-direction: column; */
 }
 
 .colizq {
@@ -16,6 +15,18 @@
 
 .coldrch {
   flex-grow: 1;
+}
+
+.coldrch p {
+  margin: 0.5em 0;
+  font-size: 1em;
+  color: #333;
+}
+
+.coldrch h2 {
+  margin-bottom: 0.5em;
+  font-size: 1.5em;
+  color: #115662;
 }
 
 .boton-volver {
@@ -87,8 +98,7 @@ button.resena {
 
 .accion img, .resena img {
   height: 60%;
-} 
-
+}
   /* RESPONSIVE */
   @media (max-width: 1000px) {
     

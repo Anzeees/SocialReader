@@ -1,6 +1,5 @@
 import { db } from "./firebase.js";
 
-// Crear perfil de usuario
 export function crearPerfilUsuario(user, nombrePantalla = null) {
   const uid = user.uid;
   const correo = user.email;
@@ -21,7 +20,7 @@ export function crearPerfilUsuario(user, nombrePantalla = null) {
   });
 }
 
-// Obtener nombre del usuario
+// Mostrar nombre
 export function mostrarNombre(uid, callback) {
   db.collection("usuarios").doc(uid).get()
     .then((doc) => {
@@ -39,7 +38,7 @@ export function mostrarNombre(uid, callback) {
     });
 }
 
-// Obtener avatar del usuario
+// Obtener avatar
 export function avatarUsuario(uid, callback) {
   db.collection("usuarios").doc(uid).get()
     .then((doc) => {
@@ -56,6 +55,7 @@ export function avatarUsuario(uid, callback) {
       callback("Avatar1.png");
     });
 }
+
 
 // === FAVORITOS ===
 

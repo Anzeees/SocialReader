@@ -3,7 +3,6 @@
     <div class="sombra" id="sombra"></div>
     <img class="hamburguesa" src="./assets/img/interface/menu-hamburguesa.png" id="hamburguesa" alt="Menú">
     <img class="logo" src="./assets/img/logotipos/LogoClaro.png">
-
     <div class="menu-hamburguesa" id="menuHamburguesa">
       <div class="top">
         <img class="logo" src="./assets/img/logotipos/LogoClaro.png" alt="Logo">
@@ -24,12 +23,10 @@
       <hr>
       <a id="exitmovil" class="exitmovil"><img src="./assets/img/interface/salida.png"> Cerrar Sesión</a>
     </div>
-
     <div class="menu">
       <a href="#home" id="inicioLink">Inicio</a>
       <a href="#search" id="buscarLink">Buscar Libros</a>
     </div>
-
     <div class="perfil">
       <img src="./assets/img/avatars/Avatar1.png" class="avatar" id="avatarEscritorio">
       <img src="./assets/img/interface/flecha-perfil.png" class="flecha-perfil">
@@ -39,7 +36,6 @@
       </div>
     </div>
   </nav>
-
   <main id="mainContent">
     <div class="panel-principal" style="display: flex; gap: 2rem;">
       <aside class="panel-lateral">
@@ -48,31 +44,25 @@
         <p id="correoPerfil">-</p>
         <small id="fechaAlta">-</small>
       </aside>
-  
       <section class="panel-principal">
         <div class="tabs">
           <button class="tab activo" data-tab="mis-listas">Mis listas</button>
           <button class="tab" data-tab="mis-resenas">Mis reseñas</button>
           <button class="tab" data-tab="mis-amigos">Mis amigos</button>
         </div>
-  
         <div class="contenido-tabs">
           <div id="mis-listas">
             <h4>Libros favoritos</h4>
             <div class="contenedor-libros" id="contenedor-favoritos"></div>
-  
             <h4>Mostrar más tarde</h4>
             <div class="contenedor-libros" id="contenedor-mas-tarde"></div>
           </div>
-  
           <div id="mis-resenas" style="display: none;"></div>
           <div id="mis-amigos" style="display: none;">
-              <div class="barra-busqueda">
-                <input type="text" id="campoBusqueda" placeholder="Introduzca el nombre del usuario...">
-                <button id="botonBuscar">
-                  <img src="./assets/img/interface/lupa.png" alt="Buscar">
-                </button>
-              </div>
+            <div class="barra-busqueda">
+              <input type="text" id="campoBusqueda" placeholder="Introduzca el nombre del usuario...">
+              <button id="botonBuscar"><img src="./assets/img/interface/lupa.png" alt="Buscar"></button>
+            </div>
             <div class="contenedor-amigos" id="contenedor-nuevos-amigos"></div>
             <h4>Mis amigos</h4>
             <div class="contenedor-amigos" id="contenedor-mis-amigos"></div>

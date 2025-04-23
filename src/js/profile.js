@@ -2,8 +2,6 @@ import {
   mostrarNombre,
   avatarUsuario,
   obtenerDocumentoUsuario,
-  buscarUsuariosPorCorreo,
-  obtenerAmigos
 } from "./services/firestoreService.js";
 import { obtenerResumenLibro } from "./services/openlibrary.js";
 
@@ -18,7 +16,9 @@ function cerrarSesion() {
   document.getElementById("menuHamburguesa").classList.remove("show");
   document.getElementById("sombra").style.setProperty("display", "none");
 
-  firebase.auth().signOut()
+  firebase
+    .auth()
+    .signOut()
     .then(() => {
       localStorage.removeItem("usuarioAutenticado");
       window.location.hash = "#login";
@@ -29,7 +29,7 @@ function cerrarSesion() {
     });
 }
 
-["exitescritorio", "exitmovil"].forEach(id => {
+["exitescritorio", "exitmovil"].forEach((id) => {
   const btn = document.getElementById(id);
   if (btn) {
     btn.addEventListener("click", (e) => {
@@ -69,37 +69,29 @@ firebase.auth().onAuthStateChanged(async (user) => {
     avatarUsuario(user.uid, (avatar) => {
       const imgUsuario = document.querySelector(".perfil-movil img");
       const imgUsuarioEscritorio = document.querySelector(".perfil img");
-      if (imgUsuarioEscritorio) imgUsuarioEscritorio.src = `./assets/img/avatars/${avatar}`;
-      if (imgUsuario) imgUsuario.src = `./assets/img/avatars/${avatar}`;
+      if (imgUsuarioEscritorio)
+        imgUsuarioEscritorio.src = `./assets/img/avatars/${avatar}`;
+      if (imgUsuario)
+        imgUsuario.src = `./assets/img/avatars/${avatar}`;
     });
 
     const datos = await obtenerDocumentoUsuario(user.uid);
     if (!datos) return;
 
-    document.getElementById("nombrePerfil").textContent = datos.nombrePantalla || "Sin nombre";
-    document.getElementById("correoPerfil").textContent = datos.correo || "-";
-    document.getElementById("fechaAlta").textContent = formatearFecha(datos.fechaAlta);
-    document.getElementById("avatarGrande").src = `./assets/img/avatars/${datos.avatar || "Avatar1.png"}`;
+    document.getElementById("nombrePerfil").textContent =
+      datos.nombrePantalla || "Sin nombre";
+    document.getElementById("correoPerfil").textContent =
+      datos.correo || "-";
+    document.getElementById("fechaAlta").textContent = formatearFecha(
+      datos.fechaAlta
+    );
+    document.getElementById("avatarGrande").src = `./assets/img/avatars/${
+      datos.avatar || "Avatar1.png"
+    }`;
 
     await mostrarLibrosUsuario(datos.librosFavoritos, "contenedor-favoritos");
     await mostrarLibrosUsuario(datos.mostrarMasTarde, "contenedor-mas-tarde");
-
-    obtenerAmigos(user.uid, (amigos) => {
-      const contenedor = document.getElementById("contenedor-mis-amigos");
-      contenedor.innerHTML = "";
-      amigos.forEach(amigo => {
-        const div = document.createElement("div");
-        div.className = "amigo";
-        div.innerHTML = `
-          <img src="./assets/img/avatars/${amigo.avatar || 'Avatar1.png'}">
-          <div class="info">
-            <p class="nombre">${amigo.nombrePantalla}</p>
-            <p class="correo">${amigo.correo}</p>
-          </div>
-        `;
-        contenedor.appendChild(div);
-      });
-    });
+    await mostrarAmigos(user.uid, datos.amigos, "contenedor-mis-amigos");
   }
 });
 
@@ -123,7 +115,8 @@ async function mostrarLibrosUsuario(lista, contenedorId) {
     try {
       const datos = await obtenerResumenLibro(clave);
       const titulo = datos.titulo || "Sin título";
-      const portada = datos.portada || "./assets/img/interface/placeholder-libro.png";
+      const portada =
+        datos.portada || "./assets/img/interface/placeholder-libro.png";
 
       const div = document.createElement("div");
       div.className = "libro-item";
@@ -139,6 +132,39 @@ async function mostrarLibrosUsuario(lista, contenedorId) {
       contenedor.appendChild(div);
     } catch (err) {
       console.warn("No se pudo obtener datos para:", clave, err);
+    }
+  }
+}
+
+async function mostrarAmigos(uidUsuario, listaUids, contenedorId) {
+  console.log("UID del usuario:", uidUsuario);
+  const contenedor = document.getElementById(contenedorId);
+  contenedor.innerHTML = "";
+
+  for (let uid of listaUids) {
+    try {
+      // Elimina comillas duplicadas si están presentes
+      uid = uid.replaceAll('"', '').trim();
+
+      if (!uid) continue;
+
+      const amigo = await obtenerDocumentoUsuario(uid);
+      if (!amigo) continue;
+
+      const div = document.createElement("div");
+      div.className = "amigo";
+      div.innerHTML = `
+        <img src="./assets/img/avatars/${amigo.avatar || 'Avatar1.png'}" alt="Avatar">
+        <div class="info">
+          <p class="nombre">${amigo.nombrePantalla || "Usuario"}</p>
+          <p class="correo">${amigo.correo || "-"}</p>
+        </div>
+        <div class="estado"></div>
+      `;
+
+      contenedor.appendChild(div);
+    } catch (error) {
+      console.warn("No se pudo cargar amigo con UID:", uid, error);
     }
   }
 }
