@@ -1,47 +1,44 @@
-import {
-  mostrarNombre,
-  avatarUsuario,
-  agregarLibroFavorito,
-  eliminarLibroFavorito,
-  estaEnFavoritos,
-  agregarMostrarMasTarde,
-  eliminarMostrarMasTarde,
-  estaEnMostrarMasTarde
-} from "./services/firestoreService.js";
+// SEARCH.JS -- ÁNGEL MARTÍNEZ ORDIALES
 
+// === IMPORTACIONES ===
+// --- Importación de servicios de Firebase y Firestore
+import { mostrarNombre, avatarUsuario, agregarLibroFavorito, eliminarLibroFavorito, estaEnFavoritos, agregarMostrarMasTarde, eliminarMostrarMasTarde, estaEnMostrarMasTarde } from "./services/firestoreService.js";
+
+// === VARIABLES DEL DOM ===
 const mainContent = document.getElementById("mainContent");
+
+// === GESTIÓN DE INTERFAZ: MENÚ HAMBURGUESA ===
+function cerrarMenuHamburguesa() {
+  document.getElementById("menuHamburguesa").classList.remove("show");
+  document.getElementById("sombra").style.display = "none";
+}
 
 document.getElementById("hamburguesa").addEventListener("click", () => {
   document.getElementById("menuHamburguesa").classList.toggle("show");
   document.getElementById("sombra").style.display = "flex";
 });
 
-function cerrarSesion() {
-  document.getElementById("menuHamburguesa").classList.remove("show");
-  document.getElementById("sombra").style.display = "none";
-  firebase.auth().signOut().then(() => {
-    localStorage.removeItem("usuarioAutenticado");
-    window.location.hash = "#login";
-    window.dispatchEvent(new HashChangeEvent("hashchange"));
-  });
-}
+document.getElementById("exitMenu").addEventListener("click", (e) => {
+  e.preventDefault();
+  cerrarMenuHamburguesa();
+});
 
+// === GESTIÓN DE SESIÓN (Cerrar sesión escritorio y móvil) ===
 ["exitescritorio", "exitmovil"].forEach(id => {
   const btn = document.getElementById(id);
   if (btn) {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
-      cerrarSesion();
+      firebase.auth().signOut().then(() => {
+        localStorage.removeItem("usuarioAutenticado");
+        window.location.hash = "#login";
+        window.dispatchEvent(new HashChangeEvent("hashchange"));
+      });
     });
   }
 });
 
-document.getElementById("exitMenu").addEventListener("click", (e) => {
-  e.preventDefault();
-  document.getElementById("menuHamburguesa").classList.remove("show");
-  document.getElementById("sombra").style.display = "none";
-});
-
+// === GESTIÓN DE MENÚ PERFIL (escritorio) ===
 document.querySelector(".perfil").addEventListener("click", (e) => {
   const menu = document.querySelector(".perfil-menu");
   menu.style.display = menu.style.display === "flex" ? "none" : "flex";
@@ -56,6 +53,17 @@ document.addEventListener("click", (e) => {
   }
 });
 
+// === REDIRECCIÓN A PERFIL (escritorio y móvil) ===
+document.querySelector("#nombreUsuario")?.addEventListener("click", () => {
+  window.location.hash = "#profile";
+});
+
+document.querySelector(".perfil-menu a[href='#profile']")?.addEventListener("click", (e) => {
+  e.preventDefault();
+  window.location.hash = "#profile";
+});
+
+// === CARGA DE DATOS DEL USUARIO AUTENTICADO ===
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
     mostrarNombre(user.uid, (nombre) => {
@@ -71,16 +79,16 @@ firebase.auth().onAuthStateChanged((user) => {
   }
 });
 
-document.querySelector("#nombreUsuario")?.addEventListener("click", () => {
-  window.location.hash = "#profile";
+// === EVENTOS DE BÚSQUEDA ===
+document.getElementById("botonBuscar").addEventListener("click", realizarBusqueda);
+
+document.getElementById("campoBusqueda").addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    realizarBusqueda();
+  }
 });
 
-document.querySelector(".perfil-menu a[href='#profile']")?.addEventListener("click", (e) => {
-  e.preventDefault();
-  window.location.hash = "#profile";
-});
-
-document.getElementById("botonBuscar").addEventListener("click", () => {
+function realizarBusqueda() {
   const filtro = document.getElementById("filtroBusqueda").value;
   const termino = document.getElementById("campoBusqueda").value.trim();
   const contenedor = document.getElementById("resultadosLibros");
@@ -103,15 +111,10 @@ document.getElementById("botonBuscar").addEventListener("click", () => {
     .finally(() => {
       spinner.classList.add("oculto");
     });
-});
+}
 
-document.getElementById("campoBusqueda").addEventListener("keypress", (e) => {
-  if (e.key === "Enter") {
-    document.getElementById("botonBuscar").click();
-  }
-});
-
-function mostrarResultados(libros) {
+// === RENDERIZADO DE RESULTADOS ===
+async function mostrarResultados(libros) {
   const contenedor = document.getElementById("resultadosLibros");
   contenedor.innerHTML = "";
 
@@ -149,33 +152,33 @@ function mostrarResultados(libros) {
     item.className = "resultado-libro";
 
     item.innerHTML = `
-  <img src="${portada}" alt="Portada" class="portada">
-  <div class="info-libro">
-    <h4>${libro.title}</h4>
-    <p class="autor">Autor: ${autores}</p>
-    <p class="categoria">Categorías: ${categoria}</p>
-    <p class="publicacion"><strong>Primera publicación en ${anio} - ${ediciones} ediciones</strong></p>
-    <div class="valoracion">
-      ${Array.from({ length: 5 }, (_, i) => `
-        <img 
-          src="./assets/img/interface/${i < valoracion ? 'estrellaact' : 'estrellades'}.png" 
-          alt="${i < valoracion ? 'Estrella activa' : 'Estrella desactivada'}" 
-          style="width: 20px; height: 20px; margin-right: 2px;"
-        >`
-    ).join('')}
-      <span>${valoracion} - ${resenas} reseñas</span>
-    </div>
-  </div>
-  <div class="acciones-libro">
-    <button class="accion btn-mostrar" data-id="${libro.key}">
-      <img src="${mostrarIcon}" alt="Guardar para más tarde">
-    </button>
-    <button class="accion btn-fav" data-id="${libro.key}">
-      <img src="${favIcon}" alt="Favorito">
-    </button>
-    <button class="resena"><img src="./assets/img/interface/nueva-resena.png" alt="Reseña"> Nueva Reseña</button>
-  </div>
-`;
+      <img src="${portada}" alt="Portada" class="portada">
+      <div class="info-libro">
+        <h4>${libro.title}</h4>
+        <p class="autor">Autor: ${autores}</p>
+        <p class="categoria">Categorías: ${categoria}</p>
+        <p class="publicacion"><strong>Primera publicación en ${anio} - ${ediciones} ediciones</strong></p>
+        <div class="valoracion">
+          ${Array.from({ length: 5 }, (_, i) => `
+            <img 
+              src="./assets/img/interface/${i < valoracion ? 'estrellaact' : 'estrellades'}.png" 
+              alt="${i < valoracion ? 'Estrella activa' : 'Estrella desactivada'}" 
+              style="width: 20px; height: 20px; margin-right: 2px;"
+            >`
+          ).join('')}
+          <span>${valoracion} - ${resenas} reseñas</span>
+        </div>
+      </div>
+      <div class="acciones-libro">
+        <button class="accion btn-mostrar" data-id="${libro.key}">
+          <img src="${mostrarIcon}" alt="Guardar para más tarde">
+        </button>
+        <button class="accion btn-fav" data-id="${libro.key}">
+          <img src="${favIcon}" alt="Favorito">
+        </button>
+        <button class="resena"><img src="./assets/img/interface/nueva-resena.png" alt="Reseña"> Nueva Reseña</button>
+      </div>
+    `;
 
     item.addEventListener("click", (e) => {
       const esBoton = e.target.closest(".accion") || e.target.closest(".resena");
@@ -187,44 +190,37 @@ function mostrarResultados(libros) {
   });
 }
 
+// === GESTIÓN DE BOTONES DE ACCIONES (Favoritos y Mostrar más tarde) ===
 document.addEventListener("click", async (e) => {
-  const btn = e.target.closest(".btn-fav");
-  if (!btn) return;
-
+  const btnFav = e.target.closest(".btn-fav");
+  const btnMostrar = e.target.closest(".btn-mostrar");
   const user = firebase.auth().currentUser;
+
   if (!user) return;
 
-  const key = btn.dataset.id.replace("/works/", "");
-  const img = btn.querySelector("img");
-
-  const esta = await estaEnFavoritos(user.uid, key);
-
-  if (esta) {
-    await eliminarLibroFavorito(user.uid, key);
-    img.src = "./assets/img/interface/favdes.png";
-  } else {
-    await agregarLibroFavorito(user.uid, key);
-    img.src = "./assets/img/interface/favact.png";
+  if (btnFav) {
+    const key = btnFav.dataset.id.replace("/works/", "");
+    const img = btnFav.querySelector("img");
+    const esta = await estaEnFavoritos(user.uid, key);
+    if (esta) {
+      await eliminarLibroFavorito(user.uid, key);
+      img.src = "./assets/img/interface/favdes.png";
+    } else {
+      await agregarLibroFavorito(user.uid, key);
+      img.src = "./assets/img/interface/favact.png";
+    }
   }
-});
 
-document.addEventListener("click", async (e) => {
-  const btn = e.target.closest(".btn-mostrar");
-  if (!btn) return;
-
-  const user = firebase.auth().currentUser;
-  if (!user) return;
-
-  const key = btn.dataset.id.replace("/works/", "");
-  const img = btn.querySelector("img");
-
-  const esta = await estaEnMostrarMasTarde(user.uid, key);
-
-  if (esta) {
-    await eliminarMostrarMasTarde(user.uid, key);
-    img.src = "./assets/img/interface/marcdes.png";
-  } else {
-    await agregarMostrarMasTarde(user.uid, key);
-    img.src = "./assets/img/interface/marcact.png";
+  if (btnMostrar) {
+    const key = btnMostrar.dataset.id.replace("/works/", "");
+    const img = btnMostrar.querySelector("img");
+    const esta = await estaEnMostrarMasTarde(user.uid, key);
+    if (esta) {
+      await eliminarMostrarMasTarde(user.uid, key);
+      img.src = "./assets/img/interface/marcdes.png";
+    } else {
+      await agregarMostrarMasTarde(user.uid, key);
+      img.src = "./assets/img/interface/marcact.png";
+    }
   }
 });

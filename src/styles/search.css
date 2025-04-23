@@ -1,3 +1,6 @@
+/* SEARCH.CSS -- ÁNGEL MARTÍNEZ ORDIALES */
+
+/* === ESTILOS DE SPINNER Y CARGA === */
 .spinner-busqueda {
   display: flex;
   flex-direction: column;
@@ -25,6 +28,7 @@
   display: none !important;
 }
 
+/* === ESTRUCTURA GENERAL DE LA VISTA === */
 section {
   display: flex;
   flex-direction: column;
@@ -37,7 +41,7 @@ main {
   flex-grow: 1;
 }
 
-/* MAIN DE BÚSQUEDA */
+/* === MAIN DE CONTENIDO Y BÚSQUEDA === */
 #mainContent {
   display: flex;
   flex-direction: column;
@@ -48,6 +52,7 @@ main {
   margin: 3% auto 0 auto;
 }
 
+/* === BLOQUE DE BÚSQUEDA AVANZADA === */
 .busqueda-avanzada {
   width: 100%;
   display: flex;
@@ -106,7 +111,7 @@ main {
   opacity: 1;
 }
 
-/* Tarjetas resultado */
+/* === RESULTADOS DE BÚSQUEDA: TARJETAS === */
 .resultados {
   display: flex;
   flex-direction: column;
@@ -209,7 +214,7 @@ main {
   height: 18px;
 }
 
-/* Vista móvil */
+/* === RESPONSIVE (MÓVIL) === */
 @media (max-width: 1000px) {
   .resultados {
     display: flex;
