@@ -49,14 +49,14 @@ button.accion.btn-mostrar {
 }
 
 button.accion.btn-fav {
-  background-color: #E5AFB1;
+  background-color: #e5afb1;
   border: solid var(--color-complementario2) 2px;
   color: var(--color-complementario2);
 }
 
 button.resena {
-  background-color: #6C84FF;
-  border: solid #008CFF 2px;
+  background-color: #6c84ff;
+  border: solid #008cff 2px;
   color: white;
 }
 
@@ -81,7 +81,7 @@ button.resena {
   color: var(--color-oscuro);
 }
 
-  /* === RESPONSIVE === */
-  @media (max-width: 1000px) {
-    /* Espacio reservado para ajustes en pantallas pequeñas */
-  }
+/* === RESPONSIVE === */
+@media (max-width: 1000px) {
+  /* Espacio reservado para ajustes en pantallas pequeñas */
+}
