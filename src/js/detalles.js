@@ -1,18 +1,15 @@
-// detalles.js actualizado para obtener más detalles del libro y autor
-import {
-  mostrarNombre,
-  avatarUsuario,
-  agregarLibroFavorito,
-  eliminarLibroFavorito,
-  estaEnFavoritos,
-  agregarMostrarMasTarde,
-  eliminarMostrarMasTarde,
-  estaEnMostrarMasTarde
-} from "./services/firestoreService.js";
+// DETALLES.JS -- ÁNGEL MARTÍNEZ ORDIALES
 
+//  === IMPORTACIONES ===
+// --- Importacion servicios de Firebase y OpenLibraryAPI
+import { mostrarNombre, avatarUsuario, agregarLibroFavorito, eliminarLibroFavorito, estaEnFavoritos, agregarMostrarMasTarde, eliminarMostrarMasTarde, estaEnMostrarMasTarde } from "./services/firestoreService.js";
+import { obtenerDetallesLibro } from "./services/openlibrary.js";
+
+// === VARIABLES DEL DOM ===
 const mainContent = document.getElementById("mainContent");
 const loader = document.getElementById("loader");
 
+// === GESTIÓN DE INTERFAZ: MENÚ HAMBURGUESA ===
 function cerrarMenuHamburguesa() {
   document.getElementById("menuHamburguesa").classList.remove("show");
   document.getElementById("sombra").style.display = "none";
@@ -28,6 +25,7 @@ document.getElementById("exitMenu").addEventListener("click", (e) => {
   cerrarMenuHamburguesa();
 });
 
+// === GESTIÓN DE SESIÓN (Cerrar sesión escritorio y móvil) ===
 ["exitescritorio", "exitmovil"].forEach(id => {
   const btn = document.getElementById(id);
   if (btn) {
@@ -42,6 +40,7 @@ document.getElementById("exitMenu").addEventListener("click", (e) => {
   }
 });
 
+// === GESTIÓN DE MENÚ PERFIL (escritorio) ===
 document.querySelector(".perfil").addEventListener("click", (e) => {
   const menu = document.querySelector(".perfil-menu");
   menu.style.display = menu.style.display === "flex" ? "none" : "flex";
@@ -56,6 +55,17 @@ document.addEventListener("click", (e) => {
   }
 });
 
+// === REDIRECCIÓN A PERFIL (escritorio y móvil) ===
+document.querySelector("#nombreUsuario")?.addEventListener("click", () => {
+  window.location.hash = "#profile";
+});
+
+document.querySelector(".perfil-menu a[href='#profile']")?.addEventListener("click", (e) => {
+  e.preventDefault();
+  window.location.hash = "#profile";
+});
+
+// === CARGA DE DATOS DEL USUARIO AUTENTICADO ===
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
     mostrarNombre(user.uid, (nombre) => {
@@ -71,58 +81,15 @@ firebase.auth().onAuthStateChanged((user) => {
   }
 });
 
-document.querySelector("#nombreUsuario")?.addEventListener("click", () => {
-  window.location.hash = "#profile";
-});
-
-document.querySelector(".perfil-menu a[href='#profile']")?.addEventListener("click", (e) => {
-  e.preventDefault();
-  window.location.hash = "#profile";
-});
-// --- Obtener detalles completos desde OpenLibrary
-async function obtenerTodosLosDetalles(workId) {
-  try {
-    const resWork = await fetch(`https://openlibrary.org/works/${workId}.json`);
-    const workData = await resWork.json();
-
-    const autorKey = workData.authors?.[0]?.author?.key;
-    const resAutor = autorKey ? await fetch(`https://openlibrary.org${autorKey}.json`) : null;
-    const autorData = resAutor ? await resAutor.json() : {};
-
-    const edicionKey = workData.edition_key?.[0];
-    const resEdicion = edicionKey ? await fetch(`https://openlibrary.org/books/${edicionKey}.json`) : null;
-    const edicionData = resEdicion ? await resEdicion.json() : {};
-
-    const idiomas = edicionData.languages?.map(l => l.key.split('/').pop().toUpperCase()) || ["No especificados"];
-    const generos = workData.subjects?.slice(0, 5) || ["Sin datos"];
-
-    return {
-      id: workId,
-      titulo: workData.title || "Sin título",
-      autor: autorData.name || "Autor desconocido",
-      biografiaAutor: autorData.bio?.value || autorData.bio || "",
-      portada: workData.covers?.[0] ? `https://covers.openlibrary.org/b/id/${workData.covers[0]}-L.jpg` : "./assets/img/logotipos/portadaDefault.png",
-      añoPublicacion: edicionData.publish_date || "Desconocido",
-      editorial: edicionData.publishers?.[0] || "No especificada",
-      idiomas,
-      generos,
-      paginas: edicionData.number_of_pages || "No especificado",
-      sinopsis: typeof workData.description === "string" ? workData.description : workData.description?.value || "Sin sinopsis disponible"
-    };
-  } catch (error) {
-    console.error("Error al obtener los detalles completos:", error);
-    return null;
-  }
-}
-
-// --- Obtener Work ID desde el hash
+// === UTILIDAD: OBTENER WORK ID DESDE EL HASH ===
+// Esta función obtiene el workId del hash de la URL. Se espera que el hash tenga el formato #/workId
 function obtenerWorkIdDesdeHash() {
   const hash = window.location.hash;
   const partes = hash.split("/");
   return partes.length === 2 ? partes[1] : null;
 }
 
-// --- Cargar contenido en la vista
+// === CARGA DE DETALLES DEL LIBRO ===
 const workId = obtenerWorkIdDesdeHash();
 const main = document.getElementById("mainContent");
 
@@ -135,7 +102,7 @@ if (workId && main) {
     </div>
   `;
 
-  obtenerTodosLosDetalles(workId).then(async libro => {
+  obtenerDetallesLibro(workId).then(async libro => {
     if (!libro) {
       main.innerHTML = "<p>Error al cargar el libro.</p>";
       return;
@@ -183,6 +150,7 @@ if (workId && main) {
       </div>
     `;
 
+    // === EVENTOS: BOTONES DE ACCIÓN "Favorito" y "Leer más tarde" ===
     const btnFav = document.querySelector(".btn-fav");
     const btnMostrar = document.querySelector(".btn-mostrar");
 

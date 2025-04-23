@@ -1,11 +1,15 @@
+/* DETALLES.CSS -- ÁNGEL MARTÍNEZ ORDIALES */
+/*  === ESTILO GENERAL DEM MAIN === */
 #mainContent {
   padding: 3em;
 }
 
+/* === CONTENEDOR PRINCIPAL DE DETALLES DEL LIBRO === */
 .detalle-libro {
   display: flex;
 }
 
+/* === COLUMNA IZUIERDA: PORTADA Y ACCIONES */
 .colizq {
   width: 16%;
   margin-right: 2%;
@@ -13,52 +17,12 @@
   align-items: center;
 }
 
-.coldrch {
-  flex-grow: 1;
-}
-
-.coldrch p {
-  margin: 0.5em 0;
-  font-size: 1em;
-  color: #333;
-}
-
-.coldrch h2 {
-  margin-bottom: 0.5em;
-  font-size: 1.5em;
-  color: #115662;
-}
-
-.boton-volver {
-  position: float;
-  top: 0;
-  background-color: var(--color-primario);
-  width: 45px;
-  height: 45px;
-  padding: 0;
-  margin: 10px;
-  border-radius: 50%;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.boton-volver img {
-  width: 30px;
-  filter: brightness(0) invert(1);
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
-
-.boton-volver img:hover {
-  transform: scale(1.1);
-}
-
 .portada {
   width: 100%;
   margin-bottom: 4%;
 }
+
+/* === BOTONES DE ACCIÓN: LEER MÁS TARDE / FAVORITOS / NUEVA RESEÑA === */
 
 button.accion.btn-mostrar, button.accion.btn-fav, button.resena {
   display: flex;
@@ -79,7 +43,7 @@ button.accion.btn-mostrar:hover, button.accion.btn-fav:hover, button.resena:hove
 }
 
 button.accion.btn-mostrar {
-  background-color: #BCD8DD;
+  background-color: var(--color-primario);
   border: solid #115662 2px;
   color: #115662;
 }
@@ -99,7 +63,25 @@ button.resena {
 .accion img, .resena img {
   height: 60%;
 }
-  /* RESPONSIVE */
+
+/* === COLUMNA DERECHA: DETELLES DEL LIBRO */
+.coldrch {
+  flex-grow: 1;
+}
+
+.coldrch h2 {
+  margin-bottom: 0.5em;
+  font-size: 1.5em;
+  color: #115662;
+}
+
+.coldrch p {
+  margin: 0.5em 0;
+  font-size: 1em;
+  color: var(--color-oscuro);
+}
+
+  /* === RESPONSIVE === */
   @media (max-width: 1000px) {
-    
+    /* Espacio reservado para ajustes en pantallas pequeñas */
   }
