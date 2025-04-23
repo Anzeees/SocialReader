@@ -1,12 +1,17 @@
-<!-- Contenedor de inicio -->
+<!-- LOGIN.HTML -- ÁNGEL MARTÍNEZ ORDIALES -->
+
+ <!-- === VISTA DE LOGIN PARA ESCRITORIO === -->
+ <!-- Lado izquierdo de la vista de login (escritorio) -->
 <div class="izq">
     <h1>Vuelve a SocialReader</h1>
+    <!-- Opciones de inicio con redes sociales -->
     <div class="opciones">
       <img class="btn-github" src="./assets/img/actions/github.png">
       <img class="btn-google" src="./assets/img/actions/google.png">
       <img class="btn-apple" src="./assets/img/actions/apple.png">
     </div>
     <hr>
+    <!-- Formulario de inicio de sesión -->
     <form id="formLogin">
       <p>O ingresa tu cuenta</p>
       <input type="email" name="correo" id="correoinicio" placeholder="Correo Electrónico" required>
@@ -15,7 +20,7 @@
       <center><input type="submit" value="INICIAR SESIÓN" class="boton"></center>
     </form>
   </div>
-  
+  <!-- Lado derecho de la vista de login (escritorio) -->
   <div class="drch">
     <img class="logologin" src="./assets/img/logotipos/LogoBlanco.png">
     <h1>¡Hola, futuro lector!</h1>
@@ -23,22 +28,25 @@
     <button class="boton" id="btnRegistrarme">REGISTRARME</button>
   </div>
   
-  <!-- NUEVOS CONTENEDORES -->
+  <!-- === VISTA DE REGISTRO PARA ESCRITORIO === -->
+   <!-- Lado izquierdo de la vista de registro (escritorio) -->
   <div class="izq2" style="display: none;">
     <img class="logologin" src="./assets/img/logotipos/LogoBlanco.png">
     <h1>¡Bienvenido de nuevo!</h1>
     <p>Para seguir compartiendo y descubriendo libros, inicia sesión con tus datos.</p>
     <button class="boton" id="btnIniciar">INICIAR SESIÓN</button>
   </div>
-  
+  <!-- Lado derecho de la vista de registro (escritorio) -->
   <div class="drch2" style="display: none;">
     <h1>Únete a SocialReader</h1>
+    <!-- Opciones de registro con redes sociales -->
     <div class="opciones">
       <img class="btn-github" src="./assets/img/actions/github.png">
       <img class="btn-google" src="./assets/img/actions/google.png">
       <img class="btn-apple" src="./assets/img/actions/apple.png">
     </div>
     <hr>
+    <!-- Formulario de registro -->
     <form id="formRegister">
       <p>O regístrate con tu correo electrónico</p>
       <input type="text" name="nombre" id="nombre" placeholder="Nombre" title="Nombre no válido" required>
@@ -51,9 +59,11 @@
     </form>
   </div>
   
+  <!-- === VISTA DE LOGIN Y REGISTRO PARA MÓVIL (SWITCH) === -->
   <div class="movil">
     <img src="./assets/img/logotipos/LogoBlanco.png" alt="Logo SocialReader" class="logologin">
     <div class="formularioinicio">
+      <!-- Switch para alternar entre login y registro -->
       <div class="switch-wrapper">
         <div class="switch-toggle" id="toggle"></div>
         <div class="switch-options">
@@ -61,7 +71,8 @@
           <div id="register">Registrarme</div>
         </div>
       </div>
-  
+
+      <!-- Formulario de inicio (móvil) -->
       <div id="formularioMovil">
         <form id="formLoginMovil">
           <h1>Vuelve a SocialReader</h1>
@@ -71,9 +82,9 @@
           <input type="submit" value="INICIAR SESIÓN" class="boton">
         </form>
       </div>
-  
       <hr>
-  
+
+      <!-- Botones sociales (móvil) -->
       <div class="opciones">
         <img class="btn-github" src="./assets/img/actions/github.png">
         <img class="btn-google" src="./assets/img/actions/google.png">
@@ -82,10 +93,11 @@
     </div>
   </div>
   
+  <!-- === MODAL DE ERROR DE AUTENTICACIÓN === -->
+  <!-- Contenedor flotante que indica si ha ocurrido algún error en el registro o inicio de sesión -->
   <div id="modalError" class="modal-error oculto">
     <div class="modal-contenido">
       <p id="mensajeError">Error de autenticación</p>
       <button id="btnCerrarModal">Aceptar</button>
     </div>
   </div>
-  

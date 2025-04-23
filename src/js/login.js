@@ -1,10 +1,14 @@
+// LOGIN.JS -- ÁNGEL MARTÍNEZ ORDIALES
+
+// === IMPORTACIONES ===
+// --- Importación servicios de Firebase
 import { auth } from "./services/firebase.js";
 import { crearPerfilUsuario } from "./services/firestoreService.js";
 
-// Estado para controlar errores anteriores de autenticación social
+// === ESTADO GLOBAL ===
 let autenticacionCancelada = false;
 
-// --- Cargar vista login
+// === FUNCIÓN PRINCIPAL: Cargar vista de login al iniciar ===
 export function cargarVistaLogin() {
   ajustarVista();
   window.addEventListener("resize", ajustarVista);
@@ -16,7 +20,7 @@ export function cargarVistaLogin() {
   document.getElementById("toggle").style.left = "0%";
 }
 
-// --- Vista responsive
+// === BLOQUE: Ajuste de Vista según tamaño de pantalla ===
 function ajustarVista() {
   if (window.innerWidth <= 1000) {
     document.querySelector(".izq").style.setProperty("display", "none");
@@ -33,7 +37,7 @@ function ajustarVista() {
   }
 }
 
-// --- Eventos formularios escritorio
+// === BLOQUE: Activar eventos en formularios de escritorio ===
 function activarEventosEscritorio() {
   document.getElementById("formLogin").addEventListener("submit", (e) => {
     e.preventDefault();
@@ -70,7 +74,6 @@ function activarEventosEscritorio() {
   });
 }
 
-// --- Formularios móviles
 function agregarEventoLoginMovil() {
   const form = document.getElementById("formLoginMovil");
   if (!form) return;
@@ -97,7 +100,7 @@ function agregarEventoRegistroMovil() {
   });
 }
 
-// --- Switch móvil
+// === BLOQUE: Switch entre login y registro movil ===
 function activarSwitchMovil() {
   const btnWrapper = document.querySelector(".switch-wrapper");
   if (!btnWrapper) return;
@@ -144,7 +147,7 @@ function activarSwitchMovil() {
   });
 }
 
-// --- Registro con validación
+// === BLOQUE: Validaciones y creación de usuario ===
 function manejarRegistro(nombre, correo, contra1, contra2) {
   const patronSeguridad = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
 
@@ -173,7 +176,7 @@ function manejarRegistro(nombre, correo, contra1, contra2) {
     });
 }
 
-// --- Login con correo
+// === BLOQUE: Inicio de sesión con correo y contraseña ===
 function manejarLogin(correo, contra) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo))
     return mostrarModalError("Correo inválido");
@@ -196,7 +199,7 @@ function manejarLogin(correo, contra) {
     });
 }
 
-// --- Restablecer contraseña
+// === Bloque: Restablecer contraseña ===
 function activarRestablecer() {
   const parrafo = document.getElementById("restablecerContra");
   if (parrafo) {
@@ -210,7 +213,7 @@ function activarRestablecer() {
   }
 }
 
-// --- Login social
+// === BLOQUE: Login con Google, GitHub y control de errores ===
 function activarLoginSocial() {
   const iniciarSocial = (provider) => {
     autenticacionCancelada = false;
@@ -252,7 +255,7 @@ function activarLoginSocial() {
   );
 }
 
-// --- Modal de error
+// === BLOQUE: Modal de error ===
 function mostrarModalError(mensaje) {
   const modal = document.getElementById("modalError");
   const texto = document.getElementById("mensajeError");
@@ -263,9 +266,8 @@ function mostrarModalError(mensaje) {
 
   btnCerrar.onclick = () => {
     modal.classList.add("oculto");
-    autenticacionCancelada = false; // Reinicia el estado
+    autenticacionCancelada = false;
   };
 }
 
-// --- Ejecutar al cargar
 cargarVistaLogin();
