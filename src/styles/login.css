@@ -68,6 +68,14 @@ input[type="submit"] {
   padding: 2% 0;
 }
 
+#restablecerContra {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  cursor: pointer;
+}
+
 /* === BOTONES DE ACCIÓN === */
 button.boton {
   background-color: transparent;

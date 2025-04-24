@@ -72,6 +72,7 @@ function activarEventosEscritorio() {
     document.querySelector(".izq2").style.display = "none";
     document.querySelector(".drch2").style.display = "none";
   });
+  activarRestablecer();
 }
 
 function agregarEventoLoginMovil() {
@@ -84,6 +85,7 @@ function agregarEventoLoginMovil() {
     const contra = form.contra.value.trim();
     manejarLogin(correo, contra);
   });
+  activarRestablecer();
 }
 
 function agregarEventoRegistroMovil() {
@@ -140,7 +142,6 @@ function activarSwitchMovil() {
           <input type="submit" value="INICIAR SESIÓN" class="boton">
         </form>`;
       agregarEventoLoginMovil();
-      activarRestablecer();
     }
 
     isLogin = !isLogin;
@@ -201,16 +202,20 @@ function manejarLogin(correo, contra) {
 
 // === Bloque: Restablecer contraseña ===
 function activarRestablecer() {
-  const parrafo = document.getElementById("restablecerContra");
-  if (parrafo) {
-    parrafo.addEventListener("click", () => {
-      const correo = prompt("Introduce tu correo electrónico:");
-      if (!correo || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) return;
-      auth.sendPasswordResetEmail(correo)
-        .then(() => alert("Correo de restablecimiento enviado"))
-        .catch((error) => console.error(error.code, error.message));
-    });
-  }
+  // Elimina cualquier listener previo asignado al elemento
+  const nuevoParrafo = document.getElementById("restablecerContra");
+  if (!nuevoParrafo) return;
+
+  const nuevoParrafoClonado = nuevoParrafo.cloneNode(true);
+  nuevoParrafo.parentNode.replaceChild(nuevoParrafoClonado, nuevoParrafo);
+
+  nuevoParrafoClonado.addEventListener("click", () => {
+    const correo = prompt("Introduce tu correo electrónico:");
+    if (!correo || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) return;
+    auth.sendPasswordResetEmail(correo)
+      .then(() => alert("Correo de restablecimiento enviado"))
+      .catch((error) => console.error(error.code, error.message));
+  });
 }
 
 // === BLOQUE: Login con Google, GitHub y control de errores ===
