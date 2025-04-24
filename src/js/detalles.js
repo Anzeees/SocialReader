@@ -41,8 +41,8 @@ if (workId && mainContent) {
 
     const user = firebase.auth().currentUser;
     const clave = libro.id;
-    let favIcon = "./assets/img/interface/favdes.png";
-    let mostrarIcon = "./assets/img/interface/marcdes.png";
+    let favIcon = "./assets/img/interface/favdesdetails.png";
+    let mostrarIcon = "./assets/img/interface/marcdesdetails.png";
 
     if (user) {
       if (await estaEnFavoritos(user.uid, clave)) favIcon = "./assets/img/interface/favact.png";
@@ -88,7 +88,7 @@ if (workId && mainContent) {
         const esta = await estaEnFavoritos(user.uid, clave);
         if (esta) {
           await eliminarLibroFavorito(user.uid, clave);
-          btnFav.querySelector("img").src = "./assets/img/interface/favdes.png";
+          btnFav.querySelector("img").src = "./assets/img/interface/favdesdetails.png";
         } else {
           await agregarLibroFavorito(user.uid, clave);
           btnFav.querySelector("img").src = "./assets/img/interface/favact.png";
@@ -100,7 +100,7 @@ if (workId && mainContent) {
         const esta = await estaEnMostrarMasTarde(user.uid, clave);
         if (esta) {
           await eliminarMostrarMasTarde(user.uid, clave);
-          btnMostrar.querySelector("img").src = "./assets/img/interface/marcdes.png";
+          btnMostrar.querySelector("img").src = "./assets/img/interface/marcdesdetails.png";
         } else {
           await agregarMostrarMasTarde(user.uid, clave);
           btnMostrar.querySelector("img").src = "./assets/img/interface/marcdetails.png";
