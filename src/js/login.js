@@ -119,7 +119,7 @@ function activarSwitchMovil() {
       contenedor.innerHTML = `
         <form id="formRegisterMovil">
           <h1>Únete a SocialReader</h1>
-          <p>O regístrate con tu correo electrónico</p>
+          <p>O regístrate con tu email</p>
           <input type="text" name="nombre" id="nombre" placeholder="Nombre" required>
           <input type="email" name="correo" id="correoregistro" placeholder="Correo Electrónico" required>
           <input type="password" name="contra" id="contraregistro" placeholder="Contraseña" required>

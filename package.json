@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "favicon": "^0.0.2",
     "firebase": "^11.6.0"
   }
 }

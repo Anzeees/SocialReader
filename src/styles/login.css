@@ -169,10 +169,6 @@ button.boton {
     background-color: var(--color-oscuro);
   }
 
-  .izq, .drch, .izq2, .drch2 {
-    display: none;
-  }
-
   .movil {
     height: 812px;
     width: 375px;

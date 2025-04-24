@@ -122,7 +122,7 @@ export async function obtenerDetallesLibro(workId) {
 
 export async function obtenerTopMasVendidos() {
   try {
-    const res = await fetch('https://openlibrary.org/subjects/fantasy.json?limit=10');
+    const res = await fetch('https://openlibrary.org/subjects/fantasy.json?limit=20');
     const data = await res.json();
     return Promise.all(data.works.map(libro => {
       const id = libro.key.split('/').pop();
@@ -136,8 +136,8 @@ export async function obtenerTopMasVendidos() {
 
 export async function obtenerLibrosPopulares() {
   const urls = [
-    'https://openlibrary.org/search.json?q=libro&limit=10',
-    'https://openlibrary.org/subjects/fantasy.json?limit=10'
+    'https://openlibrary.org/search.json?q=libro&limit=20',
+    'https://openlibrary.org/subjects/fantasy.json?limit=20'
   ];
 
   for (const url of urls) {
