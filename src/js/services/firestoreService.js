@@ -181,6 +181,25 @@ export async function obtenerTodosUsuarios() {
   }
 }
 
-export function CrearResena(user) {
-  
+export function crearResena(uid, idLibro, review, valoracion, spoilers) {
+  const fecha = new Date().toISOString();
+  const idResena = `${uid}-${idLibro}-${fecha}`;
+
+  const nuevaResena = {
+    idresena: idResena,
+    uid: uid,
+    idlibro: idLibro,
+    review: review,
+    valoracion: valoracion,
+    spoilers: spoilers
+  };
+
+  const resenaRef = db.collection("resenas").doc(idResena);
+  const usuarioRef = db.collection("usuarios").doc(uid);
+  return resenaRef.set(nuevaResena)
+    .then(() => {
+      return usuarioRef.update({
+        resenas: firebase.firestore.FieldValue.arrayUnion(idResena)
+      });
+    });
 }

@@ -1,8 +1,16 @@
 // SEARCH.JS -- ÁNGEL MARTÍNEZ ORDIALES
 
 // === IMPORTACIONES ===
-// --- Importación de servicios de Firebase y Firestore
-import { mostrarNombre, avatarUsuario, agregarLibroFavorito, eliminarLibroFavorito, estaEnFavoritos, agregarMostrarMasTarde, eliminarMostrarMasTarde, estaEnMostrarMasTarde } from "./services/firestoreService.js";
+import {
+  mostrarNombre,
+  avatarUsuario,
+  agregarLibroFavorito,
+  eliminarLibroFavorito,
+  estaEnFavoritos,
+  agregarMostrarMasTarde,
+  eliminarMostrarMasTarde,
+  estaEnMostrarMasTarde,
+} from "./services/firestoreService.js";
 
 // === VARIABLES DEL DOM ===
 const mainContent = document.getElementById("mainContent");
@@ -176,13 +184,24 @@ async function mostrarResultados(libros) {
         <button class="accion btn-fav" data-id="${libro.key}">
           <img src="${favIcon}" alt="Favorito">
         </button>
-        <button class="resena"><img src="./assets/img/interface/nueva-resena.png" alt="Reseña"> Nueva Reseña</button>
+        <button class="resena" data-id="${keyLimpia}">
+          <img src="./assets/img/interface/nueva-resena.png" alt="Reseña"> Nueva Reseña
+        </button>
       </div>
     `;
 
     item.addEventListener("click", (e) => {
-      const esBoton = e.target.closest(".accion") || e.target.closest(".resena");
+      const btnResena = e.target.closest(".resena");
+      const esBoton = e.target.closest(".accion");
+
+      if (btnResena) {
+        const workId = btnResena.dataset.id;
+        window.location.hash = `#resena/${workId}`;
+        return;
+      }
+
       if (esBoton) return;
+
       window.location.hash = `#detalle/${keyLimpia}`;
     });
 
