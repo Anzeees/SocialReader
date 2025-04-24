@@ -2,21 +2,9 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Regla para permitir lectura y escritura del documento del usuario
-    match /usuarios/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
-    }
-
-    // Regla para permitir crear una reseña solo si el UID coincide con el autenticado
-    match /resenas/{idresena} {
-      allow create: if request.auth != null &&
-                    request.resource.data.uid == request.auth.uid &&
-                    request.resource.data.idlibro is string &&
-                    request.resource.data.review is string &&
-                    request.resource.data.valoracion is int &&
-                    request.resource.data.spoilers is bool;
-                    
-      allow read: if true; // Puedes ajustar esta parte según tu lógica
+    // Regla global para todas las colecciones
+    match /{document=**} {
+      allow read, write: if request.auth != null;
     }
   }
 }

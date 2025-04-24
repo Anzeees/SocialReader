@@ -2,7 +2,7 @@
 
 // === IMPORTACIONES ===
 // --- Servicios de Firebase y OpenLibrary
-import { mostrarNombre, avatarUsuario, obtenerDocumentoUsuario, obtenerTodosUsuarios, agregarAmigo, eliminarAmigo } from "./services/firestoreService.js";
+import { mostrarNombre, avatarUsuario, obtenerDocumentoUsuario, obtenerTodosUsuarios, agregarAmigo, eliminarAmigo, obtenerResenasDeUsuario } from "./services/firestoreService.js";
 import { obtenerResumenLibro } from "./services/openlibrary.js";
 
 // === VARIABLES GLOBALES ===
@@ -88,6 +88,7 @@ async function cargarDatosUsuario(uid) {
   await mostrarLibrosUsuario(datos.mostrarMasTarde, "contenedor-mas-tarde");
   await mostrarAmigos(uid, datos.amigos, "contenedor-mis-amigos");
   await mostrarNuevosAmigos(uid, datos.amigos);
+  await mostrarResenasUsuario(uid);
 }
 
 function formatearFecha(timestamp) {
@@ -235,3 +236,34 @@ document.getElementById("guardarAvatar").addEventListener("click", async () => {
   document.getElementById("selectorAvatar").classList.add("oculto");
   avatarSeleccionado = null;
 });
+
+async function mostrarResenasUsuario(uid) {
+  const contenedor = document.getElementById("mis-resenas");
+  contenedor.innerHTML = "";
+
+  const resenas = await obtenerResenasDeUsuario(uid);
+  if (resenas.length === 0) {
+    contenedor.innerHTML = "<p>No has publicado ninguna reseña todavía.</p>";
+    return;
+  }
+
+  for (const resena of resenas) {
+    const datos = await obtenerResumenLibro(resena.idlibro);
+    const titulo = datos.titulo || "Título desconocido";
+    const portada = datos.portada || "./assets/img/interface/placeholder-libro.png";
+
+    const div = document.createElement("div");
+    div.className = "libro-item";
+    div.addEventListener("click", () => {
+      window.location.hash = `#detalle/${resena.idlibro}`;
+    });
+    div.innerHTML = `
+      <img src="${portada}" alt="${titulo}">
+      <div class="overlay">
+        <strong>${titulo}</strong><br>
+        Valoración: ${resena.valoracion}/5
+      </div>
+    `;
+    contenedor.appendChild(div);
+  }
+}

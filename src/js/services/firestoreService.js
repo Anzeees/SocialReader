@@ -203,3 +203,8 @@ export function crearResena(uid, idLibro, review, valoracion, spoilers) {
       });
     });
 }
+
+export async function obtenerResenasDeUsuario(uid) {
+  const snapshot = await db.collection("resenas").where("uid", "==", uid).get();
+  return snapshot.docs.map(doc => doc.data());
+}
