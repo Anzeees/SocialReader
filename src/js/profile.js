@@ -2,79 +2,14 @@
 
 // === IMPORTACIONES ===
 // --- Servicios de Firebase y OpenLibrary
-import { mostrarNombre, avatarUsuario, obtenerDocumentoUsuario, obtenerTodosUsuarios, agregarAmigo, eliminarAmigo } from "./services/firestoreService.js";
+import { obtenerDocumentoUsuario, obtenerTodosUsuarios, agregarAmigo, eliminarAmigo } from "./services/firestoreService.js";
 import { obtenerResumenLibro } from "./services/openlibrary.js";
+import { accionesMenu } from "./nav.js";
 
 // === VARIABLES GLOBALES ===
-const mainContent = document.getElementById("mainContent");
+// const mainContent = document.getElementById("mainContent");
 
-// === MENÚ HAMBURGUESA: Mostrar/Ocultar ===
-document.getElementById("hamburguesa").addEventListener("click", () => {
-  document.getElementById("menuHamburguesa").classList.toggle("show");
-  document.getElementById("sombra").style.setProperty("display", "flex");
-});
-document.getElementById("exitMenu").addEventListener("click", (e) => {
-  e.preventDefault();
-  document.getElementById("menuHamburguesa").classList.remove("show");
-  document.getElementById("sombra").style.setProperty("display", "none");
-});
-
-// === CIERRE DE SESIÓN: Escritorio y móvil ===
-["exitescritorio", "exitmovil"].forEach(id => {
-  const btn = document.getElementById(id);
-  if (btn) {
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      firebase.auth().signOut().then(() => {
-        localStorage.removeItem("usuarioAutenticado");
-        window.location.hash = "#login";
-        window.dispatchEvent(new HashChangeEvent("hashchange"));
-      });
-    });
-  }
-});
-
-// === MENÚ PERFIL: Mostrar/Ocultar (escritorio) ===
-document.querySelector(".perfil").addEventListener("click", (e) => {
-  const menu = document.querySelector(".perfil-menu");
-  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
-  e.stopPropagation();
-});
-document.addEventListener("click", (e) => {
-  const menu = document.querySelector(".perfil-menu");
-  const perfil = document.querySelector(".perfil");
-  if (!perfil.contains(e.target)) {
-    menu.style.display = "none";
-  }
-});
-
-// === REDIRECCIÓN AL PERFIL (móvil y escritorio) ===
-document.querySelector("#nombreUsuario")?.addEventListener("click", () => {
-  window.location.hash = "#profile";
-});
-document.querySelector(".perfil-menu a[href='#profile']")?.addEventListener("click", (e) => {
-  e.preventDefault();
-  window.location.hash = "#profile";
-});
-
-// === CARGA DE DATOS DE USUARIO AUTENTICADO ===
-firebase.auth().onAuthStateChanged(async (user) => {
-  if (!user) return;
-
-  mostrarNombre(user.uid, (nombre) => {
-    const h5Usuario = document.querySelector(".perfil-movil h5");
-    if (h5Usuario) h5Usuario.textContent = nombre;
-  });
-  avatarUsuario(user.uid, (avatar) => {
-    const imgUsuario = document.querySelector(".perfil-movil img");
-    const imgUsuarioEscritorio = document.querySelector(".perfil img");
-    if (imgUsuarioEscritorio) imgUsuarioEscritorio.src = `./assets/img/avatars/${avatar}`;
-    if (imgUsuario) imgUsuario.src = `./assets/img/avatars/${avatar}`;
-  });
-
-  cargarDatosUsuario(user.uid);
-});
-
+accionesMenu();
 async function cargarDatosUsuario(uid) {
   const datos = await obtenerDocumentoUsuario(uid);
   if (!datos) return;
