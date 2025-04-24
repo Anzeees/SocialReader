@@ -180,3 +180,7 @@ export async function obtenerTodosUsuarios() {
     return [];
   }
 }
+
+export function CrearResena(user) {
+  
+}

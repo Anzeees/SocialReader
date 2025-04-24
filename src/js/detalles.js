@@ -1,14 +1,6 @@
 // DETALLES.JS -- ÁNGEL MARTÍNEZ ORDIALES
 
-import {
-  agregarLibroFavorito,
-  eliminarLibroFavorito,
-  estaEnFavoritos,
-  agregarMostrarMasTarde,
-  eliminarMostrarMasTarde,
-  estaEnMostrarMasTarde
-} from "./services/firestoreService.js";
-
+import { agregarLibroFavorito, eliminarLibroFavorito, estaEnFavoritos, agregarMostrarMasTarde, eliminarMostrarMasTarde, estaEnMostrarMasTarde } from "./services/firestoreService.js";
 import { obtenerDetallesLibro } from "./services/openlibrary.js";
 import { accionesMenu } from "./nav.js";
 
@@ -60,7 +52,7 @@ if (workId && mainContent) {
             <button class="accion btn-fav" data-id="${clave}">
               <img src="${favIcon}" alt="Favorito"> Mis Favoritos
             </button>
-            <button class="resena">
+            <button class="resena btn-resena" data-id="${clave}">
               <img src="./assets/img/interface/nueva-resena.png" alt="Reseña"> Nueva Reseña
             </button>
           </div>
@@ -105,6 +97,13 @@ if (workId && mainContent) {
           await agregarMostrarMasTarde(user.uid, clave);
           btnMostrar.querySelector("img").src = "./assets/img/interface/marcdetails.png";
         }
+      });
+
+      const btnResena = document.querySelector(".btn-resena");
+      btnResena.addEventListener("click", (e) => {
+        e.stopPropagation();
+        window.location.hash = `#resena/${clave}`;
+        window.dispatchEvent(new HashChangeEvent("hashchange"));
       });
     }
   });

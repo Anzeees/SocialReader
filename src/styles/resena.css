@@ -1,0 +1,85 @@
+/* HOME.CSS -- ÁNGEL MARTÍNEZ ORDIALES */
+
+.contenedor-resena {
+    width: 90%;
+    max-width: 700px;
+    margin: 40px auto;
+    background-color: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    font-family: inherit;
+  }
+  
+  .info-libro {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .portada-libro {
+    width: 90px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  }
+  
+  .datos-libro h2 {
+    font-size: 1.5em;
+    margin-bottom: 5px;
+  }
+  
+  .datos-libro .autor {
+    color: var(--color-complementario1);
+    font-size: 1em;
+  }
+  
+  .separador {
+    margin: 25px 0;
+    border: none;
+    height: 2px;
+    background-color: var(--color-complementario1);
+    opacity: 0.3;
+  }
+  
+  .estrellas {
+    font-size: 2em;
+    color: lightgray;
+    cursor: pointer;
+    margin: 10px 0 20px;
+  }
+  
+  .estrella:hover,
+  .estrella.activa {
+    color: gold;
+  }
+  
+  textarea {
+    width: 100%;
+    padding: 15px;
+    font-size: 1em;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    resize: vertical;
+    background-color: var(--color-claro);
+  }
+  
+  .opciones-resena {
+    margin: 15px 0;
+    font-size: 0.95em;
+  }
+  
+  .boton {
+    background-color: var(--color-complementario2);
+    color: white;
+    padding: 12px 25px;
+    font-size: 1em;
+    border: none;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .boton:hover {
+    background-color: #e63538;
+  }
+  

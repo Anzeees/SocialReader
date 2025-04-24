@@ -35,6 +35,11 @@ const rutas = {
     vista: 'detalles.html',
     estilo: 'detalles.css',
     script: 'detalles.js'
+  },
+  resena: {
+    vista: 'resena.html',
+    estilo: 'resena.css',
+    script: 'resena.js'
   }
 };
 
