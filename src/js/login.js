@@ -1,7 +1,6 @@
 // LOGIN.JS -- ÁNGEL MARTÍNEZ ORDIALES
 
 // === IMPORTACIONES ===
-// --- Importación servicios de Firebase
 import { auth } from "./services/firebase.js";
 import { crearPerfilUsuario } from "./services/firestoreService.js";
 
@@ -17,23 +16,24 @@ export function cargarVistaLogin() {
   activarEventosEscritorio();
   activarSwitchMovil();
   activarLoginSocial();
+  activarEventoRestablecerGlobal(); // NUEVO: activa restablecer en todo el documento
   document.getElementById("toggle").style.left = "0%";
 }
 
 // === BLOQUE: Ajuste de Vista según tamaño de pantalla ===
 function ajustarVista() {
   if (window.innerWidth <= 1000) {
-    document.querySelector(".izq").style.setProperty("display", "none");
-    document.querySelector(".drch").style.setProperty("display", "none");
-    document.querySelector(".izq2").style.setProperty("display", "none");
-    document.querySelector(".drch2").style.setProperty("display", "none");
-    document.querySelector(".movil").style.setProperty("display", "flex");
+    document.querySelector(".izq").style.display = "none";
+    document.querySelector(".drch").style.display = "none";
+    document.querySelector(".izq2").style.display = "none";
+    document.querySelector(".drch2").style.display = "none";
+    document.querySelector(".movil").style.display = "flex";
   } else {
-    document.querySelector(".movil").style.setProperty("display", "none");
-    document.querySelector(".izq").style.setProperty("display", "flex");
-    document.querySelector(".drch").style.setProperty("display", "flex");
-    document.querySelector(".izq2").style.setProperty("display", "none");
-    document.querySelector(".drch2").style.setProperty("display", "none");
+    document.querySelector(".movil").style.display = "none";
+    document.querySelector(".izq").style.display = "flex";
+    document.querySelector(".drch").style.display = "flex";
+    document.querySelector(".izq2").style.display = "none";
+    document.querySelector(".drch2").style.display = "none";
   }
 }
 
@@ -72,10 +72,9 @@ function activarEventosEscritorio() {
     document.querySelector(".izq2").style.display = "none";
     document.querySelector(".drch2").style.display = "none";
   });
-  activarRestablecer();
 }
 
-// === BLOQUE: Activar eventos en formulario login movil ===
+// === BLOQUE: Activar eventos en formulario login móvil ===
 function agregarEventoLoginMovil() {
   const form = document.getElementById("formLoginMovil");
   if (!form) return;
@@ -86,10 +85,9 @@ function agregarEventoLoginMovil() {
     const contra = form.contra.value.trim();
     manejarLogin(correo, contra);
   });
-  activarRestablecer();
 }
 
-// === BLOQUE: Activar eventos en formulario registro movil ===
+// === BLOQUE: Activar eventos en formulario registro móvil ===
 function agregarEventoRegistroMovil() {
   const form = document.getElementById("formRegisterMovil");
   if (!form) return;
@@ -104,7 +102,7 @@ function agregarEventoRegistroMovil() {
   });
 }
 
-// === BLOQUE: Switch entre login y registro movil ===
+// === BLOQUE: Switch entre login y registro móvil ===
 function activarSwitchMovil() {
   const btnWrapper = document.querySelector(".switch-wrapper");
   if (!btnWrapper) return;
@@ -244,22 +242,44 @@ function activarLoginSocial() {
   );
 }
 
-// === Bloque: Restablecer contraseña ===
-function activarRestablecer() {
-  // Elimina cualquier listener previo asignado al elemento
-  const nuevoParrafo = document.getElementById("restablecerContra");
-  if (!nuevoParrafo) return;
-
-  const nuevoParrafoClonado = nuevoParrafo.cloneNode(true);
-  nuevoParrafo.parentNode.replaceChild(nuevoParrafoClonado, nuevoParrafo);
-
-  nuevoParrafoClonado.addEventListener("click", () => {
-    const correo = prompt("Introduce tu correo electrónico:");
-    if (!correo || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) return;
-    auth.sendPasswordResetEmail(correo)
-      .then(() => mostrarModalError("Correo de restablecimiento enviado"))
-      .catch((error) => console.error(error.code, error.message));
+// === NUEVO BLOQUE: Delegación para botón de restablecer contraseña (móvil + escritorio) ===
+function activarEventoRestablecerGlobal() {
+  document.addEventListener("click", (e) => {
+    if (e.target?.id === "restablecerContra") {
+      mostrarModalRestablecer();
+    }
   });
+}
+
+function mostrarModalRestablecer() {
+  const modal = document.getElementById("modalRestablecer");
+  const inputCorreo = document.getElementById("correoRecuperacion");
+  if (!modal || !inputCorreo) return;
+
+  inputCorreo.value = "";
+  modal.classList.remove("oculto");
+
+  document.getElementById("btnEnviarRecuperacion").onclick = () => {
+    const correo = inputCorreo.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) {
+      mostrarModalError("Correo inválido");
+      return;
+    }
+
+    auth.sendPasswordResetEmail(correo)
+      .then(() => {
+        modal.classList.add("oculto");
+        mostrarModalError("Correo de restablecimiento enviado.");
+      })
+      .catch((error) => {
+        console.error(error.code, error.message);
+        mostrarModalError("Error al enviar correo. Intenta más tarde.");
+      });
+  };
+
+  document.getElementById("btnCerrarRecuperacion").onclick = () => {
+    modal.classList.add("oculto");
+  };
 }
 
 // === BLOQUE: Modal de error ===

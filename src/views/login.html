@@ -14,7 +14,7 @@
   <!-- Formulario de inicio de sesión -->
   <form id="formLogin">
     <p>O ingresa tu cuenta</p>
-    <input type="email" name="correo" id="correoinicio" placeholder="Correo Electrónico" required>
+    <input type="text" name="correo" id="correoinicio" placeholder="Correo Electrónico" required>
     <input type="password" name="contra" id="contrainicio" placeholder="Contraseña" required>
     <center><a id="restablecerContra">¿Olvidaste tu contraseña?</a></center>
     <center><input type="submit" value="INICIAR SESIÓN" class="boton"></center>
@@ -50,7 +50,7 @@
   <form id="formRegister">
     <p>O regístrate con tu email</p>
     <input type="text" name="nombre" id="nombre" placeholder="Nombre" title="Nombre no válido" required>
-    <input type="email" name="correo" id="correoregistro" placeholder="Correo Electrónico" required>
+    <input type="text" name="correo" id="correoregistro" placeholder="Correo Electrónico" required>
     <input type="password" name="contra" id="contraregistro" placeholder="Contraseña" title="La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y símbolos" required>
     <input type="password" name="contra2" id="contraregistro2" placeholder="Repetir Contraseña" required>
     <center><input type="submit" value="REGISTRARME" class="boton"></center>
@@ -74,7 +74,7 @@
     <div id="formularioMovil">
       <form id="formLoginMovil">
         <h1>Vuelve a SocialReader</h1>
-        <input type="email" name="correo" placeholder="Correo Electrónico" required>
+        <input type="text" name="correo" placeholder="Correo Electrónico" required>
         <input type="password" name="contra" placeholder="Contraseña" required>
         <center><a id="restablecerContra">¿Olvidaste tu contraseña?</a></center>
         <input type="submit" value="INICIAR SESIÓN" class="boton">
@@ -97,5 +97,18 @@
   <div class="modal-contenido">
     <p id="mensajeError">Error de autenticación</p>
     <button id="btnCerrarModal">Aceptar</button>
+  </div>
+</div>
+
+<!-- === MODAL DE CAMBIO DE CONTRASEÑA === -->
+<div id="modalRestablecer" class="modal-error oculto">
+  <div class="modal-contenido">
+    <h2>Cambiar Contraseña</h2>
+    <p>Introduce tu correo electrónico para enviarte un enlace de restablecimiento.</p>
+    <input type="email" id="correoRecuperacion" placeholder="Correo Electrónico" required>
+    <div style="margin-top: 15px;">
+      <button id="btnEnviarRecuperacion">Enviar</button>
+      <button id="btnCerrarRecuperacion" style="margin-left: 10px;">Cerrar</button>
+    </div>
   </div>
 </div>

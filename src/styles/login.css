@@ -181,7 +181,9 @@ button.boton {
 
   .movil {
     height: 812px;
+    max-height: 100vh;
     width: 375px;
+    max-width: 100vw;
     background: linear-gradient(to bottom left, var(--color-complementario2), #ff693b);
     display: flex;
     flex-direction: column;
