@@ -67,6 +67,20 @@ document.querySelector(".perfil-menu a[href='#profile']")?.addEventListener("cli
     window.location.hash = "#profile";
   });
 
+
+  function mostrarModal(mensaje) {
+    const modal = document.getElementById("modalMensaje");
+    const texto = document.getElementById("modalTexto");
+    const cerrar = document.getElementById("cerrarModal");
+  
+    texto.textContent = mensaje;
+    modal.classList.remove("hidden");
+  
+    cerrar.onclick = () => {
+      modal.classList.add("hidden");
+    };
+  }
+
 // === CARGA DE DATOS DEL USUARIO AUTENTICADO ===
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
@@ -169,11 +183,18 @@ firebase.auth().onAuthStateChanged(async (user) => {
       const spoilers = document.getElementById("spoiler").checked;
 
       try {
-        await crearResena(uid, workId, review, valoracion, spoilers);
-        alert("Reseña publicada correctamente.");
-      } catch (error) {
-        console.error("Error al crear la reseña:", error);
-        alert("No se pudo guardar la reseña. Intenta más tarde.");
-      }
+  await crearResena(uid, workId, review, valoracion, spoilers);
+  mostrarModal("Reseña publicada correctamente.");
+
+  // Limpiar formulario
+  document.getElementById("formResena").reset();
+  const estrellas = document.querySelectorAll(".estrella");
+  estrellas.forEach(e => e.classList.remove("activa"));
+  document.getElementById("valoracion").setAttribute("data-valor", "0");
+
+} catch (error) {
+  console.error("Error al crear la reseña:", error);
+  mostrarModal("No se pudo guardar la reseña. Intenta más tarde.");
+}
     });
 });
