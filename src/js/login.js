@@ -75,6 +75,7 @@ function activarEventosEscritorio() {
   activarRestablecer();
 }
 
+// === BLOQUE: Activar eventos en formulario login movil ===
 function agregarEventoLoginMovil() {
   const form = document.getElementById("formLoginMovil");
   if (!form) return;
@@ -88,6 +89,7 @@ function agregarEventoLoginMovil() {
   activarRestablecer();
 }
 
+// === BLOQUE: Activar eventos en formulario registro movil ===
 function agregarEventoRegistroMovil() {
   const form = document.getElementById("formRegisterMovil");
   if (!form) return;
@@ -200,24 +202,6 @@ function manejarLogin(correo, contra) {
     });
 }
 
-// === Bloque: Restablecer contraseña ===
-function activarRestablecer() {
-  // Elimina cualquier listener previo asignado al elemento
-  const nuevoParrafo = document.getElementById("restablecerContra");
-  if (!nuevoParrafo) return;
-
-  const nuevoParrafoClonado = nuevoParrafo.cloneNode(true);
-  nuevoParrafo.parentNode.replaceChild(nuevoParrafoClonado, nuevoParrafo);
-
-  nuevoParrafoClonado.addEventListener("click", () => {
-    const correo = prompt("Introduce tu correo electrónico:");
-    if (!correo || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) return;
-    auth.sendPasswordResetEmail(correo)
-      .then(() => mostrarModalError("Correo de restablecimiento enviado"))
-      .catch((error) => console.error(error.code, error.message));
-  });
-}
-
 // === BLOQUE: Login con Google, GitHub y control de errores ===
 function activarLoginSocial() {
   const iniciarSocial = (provider) => {
@@ -258,6 +242,24 @@ function activarLoginSocial() {
       mostrarModalError("Este servicio aún no está disponible.");
     })
   );
+}
+
+// === Bloque: Restablecer contraseña ===
+function activarRestablecer() {
+  // Elimina cualquier listener previo asignado al elemento
+  const nuevoParrafo = document.getElementById("restablecerContra");
+  if (!nuevoParrafo) return;
+
+  const nuevoParrafoClonado = nuevoParrafo.cloneNode(true);
+  nuevoParrafo.parentNode.replaceChild(nuevoParrafoClonado, nuevoParrafo);
+
+  nuevoParrafoClonado.addEventListener("click", () => {
+    const correo = prompt("Introduce tu correo electrónico:");
+    if (!correo || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) return;
+    auth.sendPasswordResetEmail(correo)
+      .then(() => mostrarModalError("Correo de restablecimiento enviado"))
+      .catch((error) => console.error(error.code, error.message));
+  });
 }
 
 // === BLOQUE: Modal de error ===
