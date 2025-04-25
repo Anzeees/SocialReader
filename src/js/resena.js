@@ -1,14 +1,64 @@
-import {
-  mostrarNombre,
-  avatarUsuario,
-  crearResena,
-} from "./services/firestoreService.js";
+/** RESENA.JS -- ÁNGEL MARTÍNEZ ORDIALES -- SOCIALREADER --
+============================================================
+Proyecto: SocialReader
+Autor: Ángel Martínez Ordiales
+Archivo: resena.js
+Descripción: Módulo de creación de reseñas de libros.
+*/
+
+// === IMPORTACIONES ===
+import { mostrarNombre, avatarUsuario, crearResena } from "./services/firestoreService.js";
 import { obtenerDetallesLibro } from "./services/openlibrary.js";
 
+// === ELEMENTOS DEL DOM ===
 const mainContent = document.getElementById("mainContent");
 const loader = document.getElementById("loader");
 
+// === FUNCIONES UTILITARIAS ===
+
+/**
+ * Muestra un modal de error con el mensaje proporcionado.
+ * @function
+ * @param {string} mensaje - Texto que se mostrara en el modal de error.
+ * @param {Function} [callback] - Funcion opcional que se ejecuta al cerrar el modal.
+ */
+function mostrarModalError(mensaje, callback) {
+  const modal = document.getElementById("modalError");
+  const texto = document.getElementById("mensajeError");
+  const btnCerrar = document.getElementById("btnCerrarModal");
+
+  if (!modal || !texto || !btnCerrar) return;
+
+  texto.textContent = mensaje;
+  modal.classList.remove("oculto");
+
+  btnCerrar.onclick = () => {
+    modal.classList.add("oculto");
+    if (typeof callback === "function") callback();
+  };
+}
+
+/**
+ * Limpia todos los campos del formulario de reseña.
+ * @function
+ * @param {HTMLFormElement} formulario - Formulario a limpiar.
+ */
+function limpiarFormulario(formulario) {
+  if (!formulario) return;
+  formulario.reset();
+
+  const estrellas = formulario.querySelectorAll(".estrella");
+  estrellas.forEach((e) => e.classList.remove("activa"));
+
+  const valoracion = formulario.querySelector("#valoracion");
+  if (valoracion) valoracion.setAttribute("data-valor", "0");
+}
+
 // === GESTIÓN DE INTERFAZ: MENÚ HAMBURGUESA ===
+/**
+ * Cierra el menú hamburguesa en vista móvil.
+ * @function
+ */
 function cerrarMenuHamburguesa() {
   document.getElementById("menuHamburguesa").classList.remove("show");
   document.getElementById("sombra").style.display = "none";
@@ -30,14 +80,11 @@ document.getElementById("exitMenu").addEventListener("click", (e) => {
   if (btn) {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
-      firebase
-        .auth()
-        .signOut()
-        .then(() => {
-          localStorage.removeItem("usuarioAutenticado");
-          window.location.hash = "#login";
-          window.dispatchEvent(new HashChangeEvent("hashchange"));
-        });
+      firebase.auth().signOut().then(() => {
+        localStorage.removeItem("usuarioAutenticado");
+        window.location.hash = "#login";
+        window.dispatchEvent(new HashChangeEvent("hashchange"));
+      });
     });
   }
 });
@@ -63,25 +110,16 @@ document.querySelector("#nombreUsuario")?.addEventListener("click", () => {
 });
 
 document.querySelector(".perfil-menu a[href='#profile']")?.addEventListener("click", (e) => {
-    e.preventDefault();
-    window.location.hash = "#profile";
-  });
-
-
-  function mostrarModalError(mensaje) {
-    const modal = document.getElementById("modalError");
-    const texto = document.getElementById("mensajeError");
-    const btnCerrar = document.getElementById("btnCerrarModal");
-  
-    texto.textContent = mensaje;
-    modal.classList.remove("oculto");
-  
-    btnCerrar.onclick = () => {
-      modal.classList.add("oculto");
-    };
-  }
+  e.preventDefault();
+  window.location.hash = "#profile";
+});
 
 // === CARGA DE DATOS DEL USUARIO AUTENTICADO ===
+
+/**
+ * Al detectar usuario autenticado, carga nombre y avatar.
+ * @function
+ */
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
     mostrarNombre(user.uid, (nombre) => {
@@ -93,42 +131,67 @@ firebase.auth().onAuthStateChanged((user) => {
       const imgUsuarioEscritorio = document.querySelector(".perfil img");
       if (imgUsuarioEscritorio)
         imgUsuarioEscritorio.src = `./assets/img/avatars/${avatar}`;
-      if (imgUsuario) imgUsuario.src = `./assets/img/avatars/${avatar}`;
+      if (imgUsuario)
+        imgUsuario.src = `./assets/img/avatars/${avatar}`;
     });
   }
 });
 
+// === BLOQUES FUNCIONALES ===
+
+/**
+ * Obtiene el ID del libro (workId) desde el hash de la URL.
+ * @function
+ * @returns {string|null} - ID del libro o null si no existe.
+ */
 function obtenerWorkIdDesdeHash() {
   const hash = window.location.hash;
   const partes = hash.split("/");
   return partes.length === 2 ? partes[1] : null;
 }
 
+/**
+ * Activa la selección de estrellas y actualiza el texto de valoración.
+ * @function
+ */
 function activarEstrellas() {
   const estrellas = document.querySelectorAll(".estrella");
+  const textoValoracion = document.getElementById("textoValoracion");
 
   estrellas.forEach((estrella) => {
     estrella.addEventListener("click", () => {
       const valorSeleccionado = parseInt(estrella.dataset.valor);
       estrellas.forEach((e) => {
-        e.classList.toggle(
-          "activa",
-          parseInt(e.dataset.valor) <= valorSeleccionado
-        );
+        e.classList.toggle("activa", parseInt(e.dataset.valor) <= valorSeleccionado);
       });
-      document
-        .getElementById("valoracion")
-        .setAttribute("data-valor", valorSeleccionado);
+      document.getElementById("valoracion").setAttribute("data-valor", valorSeleccionado);
+      if (textoValoracion) {
+        textoValoracion.textContent = `${valorSeleccionado} estrella${valorSeleccionado === 1 ? "" : "s"}`;
+      }
     });
   });
 }
 
+// === CARGA Y GESTIÓN DEL FORMULARIO DE RESEÑA ===
+
+/**
+ * Carga los detalles del libro y muestra el formulario para crear una reseña.
+ * Valida que el usuario esté logueado y maneja errores si fallan las peticiones.
+ * @function
+ */
 firebase.auth().onAuthStateChanged(async (user) => {
   if (!user) return;
+
   const uid = user.uid;
   const workId = obtenerWorkIdDesdeHash();
+
   if (!workId) {
-    mainContent.innerHTML = "<p>Error: libro no especificado.</p>";
+    loader.style.display = "none";
+    mainContent.hidden = false;
+    mostrarModalError("Error: No se ha especificado ningún libro para reseñar.", () => {
+      window.location.hash = "#home";
+      window.dispatchEvent(new HashChangeEvent("hashchange"));
+    });
     return;
   }
 
@@ -136,18 +199,20 @@ firebase.auth().onAuthStateChanged(async (user) => {
   mainContent.hidden = true;
 
   const libro = await obtenerDetallesLibro(workId);
+
   loader.style.display = "none";
+
   if (!libro) {
-    mainContent.innerHTML = "<p>Error al cargar los detalles del libro.</p>";
+    mainContent.hidden = false;
+    mostrarModalError("Error al cargar los detalles del libro.");
     return;
   }
 
+  mainContent.hidden = false;
   mainContent.innerHTML = `
     <div class="resena-container">
       <div class="info-libro">
-        <img src="${
-          libro.portada
-        }" alt="Portada del libro" class="portada-libro">
+        <img src="${libro.portada}" alt="Portada del libro" class="portada-libro">
         <div class="datos-libro">
           <h2>${libro.titulo}</h2>
           <p class="autor">${libro.autor}</p>
@@ -157,9 +222,8 @@ firebase.auth().onAuthStateChanged(async (user) => {
       <form id="formResena">
         <label for="valoracion">Mi Valoración:</label>
         <div class="estrellas" id="valoracion" data-valor="0">
-          ${[1, 2, 3, 4, 5]
-            .map((i) => `<span class="estrella" data-valor="${i}">★</span>`)
-            .join("")}
+          ${[1,2,3,4,5].map((i) => `<span class="estrella" data-valor="${i}">★</span>`).join("")}
+          <span id="textoValoracion" class="texto-valoracion">0 estrellas</span>
         </div>
         <label for="opinion">¿Cuál es tu opinión?</label>
         <textarea id="opinion" placeholder="Escribe tu reseña aquí..." rows="6"></textarea>
@@ -174,27 +238,27 @@ firebase.auth().onAuthStateChanged(async (user) => {
   activarEstrellas();
 
   document.getElementById("formResena").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const review = document.getElementById("opinion").value.trim();
-      const valoracion =
-        parseInt(
-          document.getElementById("valoracion").getAttribute("data-valor")
-        ) || 0;
-      const spoilers = document.getElementById("spoiler").checked;
+    e.preventDefault();
 
-      try {
-  await crearResena(uid, workId, review, valoracion, spoilers);
-  mostrarModalError("Reseña publicada correctamente.");
+    const review = document.getElementById("opinion").value.trim();
+    const valoracion = parseInt(document.getElementById("valoracion").getAttribute("data-valor")) || 0;
+    const spoilers = document.getElementById("spoiler").checked;
 
-  // Limpiar formulario
-  document.getElementById("formResena").reset();
-  const estrellas = document.querySelectorAll(".estrella");
-  estrellas.forEach(e => e.classList.remove("activa"));
-  document.getElementById("valoracion").setAttribute("data-valor", "0");
+    if (valoracion === 0) {
+      mostrarModalError("Debes seleccionar al menos una estrella para publicar tu reseña.");
+      return;
+    }
 
-} catch (error) {
-  console.error("Error al crear la reseña:", error);
-  mostrarModalError("No se pudo guardar la reseña. Intenta más tarde.");
-}
-    });
+    try {
+      await crearResena(uid, workId, review, valoracion, spoilers);
+      mostrarModalError("¡Reseña publicada correctamente!", () => {
+        window.location.hash = `#detalle/${workId}`;
+        window.dispatchEvent(new HashChangeEvent("hashchange"));
+      });
+      limpiarFormulario(document.getElementById("formResena"));
+    } catch (error) {
+      console.error("Error al crear la reseña:", error);
+      mostrarModalError("No se pudo guardar la reseña. Intenta más tarde.");
+    }
+  });
 });

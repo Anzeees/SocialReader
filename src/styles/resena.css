@@ -1,3 +1,12 @@
+/* RESENA.CSS -- ÁNGEL MARTÍNEZ ORDIALES -- SOCIALREADER --
+============================================================
+Proyecto: SocialReader
+Autor: Ángel Martínez Ordiales
+Archivo: resena.css
+Descripción: Estilos CSS para la vista de creación de reseñas.
+*/
+
+/* === ESTILOS GENERALES DE LA VISTA DE RESEÑAS === */
 #mainContent {
   padding: 3em;
   display: flex;
@@ -8,6 +17,7 @@
   box-sizing: border-box;
 }
 
+/* === CONTENEDOR PRINCIPAL DE LA RESEÑA === */
 .resena-container {
   display: flex;
   flex-direction: column;
@@ -21,6 +31,7 @@
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
 }
 
+/* === INFORMACIÓN DEL LIBRO (Portada y título) === */
 .info-libro {
   display: flex;
   align-items: center;
@@ -43,6 +54,7 @@
   font-size: 1em;
 }
 
+/* === SEPARADOR ENTRE INFORMACIÓN Y FORMULARIO === */
 .separador {
   margin: 25px 0;
   border: none;
@@ -51,6 +63,7 @@
   opacity: 0.3;
 }
 
+/* === SISTEMA DE VALORACIÓN CON ESTRELLAS === */
 .estrellas {
   font-size: 2em;
   color: lightgray;
@@ -58,8 +71,7 @@
   margin: 10px 0 20px;
 }
 
-.estrella:hover,
-.estrella.activa {
+.estrella:hover, .estrella.activa {
   color: gold;
 }
 
@@ -73,11 +85,24 @@ textarea {
   background-color: var(--color-claro);
 }
 
+#valoracion {
+  display: flex;
+  align-items: center;
+}
+
+#textoValoracion {
+  margin-left: 1%;
+  font-size: medium;
+  justify-self: center;
+}
+
+/* === OPCIONES ADICIONALES DE LA RESEÑA (spoiler) === */
 .opciones-resena {
   margin: 15px 0;
   font-size: 0.95em;
 }
 
+/* === BOTÓN DE PUBLICAR RESEÑA === */
 .boton {
   background-color: var(--color-complementario2);
   color: white;
@@ -93,6 +118,7 @@ textarea {
   background-color: #e63538;
 }
 
+/* === CARGADOR (LOADER) === */
 .loader-container {
   display: flex;
   flex-direction: column;
@@ -116,7 +142,6 @@ textarea {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
-
 
 /* === MODAL DE ERROR === */
 .modal-error {
@@ -155,6 +180,7 @@ textarea {
   cursor: pointer;
 }
 
+/* === CLASES DE UTILIDAD === */
 .oculto {
   display: none;
 }

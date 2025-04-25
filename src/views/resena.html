@@ -1,5 +1,14 @@
-<!-- RESENA.HTML -- ÁNGEL MARTÍNEZ ORDIALES -->
+<!-- RESENA.HTML -- ÁNGEL MARTÍNEZ ORDIALES -- SOCIALREADER --
+=======================================================
+Proyecto: SocialReader
+Autor: Ángel Martínez Ordiales
+Archivo: resena.html
+Descripción: Vista de reseña de libros (resena)
+=======================================================
+-->
+<!-- === ESTRUCTURA PRINCIPAL: Sección de Reseñas -->
 <section>
+  <!-- BARRA DE NAVEGACIÓN -->
   <nav>
     <div class="sombra" id="sombra"></div>
     <img class="hamburguesa" src="./assets/img/interface/menu-hamburguesa.png" id="hamburguesa" alt="Menú">
@@ -40,14 +49,16 @@
       </div>
     </div>
   </nav>
-
+<!-- === CARGADOR MIENTRAS SE GENERA EL FORMULARIO === -->
   <div id="loader" class="loader-container">
     <div class="spinner"></div>
     <p>Generando formulario...</p>
   </div>
 
+  <!-- === CONTENEDOR PRINCIPAL (formulario de reseña) === -->
   <main id="mainContent" data-vista="resena" hidden></main>
 
+  <!-- === MODAL DE ERROR === -->
   <div id="modalError" class="modal-error oculto">
     <div class="modal-contenido">
       <p id="mensajeError">Error de autenticación</p>
