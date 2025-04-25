@@ -1,4 +1,10 @@
-// LOGIN.JS -- ÁNGEL MARTÍNEZ ORDIALES
+/** LOGIN.JS -- ÁNGEL MARTÍNEZ ORDIALES -- SOCIALREADER --
+===========================================================
+Proyecto: SocialReader
+Autor: Ángel Martínez Ordiales
+Archivo: login.js
+Descripción: Módulo de autenticación de usuarios.
+*/
 
 // === IMPORTACIONES ===
 import { auth } from "./services/firebase.js";
@@ -7,8 +13,11 @@ import { crearPerfilUsuario } from "./services/firestoreService.js";
 // === ESTADO GLOBAL ===
 let autenticacionCancelada = false;
 
-// === FUNCIÓN PRINCIPAL: Cargar vista de login al iniciar ===
-export function cargarVistaLogin() {
+/**
+ * Carga la vista de login inicial y asigna los eventos (Función principal).
+ * @function
+ */
+function cargarVistaLogin() {
   ajustarVista();
   window.addEventListener("resize", ajustarVista);
   agregarEventoLoginMovil();
@@ -16,11 +25,14 @@ export function cargarVistaLogin() {
   activarEventosEscritorio();
   activarSwitchMovil();
   activarLoginSocial();
-  activarEventoRestablecerGlobal(); // NUEVO: activa restablecer en todo el documento
+  activarEventoRestablecerGlobal();
   document.getElementById("toggle").style.left = "0%";
 }
-
-// === BLOQUE: Ajuste de Vista según tamaño de pantalla ===
+// === BLOQUES FUNCIONALES ===
+/**
+ * Ajusta la vista entre escritorio y móvil según el ancho de pantalla.
+ * @function
+ */
 function ajustarVista() {
   if (window.innerWidth <= 1000) {
     document.querySelector(".izq").style.display = "none";
@@ -37,7 +49,10 @@ function ajustarVista() {
   }
 }
 
-// === BLOQUE: Activar eventos en formularios de escritorio ===
+/**
+ * Activa los eventos de login, registro y cambio entre formularios de escritorio.
+ * @function
+ */
 function activarEventosEscritorio() {
   document.getElementById("formLogin").addEventListener("submit", (e) => {
     e.preventDefault();
@@ -74,7 +89,10 @@ function activarEventosEscritorio() {
   });
 }
 
-// === BLOQUE: Activar eventos en formulario login móvil ===
+/**
+ * Agrega el evento de login para el formulario de móvil.
+ * @function
+ */
 function agregarEventoLoginMovil() {
   const form = document.getElementById("formLoginMovil");
   if (!form) return;
@@ -87,7 +105,10 @@ function agregarEventoLoginMovil() {
   });
 }
 
-// === BLOQUE: Activar eventos en formulario registro móvil ===
+/**
+ * Agrega el evento de registro para el formulario de móvil.
+ * @function
+ */
 function agregarEventoRegistroMovil() {
   const form = document.getElementById("formRegisterMovil");
   if (!form) return;
@@ -102,7 +123,10 @@ function agregarEventoRegistroMovil() {
   });
 }
 
-// === BLOQUE: Switch entre login y registro móvil ===
+/**
+ * Activa el switch de cambio entre login y registro en móvil.
+ * @function
+ */
 function activarSwitchMovil() {
   const btnWrapper = document.querySelector(".switch-wrapper");
   if (!btnWrapper) return;
@@ -148,7 +172,14 @@ function activarSwitchMovil() {
   });
 }
 
-// === BLOQUE: Validaciones y creación de usuario ===
+/**
+ * Maneja el proceso de registro de usuario.
+ * @function
+ * @param {string} nombre - Nombre del usuario.
+ * @param {string} correo - Correo electrónico del usuario.
+ * @param {string} contra1 - Contraseña ingresada.
+ * @param {string} contra2 - Confirmación de la contraseña.
+ */
 function manejarRegistro(nombre, correo, contra1, contra2) {
   const patronSeguridad = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
 
@@ -177,7 +208,12 @@ function manejarRegistro(nombre, correo, contra1, contra2) {
     });
 }
 
-// === BLOQUE: Inicio de sesión con correo y contraseña ===
+/**
+ * Maneja el inicio de sesión de usuario.
+ * @function
+ * @param {string} correo - Correo electrónico del usuario.
+ * @param {string} contra - Contraseña del usuario.
+ */
 function manejarLogin(correo, contra) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo))
     return mostrarModalError("Correo inválido");
@@ -200,7 +236,11 @@ function manejarLogin(correo, contra) {
     });
 }
 
-// === BLOQUE: Login con Google, GitHub y control de errores ===
+/**
+ * Activa los eventos de inicio de sesión con proveedores sociales (Google, GitHub, Apple).
+ * Maneja el flujo de autenticación con Firebase y errores comunes como cierre del popup
+ * o conflictos de credenciales. En caso de éxito, redirige al usuario a la vista principal.
+ */
 function activarLoginSocial() {
   const iniciarSocial = (provider) => {
     autenticacionCancelada = false;
@@ -242,7 +282,12 @@ function activarLoginSocial() {
   );
 }
 
-// === NUEVO BLOQUE: Delegación para botón de restablecer contraseña (móvil + escritorio) ===
+/**
+ * Activa el evento de restablecer contraseña cuando se hace click en cualquier elemento
+ * con ID "restablecerContra". Aplica para versiones móvil y escritorio.
+ * Utiliza delegación de eventos.
+ * @returns {void}
+ */
 function activarEventoRestablecerGlobal() {
   document.addEventListener("click", (e) => {
     if (e.target?.id === "restablecerContra") {
@@ -251,6 +296,11 @@ function activarEventoRestablecerGlobal() {
   });
 }
 
+/**
+ * Muestra el modal de restablecimiento de contraseña.
+ * Permite al usuario introducir un correo para enviar un email de recuperación.
+ * @returns {void}
+ */
 function mostrarModalRestablecer() {
   const modal = document.getElementById("modalRestablecer");
   const inputCorreo = document.getElementById("correoRecuperacion");
@@ -282,7 +332,11 @@ function mostrarModalRestablecer() {
   };
 }
 
-// === BLOQUE: Modal de error ===
+/**
+ * Muestra un modal de error con un mensaje personalizado y lo oculta cuando el usuario hace click en Aceptar.
+ * @param {string} mensaje - Mensaje de error a mostrar en el modal.
+ * @returns {void}
+ */
 function mostrarModalError(mensaje) {
   const modal = document.getElementById("modalError");
   const texto = document.getElementById("mensajeError");

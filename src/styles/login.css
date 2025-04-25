@@ -1,4 +1,11 @@
-/* LOGIN.CSS -- ÁNGEL MARTÍNEZ ORDIALES */
+/* LOGIN.CSS -- ÁNGEL MARTÍNEZ ORDIALES -- SOCIALREADER --
+===========================================================
+Proyecto: SocialReader
+Autor: Ángel Martínez Ordiales
+Archivo: login.css
+Descripción: Estilos CSS para las vistas de autenticación (login y registro).
+*/
+
 /* === ESTILOS GENERALES DE LAS VISTAS DE AUTENTICACIÓN === */
 .izq, .drch, .izq2, .drch2 {
   width: 50%;
@@ -78,6 +85,21 @@ input[type="submit"] {
   cursor: pointer;
 }
 
+/* === COLORES SECCIONES === */
+.drch {
+  background: linear-gradient(to bottom right, var(--color-complementario2), #ff693b);
+  color: white;
+}
+
+.izq2 {
+  background: linear-gradient(to bottom left, var(--color-complementario2), #ff693b);
+  color: white;
+}
+
+.izq2 p, .drch p {
+  color: white;
+}
+
 /* === BOTONES DE ACCIÓN === */
 button.boton {
   background-color: transparent;
@@ -91,21 +113,6 @@ button.boton {
   margin-top: 10%;
   border: 2px solid white;
   border-radius: 100px;
-}
-
-/* === COLORES DE FONDO SEGÚN LA SECCIÓN === */
-.drch {
-  background: linear-gradient(to bottom right, var(--color-complementario2), #ff693b);
-  color: white;
-}
-
-.izq2 {
-  background: linear-gradient(to bottom left, var(--color-complementario2), #ff693b);
-  color: white;
-}
-
-.izq2 p, .drch p {
-  color: white;
 }
 
 /* === OPCIONES SOCIALES (GITHUB, GOOGLE, APPLE) === */
@@ -169,11 +176,20 @@ button.boton {
   cursor: pointer;
 }
 
+/* === CLASES DE UTILIDAD === */
 .oculto {
   display: none;
 }
 
-/* === RESPONSIVE (VISTA MÓVIL) === */
+.espaciado-superior {
+  margin-top: 15px;
+}
+
+.margen-izquierda {
+  margin-left: 10px;
+}
+
+/* === RESPONSIVE (VISTA PEQUEÑA) === */
 @media (max-width: 1000px) {
   body {
     background-color: var(--color-oscuro);

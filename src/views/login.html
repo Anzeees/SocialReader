@@ -1,4 +1,11 @@
-<!-- LOGIN.HTML -- ÁNGEL MARTÍNEZ ORDIALES -->
+<!-- LOGIN.HTML -- ÁNGEL MARTÍNEZ ORDIALES -- SOCIALREADER --
+=======================================================
+Proyecto: SocialReader
+Autor: Ángel Martínez Ordiales
+Archivo: login.html
+Descripción: Vista de inicio de sesión y registro de usuarios (login)
+=======================================================
+-->
 
 <!-- === VISTA DE LOGIN PARA ESCRITORIO === -->
 <!-- Lado izquierdo de la vista de login (escritorio) -->
@@ -30,14 +37,14 @@
   
 <!-- === VISTA DE REGISTRO PARA ESCRITORIO === -->
 <!-- Lado izquierdo de la vista de registro (escritorio) -->
-<div class="izq2" style="display: none;">
+<div class="izq2">
   <img class="logologin" src="./assets/img/logotipos/LogoBlanco.png">
   <h1>¡Bienvenido de nuevo!</h1>
   <p>Para seguir compartiendo y descubriendo libros, inicia sesión con tus datos.</p>
   <button class="boton" id="btnIniciar">INICIAR SESIÓN</button>
 </div>
 <!-- Lado derecho de la vista de registro (escritorio) -->
-<div class="drch2" style="display: none;">
+<div class="drch2">
   <h1>Únete a SocialReader</h1>
   <!-- Opciones de registro con redes sociales -->
   <div class="opciones">
@@ -106,9 +113,9 @@
     <h2>Cambiar Contraseña</h2>
     <p>Introduce tu correo electrónico para enviarte un enlace de restablecimiento.</p>
     <input type="email" id="correoRecuperacion" placeholder="Correo Electrónico" required>
-    <div style="margin-top: 15px;">
+    <div class="espaciado-superior">
       <button id="btnEnviarRecuperacion">Enviar</button>
-      <button id="btnCerrarRecuperacion" style="margin-left: 10px;">Cerrar</button>
+      <button id="btnCerrarRecuperacion" class="margen-izquierda">Cerrar</button>
     </div>
   </div>
 </div>
