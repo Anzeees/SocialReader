@@ -69,6 +69,8 @@ input[type="submit"] {
 }
 
 #restablecerContra {
+  color: var(--color-complementario1);
+  text-decoration: underline;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;

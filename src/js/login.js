@@ -138,7 +138,7 @@ function activarSwitchMovil() {
           <h1>Vuelve a SocialReader</h1>
           <input type="email" name="correo" placeholder="Correo Electrónico" required>
           <input type="password" name="contra" placeholder="Contraseña" required>
-          <p id="restablecerContra">¿Olvidaste tu contraseña?</p>
+          <center><a id="restablecerContra">¿Olvidaste tu contraseña?</a></center>
           <input type="submit" value="INICIAR SESIÓN" class="boton">
         </form>`;
       agregarEventoLoginMovil();
@@ -213,7 +213,7 @@ function activarRestablecer() {
     const correo = prompt("Introduce tu correo electrónico:");
     if (!correo || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo)) return;
     auth.sendPasswordResetEmail(correo)
-      .then(() => alert("Correo de restablecimiento enviado"))
+      .then(() => mostrarModalError("Correo de restablecimiento enviado"))
       .catch((error) => console.error(error.code, error.message));
   });
 }
