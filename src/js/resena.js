@@ -68,16 +68,16 @@ document.querySelector(".perfil-menu a[href='#profile']")?.addEventListener("cli
   });
 
 
-  function mostrarModal(mensaje) {
-    const modal = document.getElementById("modalMensaje");
-    const texto = document.getElementById("modalTexto");
-    const cerrar = document.getElementById("cerrarModal");
+  function mostrarModalError(mensaje) {
+    const modal = document.getElementById("modalError");
+    const texto = document.getElementById("mensajeError");
+    const btnCerrar = document.getElementById("btnCerrarModal");
   
     texto.textContent = mensaje;
-    modal.classList.remove("hidden");
+    modal.classList.remove("oculto");
   
-    cerrar.onclick = () => {
-      modal.classList.add("hidden");
+    btnCerrar.onclick = () => {
+      modal.classList.add("oculto");
     };
   }
 
@@ -184,7 +184,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
 
       try {
   await crearResena(uid, workId, review, valoracion, spoilers);
-  mostrarModal("Reseña publicada correctamente.");
+  mostrarModalError("Reseña publicada correctamente.");
 
   // Limpiar formulario
   document.getElementById("formResena").reset();
@@ -194,7 +194,7 @@ firebase.auth().onAuthStateChanged(async (user) => {
 
 } catch (error) {
   console.error("Error al crear la reseña:", error);
-  mostrarModal("No se pudo guardar la reseña. Intenta más tarde.");
+  mostrarModalError("No se pudo guardar la reseña. Intenta más tarde.");
 }
     });
 });
