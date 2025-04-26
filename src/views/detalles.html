@@ -1,4 +1,11 @@
-<!-- DETALLES.HTML -- ÁNGEL MARTÍNEZ ORDIALES -->
+<!-- DETALLES.HTML -- ÁNGEL MARTÍNEZ ORDIALES -- SOCIALREADER --
+=======================================================
+Proyecto: SocialReader
+Autor: Ángel Martínez Ordiales
+Archivo: detalles.html
+Descripción: Vista de detalles del libro.
+=======================================================
+-->
 <section>
   <!-- === BARRA DE NAVEGACIÓN GENERAL (ESCRITORIO Y MÓVIL) === -->
   <nav>
@@ -65,10 +72,15 @@
   <main id="mainContent" data-vista="inicio" hidden></main>
 
   <!-- === CONTENEDOR MODAL DE ERROR (FORMATO FINAL) === -->
-<div id="modalError" class="modal-error oculto">
-  <div class="modal-contenido">
-    <p id="mensajeError">Error de autenticación</p>
-    <button id="btnCerrarModal">Aceptar</button>
+  <div id="modalError" class="modal-error oculto">
+    <div class="modal-contenido">
+      <p id="mensajeError">Error de autenticación</p>
+      <button id="btnCerrarModal">Aceptar</button>
+    </div>
   </div>
-</div>
+
+  <!-- === NOTIFICACIÓN TOAST SUPERIOR === -->
+  <div id="toast" class="toast oculto">
+    <p id="toastMensaje">Mensaje de prueba</p>
+  </div>
 </section>

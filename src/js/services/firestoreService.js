@@ -208,3 +208,40 @@ export async function obtenerResenasDeUsuario(uid) {
   const snapshot = await db.collection("resenas").where("uid", "==", uid).get();
   return snapshot.docs.map(doc => doc.data());
 }
+
+/**
+ * Obtiene los datos del usuario por su UID.
+ */
+export async function obtenerUsuarioPorUID(uid) {
+  try {
+    const doc = await firebase.firestore().collection("usuarios").doc(uid).get();
+    if (doc.exists) {
+      return doc.data();
+    } else {
+      return { nombrePantalla: "Usuario desconocido", avatar: "Avatar4.png" };
+    }
+  } catch (error) {
+    console.error("Error obteniendo usuario:", error);
+    return { nombrePantalla: "Usuario desconocido", avatar: "Avatar4.png" };
+  }
+}
+
+/**
+ * Obtiene las reseñas de un libro por ID.
+ */
+export async function obtenerResenasLibro(idLibro) {
+  try {
+    const snapshot = await firebase.firestore()
+      .collection("resenas")
+      .where("idlibro", "==", idLibro)
+      .orderBy("valoracion", "desc")
+      .get();
+
+    const resenas = [];
+    snapshot.forEach(doc => resenas.push(doc.data()));
+    return resenas;
+  } catch (error) {
+    console.error("Error obteniendo reseñas:", error);
+    return [];
+  }
+}

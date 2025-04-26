@@ -1,5 +1,12 @@
-/* DETALLES.CSS -- ÁNGEL MARTÍNEZ ORDIALES */
+/* DETALLES.CSS -- ÁNGEL MARTÍNEZ ORDIALES -- SOCIALREADER --
+==============================================================
+Proyecto: SocialReader
+Autor: Ángel Martínez Ordiales
+Archivo: detalles.css
+Descripción: Estilos CSS para la vista de detalles de libros.
+*/
 
+/* === ESTILOS GENERALES DE LA VISTA DE DETALLES === */
 #mainContent {
   padding: 3em;
   display: flex;
@@ -22,9 +29,16 @@
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+  animation: fadeSlideIn 0.8s ease forwards;
 }
 
-/* === COLUMNA IZQUIERDA: PORTADA Y ACCIONES === */
+/* === ANIMACIONES === */
+@keyframes fadeSlideIn {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* === COLUMNA IZQUIERDA: Portada y botones de acción === */
 .colizq {
   width: 16%;
   min-width: 250px;
@@ -44,6 +58,7 @@
   transform: scale(1.03);
 }
 
+/* === BOTONES DE ACCIONES (Favoritos, Más tarde, Reseña) === */
 .acciones-libro {
   display: flex;
   flex-direction: column;
@@ -62,8 +77,8 @@ button.resena {
   font-weight: 600;
   padding: 0 1rem;
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
   border: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 button.accion.btn-mostrar:hover,
@@ -73,22 +88,23 @@ button.resena:hover {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
+/* Colores específicos de cada botón */
 button.accion.btn-mostrar {
   background-color: #e0f7f9;
   color: #115662;
-  border: solid 1px #115662;
+  border: 1px solid #115662;
 }
 
 button.accion.btn-fav {
   background-color: #fce4ec;
   color: #c2185b;
-  border: solid 1px #c2185b;
+  border: 1px solid #c2185b;
 }
 
 button.resena {
   background-color: #6c84ff;
   color: white;
-  border: solid 1px #008cff;
+  border: 1px solid #008cff;
 }
 
 .accion img,
@@ -97,7 +113,7 @@ button.resena {
   margin-right: 0.5rem;
 }
 
-/* === COLUMNA DERECHA: DETALLES === */
+/* === COLUMNA DERECHA: Información del libro === */
 .coldrch {
   flex-grow: 1;
   display: flex;
@@ -118,6 +134,77 @@ button.resena {
   font-size: 1rem;
   line-height: 1.6;
   color: #444;
+}
+
+/* === CONTENEDOR DE RESEÑAS === */
+.contenedor-resenas {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 1000px;
+}
+
+.etiqueta-resena {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background-color: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.etiqueta-resena img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.contenido-resena {
+  display: flex;
+  flex-direction: column;
+}
+
+.nombre-usuario {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 0.3rem;
+}
+
+.estrellas-resena {
+  color: #ffc107;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.texto-resena {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.4;
+}
+
+/* Mensaje si la reseña contiene spoilers */
+.contenido-resena i {
+  font-size: 0.9rem;
+  color: #b00020;
+}
+
+/* Botón para revelar spoiler */
+.spoiler-toggle {
+  all: unset;
+  display: inline;
+  color: #c0392b;
+  font-style: italic;
+  font-size: 0.95rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.spoiler-toggle:hover {
+  color: #922b21;
 }
 
 /* === SPINNER DE CARGA === */
@@ -182,12 +269,44 @@ button.resena {
   cursor: pointer;
 }
 
-/* Para ocultarlo inicialmente */
+/* === NOTIFICACIÓN TOAST SUPERIOR === */
+.toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #2c3e50;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  z-index: 9999;
+  font-size: 1rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease, top 0.5s ease;
+}
+
+.toast-success {
+  background-color: #27ae60; /* Verde éxito */
+}
+
+.toast-error {
+  background-color: #c0392b; /* Rojo error */
+}
+
+.toast.mostrar {
+  opacity: 1;
+  pointer-events: auto;
+  top: 40px;
+}
+
+/* === CLASES DE UTILIDAD === */
 .oculto {
   display: none;
 }
 
-/* === RESPONSIVE === */
+/* === RESPONSIVE (versión móvil) === */
 @media (max-width: 1000px) {
   .detalle-libro {
     flex-direction: column;

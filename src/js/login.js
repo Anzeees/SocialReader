@@ -34,18 +34,29 @@ function cargarVistaLogin() {
  * @function
  */
 function ajustarVista() {
+  const izq = document.querySelector(".izq");
+  const drch = document.querySelector(".drch");
+  const izq2 = document.querySelector(".izq2");
+  const drch2 = document.querySelector(".drch2");
+  const movil = document.querySelector(".movil");
+
+  // Si ninguno existe (no estamos en login), salir
+  if (!izq && !drch && !izq2 && !drch2 && !movil) {
+    return;
+  }
+
   if (window.innerWidth <= 1000) {
-    document.querySelector(".izq").style.display = "none";
-    document.querySelector(".drch").style.display = "none";
-    document.querySelector(".izq2").style.display = "none";
-    document.querySelector(".drch2").style.display = "none";
-    document.querySelector(".movil").style.display = "flex";
+    if (izq) izq.style.display = "none";
+    if (drch) drch.style.display = "none";
+    if (izq2) izq2.style.display = "none";
+    if (drch2) drch2.style.display = "none";
+    if (movil) movil.style.display = "flex";
   } else {
-    document.querySelector(".movil").style.display = "none";
-    document.querySelector(".izq").style.display = "flex";
-    document.querySelector(".drch").style.display = "flex";
-    document.querySelector(".izq2").style.display = "none";
-    document.querySelector(".drch2").style.display = "none";
+    if (movil) movil.style.display = "none";
+    if (izq) izq.style.display = "flex";
+    if (drch) drch.style.display = "flex";
+    if (izq2) izq2.style.display = "none";
+    if (drch2) drch2.style.display = "none";
   }
 }
 
@@ -333,21 +344,31 @@ function mostrarModalRestablecer() {
 }
 
 /**
- * Muestra un modal de error con un mensaje personalizado y lo oculta cuando el usuario hace click en Aceptar.
- * @param {string} mensaje - Mensaje de error a mostrar en el modal.
- * @returns {void}
+ * Muestra un modal de error con un mensaje personalizado y opcionalmente redirige al cerrar.
+ * Si el modal no existe (en otras vistas), simplemente no hace nada.
+ * @param {string} mensaje - Mensaje de error a mostrar.
+ * @param {string} [redireccion] - Ruta opcional a redirigir al cerrar el modal.
  */
-function mostrarModalError(mensaje) {
+function mostrarModalError(mensaje, redireccion = null) {
   const modal = document.getElementById("modalError");
   const texto = document.getElementById("mensajeError");
   const btnCerrar = document.getElementById("btnCerrarModal");
+
+  // Si alguno de los elementos no existe, no mostramos modal
+  if (!modal || !texto || !btnCerrar) {
+    console.warn("Modal de error no disponible en esta vista.");
+    return;
+  }
 
   texto.textContent = mensaje;
   modal.classList.remove("oculto");
 
   btnCerrar.onclick = () => {
     modal.classList.add("oculto");
-    autenticacionCancelada = false;
+    if (redireccion) {
+      window.location.hash = redireccion;
+      window.dispatchEvent(new HashChangeEvent("hashchange"));
+    }
   };
 }
 

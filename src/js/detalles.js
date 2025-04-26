@@ -1,6 +1,13 @@
-// DETALLES.JS -- ÁNGEL MARTÍNEZ ORDIALES
+// DETALLES.JS -- ÁNGEL MARTÍNEZ ORDIALES -- SOCIALREADER --
+// ===========================================================
+// Proyecto: SocialReader
+// Autor: Ángel Martínez Ordiales
+// Archivo: detalles.js
+// Descripción: Vista de detalles de libros y gestión de reseñas.
+// ===========================================================
 
-import { mostrarNombre, avatarUsuario, agregarLibroFavorito, eliminarLibroFavorito, estaEnFavoritos, agregarMostrarMasTarde, eliminarMostrarMasTarde, estaEnMostrarMasTarde } from "./services/firestoreService.js";
+// === IMPORTACIONES ===
+import { mostrarNombre, avatarUsuario, agregarLibroFavorito, eliminarLibroFavorito, estaEnFavoritos, agregarMostrarMasTarde, eliminarMostrarMasTarde, estaEnMostrarMasTarde, obtenerResenasLibro, obtenerUsuarioPorUID } from "./services/firestoreService.js";
 import { obtenerDetallesLibro } from "./services/openlibrary.js";
 
 // === VARIABLES DEL DOM ===
@@ -8,6 +15,10 @@ const mainContent = document.getElementById("mainContent");
 const loader = document.getElementById("loader");
 
 // === GESTIÓN DE INTERFAZ: MENÚ HAMBURGUESA ===
+
+/**
+ * Cierra el menú hamburguesa en vista móvil.
+ */
 function cerrarMenuHamburguesa() {
   document.getElementById("menuHamburguesa").classList.remove("show");
   document.getElementById("sombra").style.display = "none";
@@ -79,7 +90,11 @@ firebase.auth().onAuthStateChanged((user) => {
   }
 });
 
-// === OBTENER ID DEL LIBRO DESDE EL HASH ===
+// === FUNCIONES PRICIPALES === 
+/**
+ * Obtiene el ID del libro desde el hash de la URL.
+ * @returns {string|null} ID del libro o null si no existe.
+ */
 function obtenerWorkIdDesdeHash() {
   const hash = window.location.hash;
   const partes = hash.split("/");
@@ -91,10 +106,9 @@ const workId = obtenerWorkIdDesdeHash();
 
 if (workId && mainContent) {
   mainContent.hidden = false;
-  loader.style.display = "flex"; // Mostrar spinner
-
+  loader.style.display = "flex";
   obtenerDetallesLibro(workId).then(async libro => {
-    loader.style.display = "none"; // Ocultar spinner
+    loader.style.display = "none";
 
     if (!libro) {
       mostrarModalError("No se ha encontrado el libro solicitado. Intenta buscar otro.", "#search");
@@ -111,77 +125,11 @@ if (workId && mainContent) {
       if (await estaEnMostrarMasTarde(user.uid, clave)) mostrarIcon = "./assets/img/interface/marcdetails.png";
     }
 
-    mainContent.innerHTML = `
-      <div class="detalle-libro">
-        <div class="colizq">
-          <img src="${libro.portada}" class="portada" alt="Portada del libro">
-          <div class="acciones-libro">
-            <button class="accion btn-mostrar" data-id="${clave}">
-              <img src="${mostrarIcon}" alt="Guardar para más tarde"> Leer más tarde
-            </button>
-            <button class="accion btn-fav" data-id="${clave}">
-              <img src="${favIcon}" alt="Favorito"> Mis Favoritos
-            </button>
-            <button class="resena btn-resena" data-id="${clave}">
-              <img src="./assets/img/interface/nueva-resena.png" alt="Reseña"> Nueva Reseña
-            </button>
-          </div>
-        </div>
-        <div class="coldrch">
-          <h2>${libro.titulo}</h2>
-          <p><strong>Autor:</strong> ${libro.autor}</p>
-          <p><strong>Editorial:</strong> ${libro.editorial}</p>
-          <p><strong>Año de publicación:</strong> ${libro.añoPublicacion}</p>
-          <p><strong>Páginas:</strong> ${libro.paginas}</p>
-          <p><strong>Idioma:</strong> ${libro.idiomas.join(", ")}</p>
-          <p><strong>Géneros:</strong> ${libro.generos.join(", ")}</p>
-          <p><strong>Sinopsis:</strong> ${libro.sinopsis}</p>
-        </div>
-      </div>
-    `;
+    mainContent.innerHTML = crearTarjetaDetalle(libro, favIcon, mostrarIcon);
 
-    // === BOTONES FAVORITO Y MOSTRAR MÁS TARDE ===
-    const btnFav = document.querySelector(".btn-fav");
-    const btnMostrar = document.querySelector(".btn-mostrar");
+    configurarEventosBotones(libro, user);
+    cargarResenasLibro(libro.id);
 
-    if (user) {
-      btnFav.addEventListener("click", async (e) => {
-        e.stopPropagation();
-        desactivarBotonTemporalmente(btnFav);
-
-        const esta = await estaEnFavoritos(user.uid, clave);
-        if (esta) {
-          await eliminarLibroFavorito(user.uid, clave);
-          btnFav.querySelector("img").src = "./assets/img/interface/favdesdetails.png";
-        } else {
-          await agregarLibroFavorito(user.uid, clave);
-          btnFav.querySelector("img").src = "./assets/img/interface/favact.png";
-        }
-      });
-
-      btnMostrar.addEventListener("click", async (e) => {
-        e.stopPropagation();
-        desactivarBotonTemporalmente(btnMostrar);
-
-        const esta = await estaEnMostrarMasTarde(user.uid, clave);
-        if (esta) {
-          await eliminarMostrarMasTarde(user.uid, clave);
-          btnMostrar.querySelector("img").src = "./assets/img/interface/marcdesdetails.png";
-        } else {
-          await agregarMostrarMasTarde(user.uid, clave);
-          btnMostrar.querySelector("img").src = "./assets/img/interface/marcdetails.png";
-        }
-      });
-
-      const btnResena = document.querySelector(".btn-resena");
-      btnResena.addEventListener("click", (e) => {
-        e.stopPropagation();
-        desactivarBotonTemporalmente(btnResena);
-
-        window.location.hash = `#resena/${clave}`;
-        window.dispatchEvent(new HashChangeEvent("hashchange"));
-      });
-    }
   }).catch((error) => {
     loader.style.display = "none";
     mostrarModalError("Error al cargar los detalles del libro. Intenta de nuevo más tarde.");
@@ -192,11 +140,158 @@ if (workId && mainContent) {
   mostrarModalError("Libro no encontrado. Intenta acceder de nuevo.", "#home");
 }
 
+// === FUNCIONES AUXILIARES ===
 /**
- * Muestra un modal de error con un mensaje personalizado y opcionalmente redirige al cerrar.
- * @param {string} mensaje - Mensaje de error a mostrar.
- * @param {string} [redireccion] - Ruta opcional a redirigir al cerrar el modal.
- * @returns {void}
+ * Configura los eventos de botones de acción del detalle del libro.
+ * @param {object} libro - Objeto del libro.
+ * @param {firebase.User} user - Usuario autenticado.
+ */
+function configurarEventosBotones(libro, user) {
+  const btnFav = document.querySelector(".btn-fav");
+  const btnMostrar = document.querySelector(".btn-mostrar");
+  const btnResena = document.querySelector(".btn-resena");
+
+  if (user) {
+    btnFav.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      desactivarBotonTemporalmente(btnFav);
+
+      const esta = await estaEnFavoritos(user.uid, libro.id);
+      if (esta) {
+        await eliminarLibroFavorito(user.uid, libro.id);
+        btnFav.querySelector("img").src = "./assets/img/interface/favdesdetails.png";
+        mostrarToast("Libro eliminado de Favoritos", "error");
+      } else {
+        await agregarLibroFavorito(user.uid, libro.id);
+        btnFav.querySelector("img").src = "./assets/img/interface/favact.png";
+        mostrarToast("Libro añadido a Favoritos", "success");
+      }
+    });
+
+    btnMostrar.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      desactivarBotonTemporalmente(btnMostrar);
+
+      const esta = await estaEnMostrarMasTarde(user.uid, libro.id);
+      if (esta) {
+        await eliminarMostrarMasTarde(user.uid, libro.id);
+        btnMostrar.querySelector("img").src = "./assets/img/interface/marcdesdetails.png";
+        mostrarToast("Libro eliminado de Leer más tarde", "error");
+      } else {
+        await agregarMostrarMasTarde(user.uid, libro.id);
+        btnMostrar.querySelector("img").src = "./assets/img/interface/marcdetails.png";
+        mostrarToast("Libro añadido a Leer más tarde", "success");
+      }
+    });
+
+    btnResena.addEventListener("click", (e) => {
+      e.stopPropagation();
+      desactivarBotonTemporalmente(btnResena);
+      window.location.hash = `#resena/${libro.id}`;
+      window.dispatchEvent(new HashChangeEvent("hashchange"));
+    });
+  }
+}
+
+/**
+ * Carga las reseñas de un libro y las muestra en pantalla.
+ * @param {string} idLibro - ID del libro.
+ */
+function cargarResenasLibro(idLibro) {
+  const contenedor = document.getElementById("contenedorResenas");
+  if (!contenedor) return;
+
+  obtenerResenasLibro(idLibro).then(async (resenas) => {
+    if (!resenas.length) {
+      contenedor.innerHTML = "<p>No hay reseñas disponibles para este libro.</p>";
+      return;
+    }
+
+    const tarjetas = await Promise.all(resenas.map(async (resena) => {
+      const usuario = await obtenerUsuarioPorUID(resena.uid);
+      return crearEtiquetaResena(usuario, resena);
+    }));
+
+    contenedor.innerHTML = tarjetas.join("");
+
+    // Activar eventos para mostrar spoilers
+    document.querySelectorAll(".spoiler-toggle").forEach(boton => {
+      boton.addEventListener("click", () => {
+        boton.outerHTML = `<div class="texto-resena">${boton.dataset.texto}</div>`;
+      });
+    });
+  }).catch((error) => {
+    console.error("Error cargando reseñas:", error);
+    contenedor.innerHTML = "<p>No se pudieron cargar las reseñas en este momento.</p>";
+  });
+}
+
+/**
+ * Crea el HTML de una reseña.
+ * @param {object} usuario - Usuario que ha creado la reseña.
+ * @param {object} resena - Objeto reseña.
+ * @returns {string} HTML generado de la reseña.
+ */
+function crearEtiquetaResena(usuario, resena) {
+  const estrellas = "★".repeat(resena.valoracion) + "☆".repeat(5 - resena.valoracion);
+  return `
+    <div class="etiqueta-resena">
+      <img src="./assets/img/avatars/${usuario.avatar}" alt="Avatar">
+      <div class="contenido-resena">
+        <div class="nombre-usuario">${usuario.nombrePantalla}</div>
+        <div class="estrellas-resena">${estrellas}</div>
+        ${resena.spoilers 
+          ? `<button class="spoiler-toggle" data-texto="${resena.review}">Esta reseña contiene spoilers. Pulsa para ver.</button>` 
+          : `<div class="texto-resena">${resena.review}</div>`}
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * Crea el contenido principal de la vista de detalles.
+ * @param {object} libro - Datos del libro.
+ * @param {string} favIcon - Icono para favoritos.
+ * @param {string} mostrarIcon - Icono para leer más tarde.
+ * @returns {string} HTML de la tarjeta de detalles.
+ */
+function crearTarjetaDetalle(libro, favIcon, mostrarIcon) {
+  return `
+    <div class="detalle-libro">
+      <div class="colizq">
+        <img src="${libro.portada}" class="portada" alt="Portada del libro">
+        <div class="acciones-libro">
+          <button class="accion btn-mostrar" data-id="${libro.id}">
+            <img src="${mostrarIcon}" alt="Guardar para más tarde"> Leer más tarde
+          </button>
+          <button class="accion btn-fav" data-id="${libro.id}">
+            <img src="${favIcon}" alt="Favorito"> Mis Favoritos
+          </button>
+          <button class="resena btn-resena" data-id="${libro.id}">
+            <img src="./assets/img/interface/nueva-resena.png" alt="Reseña"> Nueva Reseña
+          </button>
+        </div>
+      </div>
+      <div class="coldrch">
+        <h2>${libro.titulo}</h2>
+        <p><strong>Autor:</strong> ${libro.autor}</p>
+        <p><strong>Editorial:</strong> ${libro.editorial}</p>
+        <p><strong>Año de publicación:</strong> ${libro.añoPublicacion}</p>
+        <p><strong>Páginas:</strong> ${libro.paginas}</p>
+        <p><strong>Idioma:</strong> ${libro.idiomas.join(", ")}</p>
+        <p><strong>Géneros:</strong> ${libro.generos.join(", ")}</p>
+        <p><strong>Sinopsis:</strong> ${libro.sinopsis}</p>
+
+        <div id="contenedorResenas" class="contenedor-resenas"></div>
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * Muestra un modal de error con redirección opcional.
+ * @param {string} mensaje - Texto del error.
+ * @param {string|null} [redireccion=null] - Redirección tras cerrar modal.
  */
 function mostrarModalError(mensaje, redireccion = null) {
   const modal = document.getElementById("modalError");
@@ -216,10 +311,9 @@ function mostrarModalError(mensaje, redireccion = null) {
 }
 
 /**
- * Desactiva un botón temporalmente durante un tiempo definido para evitar múltiples clics.
+ * Desactiva temporalmente un botón para evitar múltiples clicks.
  * @param {HTMLElement} boton - Botón a desactivar.
- * @param {number} [milisegundos=1000] - Tiempo que el botón permanecerá desactivado (por defecto 1000ms).
- * @returns {void}
+ * @param {number} [milisegundos=1000] - Tiempo en ms.
  */
 function desactivarBotonTemporalmente(boton, milisegundos = 1000) {
   if (!boton) return;
@@ -227,4 +321,32 @@ function desactivarBotonTemporalmente(boton, milisegundos = 1000) {
   setTimeout(() => {
     boton.disabled = false;
   }, milisegundos);
+}
+
+/**
+ * Muestra un toast de notificación.
+ * @param {string} mensaje - Texto del mensaje.
+ * @param {string} [tipo="success"] - Tipo: "success" o "error".
+ */
+function mostrarToast(mensaje, tipo = "success") {
+  const toast = document.getElementById("toast");
+  const toastMensaje = document.getElementById("toastMensaje");
+
+  toastMensaje.textContent = mensaje;
+  toast.classList.remove("oculto", "toast-success", "toast-error");
+
+  if (tipo === "success") {
+    toast.classList.add("toast-success");
+  } else if (tipo === "error") {
+    toast.classList.add("toast-error");
+  }
+
+  toast.classList.add("mostrar");
+
+  setTimeout(() => {
+    toast.classList.remove("mostrar");
+    setTimeout(() => {
+      toast.classList.add("oculto");
+    }, 500);
+  }, 2000);
 }

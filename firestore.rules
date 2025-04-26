@@ -2,9 +2,17 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Regla global para todas las colecciones
-    match /{document=**} {
-      allow read, write: if request.auth != null;
+    // Colección de usuarios
+    match /usuarios/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Colección de reseñas
+    match /resenas/{resenaId} {
+      allow read: if true; // Cualquiera puede leer reseñas
+      allow create: if request.auth != null; // Solo usuarios logueados pueden crear
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.uid; 
+      // Solo puede editar o borrar su propia reseña
     }
   }
 }
