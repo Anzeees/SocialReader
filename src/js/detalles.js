@@ -97,7 +97,7 @@ if (workId && mainContent) {
     loader.style.display = "none"; // Ocultar spinner
 
     if (!libro) {
-      mainContent.innerHTML = "<p>Error al cargar los detalles del libro.</p>";
+      mostrarModalError("No se ha encontrado el libro solicitado. Intenta buscar otro.", "#search");
       return;
     }
 
@@ -147,6 +147,8 @@ if (workId && mainContent) {
     if (user) {
       btnFav.addEventListener("click", async (e) => {
         e.stopPropagation();
+        desactivarBotonTemporalmente(btnFav);
+
         const esta = await estaEnFavoritos(user.uid, clave);
         if (esta) {
           await eliminarLibroFavorito(user.uid, clave);
@@ -159,6 +161,8 @@ if (workId && mainContent) {
 
       btnMostrar.addEventListener("click", async (e) => {
         e.stopPropagation();
+        desactivarBotonTemporalmente(btnMostrar);
+
         const esta = await estaEnMostrarMasTarde(user.uid, clave);
         if (esta) {
           await eliminarMostrarMasTarde(user.uid, clave);
@@ -172,11 +176,55 @@ if (workId && mainContent) {
       const btnResena = document.querySelector(".btn-resena");
       btnResena.addEventListener("click", (e) => {
         e.stopPropagation();
+        desactivarBotonTemporalmente(btnResena);
+
         window.location.hash = `#resena/${clave}`;
         window.dispatchEvent(new HashChangeEvent("hashchange"));
       });
     }
+  }).catch((error) => {
+    loader.style.display = "none";
+    mostrarModalError("Error al cargar los detalles del libro. Intenta de nuevo más tarde.");
+    console.error(error);
   });
 } else {
-  mainContent.innerHTML = "<p>No se ha especificado ningún libro.</p>";
+  loader.style.display = "none";
+  mostrarModalError("Libro no encontrado. Intenta acceder de nuevo.", "#home");
+}
+
+/**
+ * Muestra un modal de error con un mensaje personalizado y opcionalmente redirige al cerrar.
+ * @param {string} mensaje - Mensaje de error a mostrar.
+ * @param {string} [redireccion] - Ruta opcional a redirigir al cerrar el modal.
+ * @returns {void}
+ */
+function mostrarModalError(mensaje, redireccion = null) {
+  const modal = document.getElementById("modalError");
+  const texto = document.getElementById("mensajeError");
+  const btnCerrar = document.getElementById("btnCerrarModal");
+
+  texto.textContent = mensaje;
+  modal.classList.remove("oculto");
+
+  btnCerrar.onclick = () => {
+    modal.classList.add("oculto");
+    if (redireccion) {
+      window.location.hash = redireccion;
+      window.dispatchEvent(new HashChangeEvent("hashchange"));
+    }
+  };
+}
+
+/**
+ * Desactiva un botón temporalmente durante un tiempo definido para evitar múltiples clics.
+ * @param {HTMLElement} boton - Botón a desactivar.
+ * @param {number} [milisegundos=1000] - Tiempo que el botón permanecerá desactivado (por defecto 1000ms).
+ * @returns {void}
+ */
+function desactivarBotonTemporalmente(boton, milisegundos = 1000) {
+  if (!boton) return;
+  boton.disabled = true;
+  setTimeout(() => {
+    boton.disabled = false;
+  }, milisegundos);
 }
