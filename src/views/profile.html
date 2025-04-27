@@ -1,11 +1,20 @@
-<!-- PROFILE.HTML -- ÁNGEL MARTÍNEZ ORDIALES -->
+<!-- 
+==========================================
+Vista: PROFILE.HTML
+Proyecto: Social Reader
+Autor: Ángel Martínez Ordiales
+Descripción: Vista del perfil del usuario
+==========================================
+-->
+
 <section>
   <!-- === BARRA DE NAVEGACIÓN GENERAL (ESCRITORIO Y MÓVIL) === -->
   <nav>
     <div class="sombra" id="sombra"></div>
+    <!-- Botón de menú hamburguesa (solo visible en móvil) -->
     <img class="hamburguesa" src="./assets/img/interface/menu-hamburguesa.png" id="hamburguesa" alt="Menú">
-    <img class="logo" src="./assets/img/logotipos/LogoClaro.png">
-
+    <!-- Logo principal -->
+    <img class="logo" src="./assets/img/logotipos/LogoClaro.png" alt="Logo">
     <!-- === MENÚ HAMBURGUESA (SOLO MÓVIL) === -->
     <div class="menu-hamburguesa" id="menuHamburguesa">
       <div class="top">
@@ -13,6 +22,7 @@
         <img class="exit" src="./assets/img/interface/cruz.png" id="exitMenu" alt="Cerrar">
       </div>
       <hr>
+      <!-- Perfil en menú móvil -->
       <div class="perfil-movil">
         <div class="contenedor-perfil">
           <img src="./assets/img/avatars/Avatar1.png" class="avatar" id="avatarMovil">
@@ -20,37 +30,38 @@
         </div>
         <hr>
       </div>
+      <!-- Opciones del menú móvil -->
       <div class="menumovil">
         <a href="#home" id="inicioLinkMovil">Inicio</a>
         <a href="#search" id="buscarLinkMovil">Buscar Libros</a>
       </div>
       <hr>
+      <!-- Cierre de sesión móvil -->
       <a id="exitmovil" class="exitmovil"><img src="./assets/img/interface/salida.png"> Cerrar Sesión</a>
     </div>
-
     <!-- === MENÚ PRINCIPAL (ESCRITORIO) === -->
     <div class="menu">
       <a href="#home" id="inicioLink">Inicio</a>
       <a href="#search" id="buscarLink">Buscar Libros</a>
     </div>
-
     <!-- === PERFIL USUARIO (ESCRITORIO) === -->
     <div class="perfil">
       <img src="./assets/img/avatars/Avatar1.png" class="avatar" id="avatarEscritorio">
       <img src="./assets/img/interface/flecha-perfil.png" class="flecha-perfil">
+      <!-- Menú desplegable de perfil -->
       <div class="perfil-menu">
         <a href="#profile"><img src="./assets/img/interface/usuario.png">Mi Perfil</a>
         <a id="exitescritorio"><img src="./assets/img/interface/salida.png">Cerrar Sesión</a>
       </div>
     </div>
   </nav>
-
-  <!-- === CONTENIDO PRINCIPAL (PERFIL) === -->
+  <!-- === CONTENIDO PRINCIPAL DEL PERFIL === -->
   <main id="mainContent">
+    <!-- === PANEL LATERAL IZQUIERDO (Perfil) === -->
     <div class="panel-lateral">
+      <!-- Imagen de avatar grande -->
       <img id="avatarGrande" class="avatar-grande" src="./assets/img/avatars/Avatar1.png" alt="Avatar">
-
-      <!-- Selector emergente de avatar -->
+      <!-- Selector de cambio de avatar -->
       <div id="selectorAvatar" class="emergente-avatar oculto">
         <h4>Selecciona tu avatar</h4>
         <div class="grid-avatars">
@@ -63,32 +74,41 @@
         </div>
         <button id="guardarAvatar">Guardar</button>
       </div>
-
+      <!-- Información del perfil -->
       <h3 id="nombrePerfil">Cargando...</h3>
       <p id="correoPerfil">-</p>
       <small id="fechaAlta">-</small>
     </div>
-
+    <!-- === PANEL DERECHO (Contenido de perfil) === -->
     <section class="panel-derecho">
+      <!-- Pestañas de navegación -->
       <div class="tabs">
         <button class="tab activo" data-tab="mis-listas">Mis listas</button>
         <button class="tab" data-tab="mis-resenas">Mis reseñas</button>
         <button class="tab" data-tab="mis-amigos">Mis amigos</button>
       </div>
+      <!-- Contenido de las pestañas -->
       <div class="contenido-tabs">
+        <!-- === SECCIÓN "MIS LISTAS" === -->
         <div id="mis-listas">
           <h4>Libros favoritos</h4>
           <div class="contenedor-libros" id="contenedor-favoritos"></div>
           <h4>Mostrar más tarde</h4>
           <div class="contenedor-libros" id="contenedor-mas-tarde"></div>
         </div>
-
-        <div id="mis-resenas" style="display: none;"></div>
-
-        <div id="mis-amigos" style="display: none;">
+        <!-- === SECCIÓN "MIS RESEÑAS" === -->
+        <div id="mis-resenas"></div>
+        <!-- === SECCIÓN "MIS AMIGOS" === -->
+        <div id="mis-amigos">
           <h4>Otros usuarios</h4>
+          <!-- Buscador de usuarios -->
+          <div id="busqueda-amigos">
+            <input type="text" id="input-buscar-amigos" placeholder="Buscar por nombre o correo...">
+          </div>
+          <!-- Listado de nuevos amigos para agregar -->
           <div class="contenedor-amigos" id="contenedor-nuevos-amigos"></div>
           <h4>Mis amigos</h4>
+          <!-- Listado de amigos actuales -->
           <div class="contenedor-amigos" id="contenedor-mis-amigos"></div>
         </div>
       </div>

@@ -1,18 +1,23 @@
-// PROFILE.JS -- ÁNGEL MARTÍNEZ ORDIALES
+/* 
+==========================================
+Script: PROFILE.JS
+Proyecto: Social Reader
+Autor: Ángel Martínez Ordiales
+Fecha de última modificación: Abril 2025
+Descripción: Lógica de la vista de perfil
+==========================================
+*/
 
 // === IMPORTACIONES ===
-// --- Servicios de Firebase y OpenLibrary
 import { mostrarNombre, avatarUsuario, obtenerDocumentoUsuario, obtenerTodosUsuarios, agregarAmigo, eliminarAmigo, obtenerResenasDeUsuario } from "./services/firestoreService.js";
 import { obtenerResumenLibro } from "./services/openlibrary.js";
-
-// === VARIABLES GLOBALES ===
-// const mainContent = document.getElementById("mainContent");
 
 // === MENÚ HAMBURGUESA: Mostrar/Ocultar ===
 document.getElementById("hamburguesa").addEventListener("click", () => {
   document.getElementById("menuHamburguesa").classList.toggle("show");
   document.getElementById("sombra").style.setProperty("display", "flex");
 });
+
 document.getElementById("exitMenu").addEventListener("click", (e) => {
   e.preventDefault();
   document.getElementById("menuHamburguesa").classList.remove("show");
@@ -20,7 +25,7 @@ document.getElementById("exitMenu").addEventListener("click", (e) => {
 });
 
 // === CIERRE DE SESIÓN: Escritorio y móvil ===
-["exitescritorio", "exitmovil"].forEach(id => {
+["exitescritorio", "exitmovil"].forEach((id) => {
   const btn = document.getElementById(id);
   if (btn) {
     btn.addEventListener("click", (e) => {
@@ -40,6 +45,7 @@ document.querySelector(".perfil").addEventListener("click", (e) => {
   menu.style.display = menu.style.display === "flex" ? "none" : "flex";
   e.stopPropagation();
 });
+
 document.addEventListener("click", (e) => {
   const menu = document.querySelector(".perfil-menu");
   const perfil = document.querySelector(".perfil");
@@ -62,12 +68,13 @@ firebase.auth().onAuthStateChanged(async (user) => {
   if (!user) return;
 
   mostrarNombre(user.uid, (nombre) => {
-    const h5Usuario = document.querySelector(".perfil-movil h5");
+    const h5Usuario = document.getElementById("nombreUsuarioMovil");
     if (h5Usuario) h5Usuario.textContent = nombre;
   });
+
   avatarUsuario(user.uid, (avatar) => {
-    const imgUsuario = document.querySelector(".perfil-movil img");
-    const imgUsuarioEscritorio = document.querySelector(".perfil img");
+    const imgUsuario = document.getElementById("avatarMovil");
+    const imgUsuarioEscritorio = document.getElementById("avatarEscritorio");
     if (imgUsuarioEscritorio) imgUsuarioEscritorio.src = `./assets/img/avatars/${avatar}`;
     if (imgUsuario) imgUsuario.src = `./assets/img/avatars/${avatar}`;
   });
@@ -75,6 +82,10 @@ firebase.auth().onAuthStateChanged(async (user) => {
   cargarDatosUsuario(user.uid);
 });
 
+/**
+ * Carga y muestra todos los datos del perfil de un usuario.
+ * @param {string} uid UID del usuario autenticado
+ */
 async function cargarDatosUsuario(uid) {
   const datos = await obtenerDocumentoUsuario(uid);
   if (!datos) return;
@@ -91,6 +102,11 @@ async function cargarDatosUsuario(uid) {
   await mostrarResenasUsuario(uid);
 }
 
+/**
+ * Formatea una fecha de Firestore a formato legible.
+ * @param {object} timestamp Marca temporal de Firestore
+ * @returns {string} Fecha formateada
+ */
 function formatearFecha(timestamp) {
   if (!timestamp || typeof timestamp.toDate !== "function") return "Sin fecha";
   const fecha = timestamp.toDate();
@@ -101,10 +117,20 @@ function formatearFecha(timestamp) {
   });
 }
 
+/**
+ * Muestra la lista de libros de un usuario en un contenedor.
+ * @param {Array} lista Lista de claves de libros
+ * @param {string} contenedorId ID del contenedor donde mostrar los libros
+ */
 async function mostrarLibrosUsuario(lista, contenedorId) {
   const contenedor = document.getElementById(contenedorId);
   if (!contenedor || !Array.isArray(lista)) return;
   contenedor.innerHTML = "";
+
+  if (lista.length === 0) {
+    contenedor.innerHTML = `<p class='mensaje-vacio'>No tienes libros en esta lista todavía.</p>`;
+    return;
+  }
 
   for (const clave of lista) {
     try {
@@ -114,13 +140,14 @@ async function mostrarLibrosUsuario(lista, contenedorId) {
 
       const div = document.createElement("div");
       div.className = "libro-item";
-      div.addEventListener("click", () => {
-        window.location.hash = `#detalle/${clave}`;
-      });
       div.innerHTML = `
         <img src="${portada}" alt="${titulo}">
         <div class="overlay">${titulo}</div>
       `;
+      div.addEventListener("click", () => {
+        window.location.hash = `#detalle/${clave}`;
+      });
+
       contenedor.appendChild(div);
     } catch (err) {
       console.warn("No se pudo obtener datos para:", clave, err);
@@ -128,6 +155,12 @@ async function mostrarLibrosUsuario(lista, contenedorId) {
   }
 }
 
+/**
+ * Muestra los amigos actuales del usuario.
+ * @param {string} uidUsuario UID del usuario
+ * @param {Array} listaUids Lista de UIDs de amigos
+ * @param {string} contenedorId ID del contenedor
+ */
 async function mostrarAmigos(uidUsuario, listaUids, contenedorId) {
   const contenedor = document.getElementById(contenedorId);
   contenedor.innerHTML = "";
@@ -150,9 +183,11 @@ async function mostrarAmigos(uidUsuario, listaUids, contenedorId) {
         </div>
         <div class="estado verde" data-uid="${uid}"></div>
       `;
-      div.querySelector(".estado").addEventListener("click", async () => {
+      div.querySelector(".estado").addEventListener("click", async (e) => {
+        e.stopPropagation();
+        e.currentTarget.disabled = true;
         await eliminarAmigo(uidUsuario, uid);
-        cargarDatosUsuario(uidUsuario);
+        await cargarDatosUsuario(uidUsuario);
       });
       contenedor.appendChild(div);
     } catch (error) {
@@ -161,89 +196,183 @@ async function mostrarAmigos(uidUsuario, listaUids, contenedorId) {
   }
 }
 
+/**
+ * Muestra nuevos usuarios para agregar como amigos.
+ * Implementa paginación tipo scroll infinito.
+ * @param {string} uidUsuario UID del usuario actual
+ * @param {Array} listaAmigos UIDs de amigos ya existentes
+ */
 async function mostrarNuevosAmigos(uidUsuario, listaAmigos) {
   const contenedor = document.getElementById("contenedor-nuevos-amigos");
+  const inputBusqueda = document.getElementById("input-buscar-amigos");
   contenedor.innerHTML = "";
+
   const todos = await obtenerTodosUsuarios();
-  for (const usuario of todos) {
-    if (!usuario.uid || usuario.uid === uidUsuario || listaAmigos.includes(usuario.uid)) continue;
-    const div = document.createElement("div");
-    div.className = "amigo";
-    div.innerHTML = `
-      <img src="./assets/img/avatars/${usuario.avatar || 'Avatar1.png'}" alt="Avatar">
-      <div class="info">
-        <p class="nombre">${usuario.nombrePantalla || "Usuario"}</p>
-        <p class="correo">${usuario.correo || "-"}</p>
-      </div>
-      <div class="estado" data-uid="${usuario.uid}"></div>
-    `;
-    div.querySelector(".estado").addEventListener("click", async () => {
-      await agregarAmigo(uidUsuario, usuario.uid);
-      cargarDatosUsuario(uidUsuario);
-    });
-    contenedor.appendChild(div);
+  if (!inputBusqueda) return;
+
+  let offset = 0;
+  const limite = 10;
+
+  function renderizar(amigosFiltrados, reiniciar = false) {
+    if (reiniciar) {
+      contenedor.innerHTML = "";
+      offset = 0;
+    }
+
+    const nuevos = amigosFiltrados.slice(offset, offset + limite);
+
+    for (const usuario of nuevos) {
+      if (!usuario.uid || usuario.uid === uidUsuario || listaAmigos.includes(usuario.uid)) continue;
+
+      const div = document.createElement("div");
+      div.className = "amigo";
+      div.innerHTML = `
+        <img src="./assets/img/avatars/${usuario.avatar || 'Avatar1.png'}" alt="Avatar">
+        <div class="info">
+          <p class="nombre">${usuario.nombrePantalla || "Usuario"}</p>
+          <p class="correo">${usuario.correo || "-"}</p>
+        </div>
+        <div class="estado" data-uid="${usuario.uid}"></div>
+      `;
+      div.querySelector(".estado").addEventListener("click", async (e) => {
+        e.stopPropagation();
+        e.currentTarget.disabled = true;
+        await agregarAmigo(uidUsuario, usuario.uid);
+        await cargarDatosUsuario(uidUsuario);
+      });
+      contenedor.appendChild(div);
+    }
+
+    offset += limite;
   }
-}
 
-// === NAVEGACIÓN POR PESTAÑAS ===
-document.querySelectorAll(".tab").forEach((tab) => {
-  tab.addEventListener("click", () => {
-    document.querySelectorAll(".tab").forEach((t) => t.classList.remove("activo"));
-    tab.classList.add("activo");
+  let amigosFiltrados = todos;
 
-    document.querySelectorAll(".contenido-tabs > div").forEach((div) => {
-      div.style.display = "none";
+  inputBusqueda.addEventListener("input", (e) => {
+    const texto = e.target.value.toLowerCase();
+    amigosFiltrados = todos.filter((usuario) => {
+      return (
+        usuario.nombrePantalla?.toLowerCase().includes(texto) ||
+        usuario.correo?.toLowerCase().includes(texto)
+      );
     });
+    renderizar(amigosFiltrados, true);
+  });
 
-    const idContenido = tab.getAttribute("data-tab");
-    const seccionActiva = document.getElementById(idContenido);
-    if (seccionActiva) {
-      seccionActiva.style.display = "block";
+  contenedor.addEventListener("scroll", () => {
+    if (contenedor.scrollLeft + contenedor.clientWidth >= contenedor.scrollWidth - 100) {
+      renderizar(amigosFiltrados);
     }
   });
+
+  renderizar(amigosFiltrados);
+}
+
+// === NAVEGACIÓN ENTRE PESTAÑAS ===
+let pestañaActivaIndex = 0;
+const tabs = Array.from(document.querySelectorAll(".tab"));
+
+/**
+ * Activa una pestaña y muestra su contenido.
+ * @param {number} index Índice de la pestaña a activar
+ */
+function activarTab(index) {
+  tabs.forEach((t) => t.classList.remove("activo"));
+  tabs[index].classList.add("activo");
+
+  const contenidos = document.querySelectorAll(".contenido-tabs > div");
+  contenidos.forEach((div) => div.classList.remove("activo-tab"));
+
+  const idContenido = tabs[index].getAttribute("data-tab");
+  const seccionActiva = document.getElementById(idContenido);
+  if (!seccionActiva) return;
+
+  seccionActiva.classList.add("activo-tab");
+  pestañaActivaIndex = index;
+}
+
+// Eventos de cambio de pestaña
+tabs.forEach((tab, index) => {
+  tab.addEventListener("click", () => activarTab(index));
 });
 
-// === SELECCIÓN DE AVATAR ===
+// Activar primera pestaña al entrar
+if (window.location.hash === "#profile") {
+  activarTab(0);
+}
+window.addEventListener("hashchange", () => {
+  if (window.location.hash === "#profile") {
+    activarTab(0);
+  }
+});
+
+// === SELECCIÓN Y CAMBIO DE AVATAR ===
 let avatarSeleccionado = null;
 
 document.getElementById("avatarGrande").addEventListener("click", () => {
-  document.getElementById("selectorAvatar").classList.toggle("oculto");
+  const selector = document.getElementById("selectorAvatar");
+  if (selector.classList.contains("mostrar")) {
+    selector.classList.remove("mostrar");
+    selector.classList.add("ocultar");
+    setTimeout(() => selector.classList.add("oculto"), 300);
+  } else {
+    selector.classList.remove("oculto", "ocultar");
+    selector.classList.add("mostrar");
+  }
 });
 
-document.querySelectorAll(".grid-avatars img").forEach(img => {
+document.querySelectorAll(".grid-avatars img").forEach((img) => {
   img.addEventListener("click", () => {
-    document.querySelectorAll(".grid-avatars img").forEach(i => i.classList.remove("seleccionado"));
+    document.querySelectorAll(".grid-avatars img").forEach((i) => i.classList.remove("seleccionado"));
     img.classList.add("seleccionado");
     avatarSeleccionado = img.dataset.avatar;
   });
 });
 
 document.getElementById("guardarAvatar").addEventListener("click", async () => {
-  if (!avatarSeleccionado) return document.getElementById("selectorAvatar").classList.add("oculto");
+  if (!avatarSeleccionado) {
+    cerrarSelectorAvatar();
+    return;
+  }
   const user = firebase.auth().currentUser;
   if (!user) return;
 
-  // Guardar avatar en Firestore
   await firebase.firestore().collection("usuarios").doc(user.uid).update({
-    avatar: avatarSeleccionado
+    avatar: avatarSeleccionado,
   });
 
-  // Actualizar en pantalla
   document.getElementById("avatarGrande").src = `./assets/img/avatars/${avatarSeleccionado}`;
-  document.querySelector(".perfil-movil img").src = `./assets/img/avatars/${avatarSeleccionado}`;
-  document.querySelector(".perfil img").src = `./assets/img/avatars/${avatarSeleccionado}`;
+  document.getElementById("avatarMovil").src = `./assets/img/avatars/${avatarSeleccionado}`;
+  document.getElementById("avatarEscritorio").src = `./assets/img/avatars/${avatarSeleccionado}`;
 
-  document.getElementById("selectorAvatar").classList.add("oculto");
+  cerrarSelectorAvatar();
   avatarSeleccionado = null;
 });
 
+/**
+ * Cierra el selector emergente de avatar.
+ */
+function cerrarSelectorAvatar() {
+  const selector = document.getElementById("selectorAvatar");
+  selector.classList.remove("mostrar");
+  selector.classList.add("ocultar");
+  setTimeout(() => {
+    selector.classList.add("oculto");
+  }, 300);
+}
+
+// === MOSTRAR RESEÑAS DEL USUARIO ===
+/**
+ * Muestra las reseñas publicadas por el usuario.
+ * @param {string} uid UID del usuario
+ */
 async function mostrarResenasUsuario(uid) {
   const contenedor = document.getElementById("mis-resenas");
   contenedor.innerHTML = "";
 
   const resenas = await obtenerResenasDeUsuario(uid);
   if (resenas.length === 0) {
-    contenedor.innerHTML = "<p>No has publicado ninguna reseña todavía.</p>";
+    contenedor.innerHTML = `<p class='mensaje-vacio'>No has publicado ninguna reseña todavía.</p>`;
     return;
   }
 
@@ -253,17 +382,28 @@ async function mostrarResenasUsuario(uid) {
     const portada = datos.portada || "./assets/img/interface/placeholder-libro.png";
 
     const div = document.createElement("div");
-    div.className = "libro-item";
+    div.className = "tarjeta-resena";
+    div.innerHTML = `
+      <div class="imagen-resena">
+        <img src="${portada}" alt="${titulo}">
+      </div>
+      <div class="contenido-resena">
+        <h4>${titulo}</h4>
+        <div class="valoracion">
+          ${Array.from({ length: 5 }, (_, i) => `
+            <img src="./assets/img/interface/${i < resena.valoracion ? 'estrellaact' : 'estrellades'}.png" 
+                 alt="${i < resena.valoracion ? 'Estrella activa' : 'Estrella desactivada'}" 
+                 class="estrella-resena">
+          `).join('')}
+        </div>
+        <p class="texto-resena">${resena.review || "Sin texto de reseña."}</p>
+      </div>
+    `;
+
     div.addEventListener("click", () => {
       window.location.hash = `#detalle/${resena.idlibro}`;
     });
-    div.innerHTML = `
-      <img src="${portada}" alt="${titulo}">
-      <div class="overlay">
-        <strong>${titulo}</strong><br>
-        Valoración: ${resena.valoracion}/5
-      </div>
-    `;
+
     contenedor.appendChild(div);
   }
 }

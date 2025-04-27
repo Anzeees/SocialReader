@@ -1,16 +1,24 @@
-/* PROFILE.CSS -- ÁNGEL MARTÍNEZ ORDIALES */
+/* 
+==========================================
+Estilos: PROFILE.CSS
+Proyecto: Social Reader
+Autor: Ángel Martínez Ordiales
+Fecha de última modificación: Abril 2025
+Descripción: Estilos de la vista de perfil
+==========================================
+*/
 
 /* === ESTRUCTURA GENERAL DEL MAIN === */
 #mainContent {
   display: flex;
   width: 100%;
-  min-height: 100vh; /* Altura mínima de toda la página */
+  min-height: 100vh;
   padding: 3%;
   box-sizing: border-box;
   gap: 2rem;
 }
 
-/* === PANEL LATERAL DE PERFIL === */
+/* === PANEL LATERAL DEL PERFIL === */
 .panel-lateral {
   width: 25%;
   min-width: 220px;
@@ -43,19 +51,20 @@
   color: #666;
 }
 
-/* === PANEL DERECHO CON TABS === */
+/* === PANEL DERECHO DEL PERFIL === */
 .panel-derecho {
   flex-grow: 1;
   background-color: #f2f2f2;
   border-radius: 10px;
   padding: 1rem;
   border: 1px solid #ccc;
-  height: 100%;
-  min-height: fit-content;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
   box-sizing: border-box;
 }
 
-/* === TABS DE SECCIONES === */
+/* === PESTAÑAS DE SECCIONES === */
 .tabs {
   display: flex;
   gap: 1.5rem;
@@ -83,7 +92,7 @@
   padding-top: 1rem;
 }
 
-/* === LISTADO DE AMIGOS (tarjetas) === */
+/* === SECCIÓN DE AMIGOS === */
 #mis-amigos h4 {
   margin-bottom: 2%;
 }
@@ -96,12 +105,9 @@
 }
 
 #contenedor-nuevos-amigos {
-  display: flex;
   flex-wrap: nowrap;
   overflow-x: auto;
-  gap: 1rem;
   padding-bottom: 1rem;
-  margin-bottom: 2rem;
 }
 
 #contenedor-nuevos-amigos::-webkit-scrollbar {
@@ -113,14 +119,14 @@
   border-radius: 4px;
 }
 
+/* === TARJETAS DE USUARIO/AMIGO === */
 .amigo {
-  max-width: 350px;
-  width: 100%;
-  min-width: fit-content;
+  width: clamp(220px, 25%, 300px);
+  min-width: 220px;
+  max-width: 300px;
   height: 80px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   background: #fff;
   border-radius: 999px;
   padding: 0.5rem 1rem;
@@ -132,42 +138,55 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  margin: 2%;
+  flex-shrink: 0;
 }
 
 .amigo .info {
   flex-grow: 1;
+  margin-left: 0.5rem;
+  overflow: hidden;
+}
+
+.amigo .nombre,
+.amigo .correo {
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .amigo .nombre {
   font-weight: bold;
-  margin: 0;
+  font-size: 0.9rem;
 }
 
 .amigo .correo {
-  margin: 0;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: #666;
 }
 
+/* Estado (botón circular para agregar/eliminar amigos) */
 .amigo .estado {
   width: 20px;
   height: 20px;
+  min-width: 20px;
+  min-height: 20px;
   background-color: #f66;
   border-radius: 50%;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: filter 0.2s;
 }
 
 .amigo .estado:hover {
   filter: brightness(1.2);
-  transition: filter 0.2s;
-  cursor: pointer;
 }
 
 .estado.verde {
   background-color: #4CAF50;
 }
 
-/* === CONTENEDORES DE LIBROS (Favoritos / Más tarde) === */
+/* === SECCIÓN DE LIBROS (favoritos / mostrar más tarde) === */
 .contenedor-libros {
   display: flex;
   flex-wrap: wrap;
@@ -182,8 +201,8 @@
   cursor: pointer;
   overflow: hidden;
   border-radius: 10px;
-  transition: transform 0.2s;
   margin-top: 1%;
+  transition: transform 0.2s;
 }
 
 .libro-item img {
@@ -232,11 +251,7 @@
   cursor: default;
 }
 
-.btn-agregado {
-  background-color: #4caf50;
-}
-
-/* === CONTENEDOR CAMBIO DE AVATAR === */
+/* === CAMBIO DE AVATAR (emergente) === */
 .emergente-avatar {
   position: fixed;
   top: 50%;
@@ -254,9 +269,10 @@
 }
 
 .oculto {
-  display: none;
+  display: none !important;
 }
 
+/* Selector de avatares */
 .grid-avatars {
   display: grid;
   grid-template-columns: repeat(3, 60px);
@@ -274,15 +290,13 @@
   transition: transform 0.2s, border 0.2s;
 }
 
-.grid-avatars img:hover {
+.grid-avatars img:hover,
+.grid-avatars img.seleccionado {
   transform: scale(1.05);
   border-color: #007bff;
 }
 
-.grid-avatars img.seleccionado {
-  border-color: #007bff;
-}
-
+/* Botón de guardar avatar */
 #guardarAvatar {
   background-color: #007bff;
   color: white;
@@ -293,6 +307,106 @@
   font-weight: bold;
 }
 
+/* === TARJETAS DE RESEÑAS DE USUARIO === */
+.tarjeta-resena {
+  display: flex;
+  align-items: flex-start;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  margin-bottom: 1rem;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tarjeta-resena:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 12px rgba(0,0,0,0.15);
+}
+
+.imagen-resena {
+  width: 120px;
+  height: 180px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.imagen-resena img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.contenido-resena {
+  padding: 1rem;
+  flex-grow: 1;
+}
+
+.contenido-resena h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.contenido-resena .valoracion {
+  display: flex;
+  gap: 0.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.estrella-resena {
+  width: 20px;
+  height: 20px;
+}
+
+.texto-resena {
+  font-size: 0.95rem;
+  color: #555;
+}
+
+/* === TRANSICIÓN DE TABS === */
+.contenido-tabs > div {
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  display: none;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.contenido-tabs > div.activo-tab {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  display: block;
+}
+
+/* === BUSCADOR DE AMIGOS === */
+#busqueda-amigos {
+  margin-bottom: 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  z-index: 1000;
+}
+
+#input-buscar-amigos {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.6rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.3s;
+  user-select: auto;
+}
+
+#input-buscar-amigos:focus {
+  border-color: #e74c3c;
+}
+
+/* === RESPONSIVE === */
 @media (max-width: 1000px) {
   #mainContent {
     flex-direction: column;
@@ -307,7 +421,11 @@
 
   .panel-derecho {
     width: 100%;
-    min-height: auto;
     margin-top: 1rem;
+  }
+
+  .imagen-resena {
+    width: 100px;
+    height: 150px;
   }
 }
