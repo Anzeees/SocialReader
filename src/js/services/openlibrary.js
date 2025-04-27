@@ -1,6 +1,12 @@
 // OPENLIBRARY.JS -- ÁNGEL MARTÍNEZ ORDIALES
 
 // === FUNCIONES AUXILIARES ===
+
+/**
+ * Obtiene el nombre de un autor dado su key en OpenLibrary.
+ * @param {string} autorKey - Ruta del autor en OpenLibrary (ej: /authors/OL12345A).
+ * @returns {Promise<string>} Nombre del autor o 'Autor desconocido'.
+ */
 async function obtenerNombreAutor(autorKey) {
   try {
     const respuesta = await fetch(`https://openlibrary.org${autorKey}.json`);
@@ -11,6 +17,11 @@ async function obtenerNombreAutor(autorKey) {
   }
 }
 
+/**
+ * Traduce un código de idioma de OpenLibrary a su nombre en español.
+ * @param {string} idiomaKey - Ruta del idioma en OpenLibrary (ej: /languages/eng).
+ * @returns {Promise<string>} Nombre del idioma o el propio código si no está mapeado.
+ */
 async function obtenerNombreIdioma(idiomaKey) {
   const cod = idiomaKey.split('/').pop();
   const nombres = {
@@ -25,6 +36,12 @@ async function obtenerNombreIdioma(idiomaKey) {
 }
 
 // === FUNCIONES PRINCIPALES ===
+
+/**
+ * Obtiene un resumen breve de un libro a partir de su workId.
+ * @param {string} workId - ID del work en OpenLibrary.
+ * @returns {Promise<object|null>} Datos básicos del libro o null si falla.
+ */
 export async function obtenerResumenLibro(workId) {
   try {
     const res = await fetch(`https://openlibrary.org/works/${workId}.json`);
@@ -45,6 +62,11 @@ export async function obtenerResumenLibro(workId) {
   }
 }
 
+/**
+ * Obtiene los detalles completos de un libro (autor, editorial, año, etc).
+ * @param {string} workId - ID del work en OpenLibrary.
+ * @returns {Promise<object|null>} Datos completos del libro o null si falla.
+ */
 export async function obtenerDetallesLibro(workId) {
   try {
     const resWork = await fetch(`https://openlibrary.org/works/${workId}.json`);
@@ -52,6 +74,7 @@ export async function obtenerDetallesLibro(workId) {
 
     const primeraEdicionKey = workData.edition_key?.[0];
     let edicionData = {};
+
     if (primeraEdicionKey) {
       const resEdicion = await fetch(`https://openlibrary.org/books/${primeraEdicionKey}.json`);
       edicionData = await resEdicion.json();
@@ -69,7 +92,9 @@ export async function obtenerDetallesLibro(workId) {
         const autorRes = await fetch(`https://openlibrary.org${autorKey}.json`);
         const autorData = await autorRes.json();
         biografiaAutor = autorData.bio?.value || autorData.bio || '';
-      } catch { biografiaAutor = ''; }
+      } catch {
+        biografiaAutor = '';
+      }
     }
 
     if (workData.subjects?.[0]) {
@@ -120,6 +145,10 @@ export async function obtenerDetallesLibro(workId) {
   }
 }
 
+/**
+ * Obtiene una lista de libros de fantasía populares (simulados como "más vendidos").
+ * @returns {Promise<Array<object>>} Lista de resúmenes de libros.
+ */
 export async function obtenerTopMasVendidos() {
   try {
     const res = await fetch('https://openlibrary.org/subjects/fantasy.json?limit=20');
@@ -134,6 +163,10 @@ export async function obtenerTopMasVendidos() {
   }
 }
 
+/**
+ * Obtiene una lista de libros populares mezclando búsquedas y fantasía.
+ * @returns {Promise<Array<object>>} Lista de libros populares.
+ */
 export async function obtenerLibrosPopulares() {
   const urls = [
     'https://openlibrary.org/search.json?q=libro&limit=20',
