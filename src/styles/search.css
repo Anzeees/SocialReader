@@ -1,32 +1,10 @@
-/* SEARCH.CSS -- ÁNGEL MARTÍNEZ ORDIALES */
-
-/* === ESTILOS DE SPINNER Y CARGA === */
-.spinner-busqueda {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 1rem 0;
-}
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 6px solid #e0e0e0;
-  border-top: 6px solid #007bff;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-.spinner-busqueda p {
-  margin-top: 0.5rem;
-  font-weight: bold;
-  color: #333;
-}
-.oculto {
-  display: none !important;
-}
+/* SEARCH.CSS -- ÁNGEL MARTÍNEZ ORDIALES -- SOCIALREADER --
+============================================================
+Proyecto: SocialReader
+Autor: Ángel Martínez Ordiales
+Archivo: search.css
+Descripción: Estilos para la vista de búsqueda de libros con filtros y paginación.
+*/
 
 /* === ESTRUCTURA GENERAL DE LA VISTA === */
 section {
@@ -41,7 +19,6 @@ main {
   flex-grow: 1;
 }
 
-/* === MAIN DE CONTENIDO Y BÚSQUEDA === */
 #mainContent {
   display: flex;
   flex-direction: column;
@@ -52,7 +29,7 @@ main {
   margin: 3% auto 0 auto;
 }
 
-/* === BLOQUE DE BÚSQUEDA AVANZADA === */
+/* === BARRA DE BÚSQUEDA AVANZADA === */
 .busqueda-avanzada {
   width: 100%;
   display: flex;
@@ -129,7 +106,6 @@ main {
   cursor: pointer;
 }
 
-/* Añade la flechita como pseudo-elemento */
 .select-wrapper::after {
   content: "▼";
   position: absolute;
@@ -141,8 +117,7 @@ main {
   color: var(--color-oscuro);
 }
 
-
-/* === RESULTADOS DE BÚSQUEDA: TARJETAS === */
+/* === RESULTADOS DE BÚSQUEDA === */
 .resultados {
   display: flex;
   flex-direction: column;
@@ -150,6 +125,14 @@ main {
   padding-bottom: 2rem;
   width: 100%;
   align-self: center;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.resultados.ocultar {
+  opacity: 0;
+  transform: translateY(30px);
 }
 
 .resultado-libro {
@@ -245,7 +228,73 @@ main {
   height: 18px;
 }
 
-/* === RESPONSIVE (MÓVIL) === */
+/* === PAGINACIÓN DE RESULTADOS === */
+.paginacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.boton-paginacion {
+  background-color: #f2f2f2;
+  border: 1px solid #dcdcdc;
+  padding: 0.6rem 1.2rem;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #333;
+  transition: background-color 0.3s, color 0.3s, border 0.3s;
+  font-size: 1rem;
+}
+
+.boton-paginacion:hover {
+  background-color: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
+.boton-paginacion:disabled {
+  background-color: #e0e0e0;
+  color: #aaa;
+  cursor: not-allowed;
+  border-color: #e0e0e0;
+}
+
+/* === SPINNER DE CARGA === */
+.spinner-busqueda {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 6px solid #e0e0e0;
+  border-top: 6px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spinner-busqueda p {
+  margin-top: 0.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.oculto {
+  display: none !important;
+}
+
+/* === RESPONSIVE: Adaptaciones para móviles === */
 @media (max-width: 1000px) {
   .resultados {
     width: 95%;
@@ -256,49 +305,30 @@ main {
   }
 
   .resultado-libro {
-    display: flex;
     flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
     gap: 1rem;
-    border: 2px solid #dcdcdc;
-    border-radius: 10px;
-    background-color: #fdfdfd;
     padding: 0.7rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   }
 
   .resultado-libro .portada {
     width: 90px;
     height: 120px;
     border-radius: 6px;
-    object-fit: cover;
-    flex-shrink: 0;
   }
 
   .info-libro {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
     font-size: 0.9rem;
   }
 
   .info-libro h4 {
     font-size: 1rem;
-    font-weight: 700;
-    margin: 0;
   }
 
   .info-libro p {
-    margin: 0.2rem 0;
     font-size: 0.85rem;
-    color: #333;
   }
 
   .valoracion {
-    display: flex;
-    align-items: center;
     gap: 0.3rem;
     font-size: 0.85rem;
     margin-top: 0.3rem;
@@ -306,26 +336,12 @@ main {
 
   .valoracion span {
     font-size: 0.8rem;
-    color: #555;
   }
 
   .acciones-libro {
-    display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
     gap: 0.5rem;
     margin-left: 0.5rem;
-  }
-
-  .acciones-libro .accion {
-    background-color: #f2f2f2;
-    border: none;
-    padding: 0.3rem;
-    border-radius: 6px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
   }
 
   .acciones-libro .accion img {
@@ -334,25 +350,9 @@ main {
   }
 
   .acciones-libro .resena {
-    background-color: #007bff;
-    color: white;
-    border: none;
     padding: 0.4rem 0.7rem;
-    border-radius: 6px;
     font-size: 0.8rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
     gap: 0.3rem;
-    white-space: nowrap;
-  }
-
-  .acciones-libro .resena {
-    font-size: 0;
-  }
-  
-  .acciones-libro .resena img {
-    font-size: initial;
   }
 }
 
@@ -373,9 +373,7 @@ main {
     margin-top: 1rem;
   }
 
-  .acciones-libro .accion,
-  .acciones-libro .resena {
-    width: auto;
+  .acciones-libro .accion, .acciones-libro .resena {
     flex-grow: 1;
     justify-content: center;
   }
