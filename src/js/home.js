@@ -1,7 +1,12 @@
-// HOME.JS -- ÁNGEL MARTÍNEZ ORDIALES
+/** HOME.JS -- ÁNGEL MARTÍNEZ ORDIALES -- SOCIALREADER --
+============================================================
+Proyecto: SocialReader
+Autor: Ángel Martínez Ordiales
+Archivo: home.js
+Descripción: Módulo de inicio y carga de libros destacados en la aplicación.
+*/
 
 // === IMPORTACIONES ===
-// --- Importacion servicios de Firebase y OpenLibraryAPI
 import { mostrarNombre, avatarUsuario } from "./services/firestoreService.js";
 import { obtenerLibrosPopulares, obtenerTopMasVendidos } from "./services/openlibrary.js";
 
@@ -9,7 +14,11 @@ import { obtenerLibrosPopulares, obtenerTopMasVendidos } from "./services/openli
 const mainContent = document.getElementById("mainContent");
 const loader = document.getElementById("loader");
 
-// === GESTIÓN DE INTERFAZ: MENÚ HAMBURGUESA ===
+// === FUNCIONES DE NAV === 
+/**
+ * Cierra el menú hamburguesa en vista móvil.
+ * @function
+ */
 function cerrarMenuHamburguesa() {
   document.getElementById("menuHamburguesa").classList.remove("show");
   document.getElementById("sombra").style.display = "none";
@@ -40,7 +49,7 @@ document.getElementById("exitMenu").addEventListener("click", (e) => {
   }
 });
 
-// === GESTIÓN DE MENÚ PERFIL (escritorio) ===
+// === GESTIÓN DEL MENÚ PERFIL (escritorio) ===
 document.querySelector(".perfil").addEventListener("click", (e) => {
   const menu = document.querySelector(".perfil-menu");
   menu.style.display = menu.style.display === "flex" ? "none" : "flex";
@@ -82,6 +91,11 @@ firebase.auth().onAuthStateChanged((user) => {
 });
 
 // === CREACIÓN DE TARJETAS DE LIBROS PARA EL CARRUSEL ===
+/**
+ * Crea dinámicamente una tarjeta de libro para el carrusel.
+ * @param {Object} libro - Datos del libro.
+ * @returns {HTMLElement} - Elemento HTML de la tarjeta.
+ */
 function crearCardLibro(libro) {
   const card = document.createElement("div");
   card.className = "card-libro";
@@ -99,7 +113,81 @@ function crearCardLibro(libro) {
   return card;
 }
 
-// === CARGA DE LOS TOPS: MÁS VENDIDOS Y MÁS POPULARES ===
+// === MOVIMIENTO DEL CARRUSEL ===
+/**
+ * Mueve el carrusel manualmente al pulsar los botones.
+ * @param {HTMLElement} btn - Botón pulsado (izquierda o derecha).
+ * @param {number} direccion - Dirección de movimiento: -1 (izquierda), 1 (derecha).
+ */
+window.moverCarrusel = function (btn, direccion) {
+  const contenedor = btn.parentElement.querySelector(".contenedor-cards");
+  const card = contenedor.querySelector(".card-libro");
+  if (!card) return;
+
+  const desplazamiento = card.offsetWidth + 16;
+  const scrollMaximo = contenedor.scrollWidth - contenedor.clientWidth;
+  const scrollActual = contenedor.scrollLeft;
+
+  if ((direccion === -1 && scrollActual === 0) || 
+      (direccion === 1 && Math.ceil(scrollActual) >= scrollMaximo)) {
+    contenedor.classList.add("rebote");
+    setTimeout(() => contenedor.classList.remove("rebote"), 400);
+    return;
+  }
+
+  contenedor.scrollBy({
+    left: direccion * desplazamiento,
+    behavior: "smooth"
+  });
+
+  setTimeout(() => actualizarBarraProgreso(contenedor), 300);
+};
+
+/**
+ * Actualiza la barra de progreso del carrusel.
+ * @param {HTMLElement} contenedor - Contenedor del carrusel.
+ */
+function actualizarBarraProgreso(contenedor) {
+  const barra = contenedor.id.includes('vendidos') ? document.getElementById('progreso-vendidos') : document.getElementById('progreso-guardados');
+
+  const scrollMaximo = contenedor.scrollWidth - contenedor.clientWidth;
+  const scrollActual = contenedor.scrollLeft;
+  const progreso = Math.min((scrollActual / scrollMaximo) * 100, 100);
+
+  barra.style.width = `${progreso}%`;
+}
+
+/**
+ * Inicia el desplazamiento automático de los carruseles.
+ * @function
+ */
+function iniciarAutoplayCarrusel() {
+  const carruseles = document.querySelectorAll(".contenedor-cards");
+
+  carruseles.forEach(contenedor => {
+    setInterval(() => {
+      const card = contenedor.querySelector(".card-libro");
+      if (!card) return;
+
+      const desplazamiento = card.offsetWidth + 16;
+      const scrollMaximo = contenedor.scrollWidth - contenedor.clientWidth;
+      const scrollActual = contenedor.scrollLeft;
+
+      if (Math.ceil(scrollActual) >= scrollMaximo) {
+        contenedor.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        contenedor.scrollBy({ left: desplazamiento, behavior: "smooth" });
+      }
+      setTimeout(() => actualizarBarraProgreso(contenedor), 300);
+    }, 5000);
+  });
+}
+
+// === CARGA DE LIBROS EN LOS CARRUSELES ===
+/**
+ * Carga los libros más vendidos y populares y los muestra en el carrusel.
+ * @function
+ */
 async function cargarTopLibros() {
   const contVendidos = document.getElementById('lista-vendidos');
   const contGuardados = document.getElementById('lista-guardados');
@@ -113,19 +201,9 @@ async function cargarTopLibros() {
   loader.style.display = "none";
   mainContent.removeAttribute("hidden");
   mainContent.classList.add("fade-in");
+
+  iniciarAutoplayCarrusel();
 }
 
-// === MOVIMIENTO DEL CARRUSEL ===
-window.moverCarrusel = function (btn, direccion) {
-  const contenedor = btn.parentElement.querySelector(".contenedor-cards");
-  const card = contenedor.querySelector(".card-libro");
-  if (!card) return;
-  const desplazamiento = card.offsetWidth + 16;
-  contenedor.scrollBy({
-    left: direccion * desplazamiento,
-    behavior: "smooth"
-  });
-};
-
-// === INICIALIZACIÓN: CARGAR CONTENIDO DE LA VISTA ===
+// === INICIALIZACIÓN ===
 cargarTopLibros();

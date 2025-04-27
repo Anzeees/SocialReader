@@ -1,5 +1,12 @@
-/* HOME.CSS -- ÁNGEL MARTÍNEZ ORDIALES */
-/* === CONTENEDOR PRICIPAL === */
+/* HOME.CSS -- ÁNGEL MARTÍNEZ ORDIALES -- SOCIALREADER --
+============================================================
+Proyecto: SocialReader
+Autor: Ángel Martínez Ordiales
+Archivo: home.css
+Descripción: Estilos CSS para la vista de inicio de la aplicación.
+*/
+
+/* === ESTILOS GENERALES DE LA VISTA DE INICIO === */
 #mainContent {
   display: flex;
   flex-direction: column;
@@ -21,23 +28,7 @@ h2 {
   margin-bottom: 2%;
 }
 
-/* === ANIMACIONES === */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.fade-in {
-  animation: fadeIn 0.6s ease-out forwards;
-}
-
-/* === LOADER (CARGANDO...) === */
+/* === LOADER (CARGANDO LIBROS) === */
 .loader-container {
   display: flex;
   flex-direction: column;
@@ -45,14 +36,14 @@ h2 {
   justify-content: center;
   min-height: 50vh;
   font-family: sans-serif;
-  color: #2C3E50;
+  color: #2c3e50;
 }
 
 .spinner {
   width: 50px;
   height: 50px;
   border: 6px solid #ccc;
-  border-top-color: #2C3E50;
+  border-top-color: #2c3e50;
   border-radius: 50%;
   animation: girar 1s linear infinite;
   margin-bottom: 1rem;
@@ -64,7 +55,7 @@ h2 {
   }
 }
 
-/* === CARRUSEL DE LIBROS Y SUS BOTONES === */
+/* === CARRUSEL DE LIBROS === */
 .carrusel {
   display: flex;
   align-items: center;
@@ -87,7 +78,7 @@ h2 {
   background: none;
   border: none;
   font-size: 2rem;
-  color: #2C3E50;
+  color: #2c3e50;
   cursor: pointer;
   padding: 0 1rem;
   z-index: 1;
@@ -103,7 +94,7 @@ h2 {
   cursor: default;
 }
 
-/* === TARJETA DE LIBRO === */
+/* === TARJETAS DE LIBROS === */
 .card-libro {
   flex: 0 0 auto;
   width: 150px;
@@ -111,7 +102,7 @@ h2 {
   border-radius: 10px;
   overflow: hidden;
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .card-libro img {
@@ -130,4 +121,51 @@ h2 {
   font-size: 0.85rem;
   color: var(--color-oscuro);
   margin-bottom: 0.5rem;
+}
+
+/* === BARRA PROGRESO CARRUSEL === */
+.barra-progreso {
+  width: 100%;
+  height: 4px;
+  background-color: #eee;
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+
+.barra-progreso-interna {
+  height: 100%;
+  width: 0%;
+  background-color: var(--color-complementario2);
+  transition: width 0.3s ease;
+  border-radius: 10px;
+}
+
+/* === ANIMACIONES === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+@keyframes rebote {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-10px); }
+  50% { transform: translateX(10px); }
+  75% { transform: translateX(-10px); }
+  100% { transform: translateX(0); }
+}
+
+.rebote {
+  animation: rebote 0.4s ease;
 }

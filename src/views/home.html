@@ -1,6 +1,14 @@
-<!-- HOME.HTML -- ÁNGEL MARTÍNEZ ORDIALES -->
+<!-- HOME.HTML -- ÁNGEL MARTÍNEZ ORDIALES -- SOCIALREADER --
+=======================================================
+Proyecto: SocialReader
+Autor: Ángel Martínez Ordiales
+Archivo: home.html
+Descripción: Vista de inicio de la aplicación (home)
+=======================================================
+-->
+<!-- === ESTRUCTURA PRINCIPAL: Sección de Inicio === -->
 <section>
-  <!-- === BARRA DE NAVEGACIÓN GENERAL (ESCRITORIO Y MÓVIL) === -->
+  <!-- === BARRA DE NAVEGACIÓN === -->
   <nav>
     <!-- Sombra de fondo para el menú hamburguesa (visible al abrir el menú móvil) -->
     <div class="sombra" id="sombra"></div>
@@ -55,13 +63,13 @@
     </div>
   </nav>
 
-  <!-- === INDICADOR DE CARGA === -->
+  <!-- === INDICADOR DE CARGA: Mientras se cargan los libros === -->
   <div id="loader" class="loader-container">
     <div class="spinner"></div>
     <p>Cargando libros...</p>
   </div>
 
-  <!-- === CONTENIDO PRINCIPAL === -->
+  <!-- === CONTENIDO PRINCIPAL (inicio) === -->
   <main id="mainContent" data-vista="inicio" hidden>
     <!-- Sección: Top más vendidos -->
     <h2>Top más vendidos</h2>
@@ -69,6 +77,9 @@
       <button class="btn-carrusel izquierda" aria-label="Anterior" onclick="moverCarrusel(this, -1)">❮</button>
       <div id="lista-vendidos" class="contenedor-cards"></div>
       <button class="btn-carrusel derecha" aria-label="Siguiente" onclick="moverCarrusel(this, 1)">❯</button>
+    </div>
+    <div class="barra-progreso">
+      <div id="progreso-vendidos" class="barra-progreso-interna"></div>
     </div>
 
     <!-- Sección: Top más populares -->
@@ -78,5 +89,9 @@
       <div id="lista-guardados" class="contenedor-cards"></div>
       <button class="btn-carrusel derecha" aria-label="Siguiente" onclick="moverCarrusel(this, 1)">❯</button>
     </div>
+    <div class="barra-progreso">
+      <div id="progreso-guardados" class="barra-progreso-interna"></div>
+    </div>
+
   </main>
 </section>
