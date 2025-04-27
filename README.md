@@ -1,6 +1,5 @@
 # Vamos a generar el archivo README.md actualizado siguiendo toda la información proporcionada.
 
-contenido_readme = """
 ![SocialReader Banner](src/assets/img/logotipos/BannerReadMe.png)
 
 # 📚 SocialReader
