@@ -15,10 +15,6 @@ const mainContent = document.getElementById("mainContent");
 const loader = document.getElementById("loader");
 
 // === GESTIÓN DE INTERFAZ: MENÚ HAMBURGUESA ===
-
-/**
- * Cierra el menú hamburguesa en vista móvil.
- */
 function cerrarMenuHamburguesa() {
   document.getElementById("menuHamburguesa").classList.remove("show");
   document.getElementById("sombra").style.display = "none";
@@ -68,7 +64,6 @@ document.addEventListener("click", (e) => {
 document.querySelector("#nombreUsuario")?.addEventListener("click", () => {
   window.location.hash = "#profile";
 });
-
 document.querySelector(".perfil-menu a[href='#profile']")?.addEventListener("click", (e) => {
   e.preventDefault();
   window.location.hash = "#profile";
@@ -90,10 +85,10 @@ firebase.auth().onAuthStateChanged((user) => {
   }
 });
 
-// === FUNCIONES PRICIPALES === 
+// === FUNCIONES PRINCIPALES ===
 /**
  * Obtiene el ID del libro desde el hash de la URL.
- * @returns {string|null} ID del libro o null si no existe.
+ * @returns {string|null}
  */
 function obtenerWorkIdDesdeHash() {
   const hash = window.location.hash;
@@ -129,7 +124,7 @@ if (workId && mainContent) {
 
     configurarEventosBotones(libro, user);
     cargarResenasLibro(libro.id);
-
+    configurarLecturaExpandida();
   }).catch((error) => {
     loader.style.display = "none";
     mostrarModalError("Error al cargar los detalles del libro. Intenta de nuevo más tarde.");
@@ -142,9 +137,9 @@ if (workId && mainContent) {
 
 // === FUNCIONES AUXILIARES ===
 /**
- * Configura los eventos de botones de acción del detalle del libro.
- * @param {object} libro - Objeto del libro.
- * @param {firebase.User} user - Usuario autenticado.
+ * Configura los eventos de los botones de acciones del libro.
+ * @param {object} libro
+ * @param {firebase.User} user
  */
 function configurarEventosBotones(libro, user) {
   const btnFav = document.querySelector(".btn-fav");
@@ -194,8 +189,22 @@ function configurarEventosBotones(libro, user) {
 }
 
 /**
- * Carga las reseñas de un libro y las muestra en pantalla.
- * @param {string} idLibro - ID del libro.
+ * Configura el comportamiento de expandir/ocultar biografía si es muy larga.
+ */
+function configurarLecturaExpandida() {
+  const bio = document.getElementById("biografiaAutor");
+  const boton = document.getElementById("leerMasBio");
+  if (!bio || !boton) return;
+
+  boton.addEventListener("click", () => {
+    bio.classList.toggle("expandido");
+    boton.textContent = bio.classList.contains("expandido") ? "Leer menos" : "Leer más";
+  });
+}
+
+/**
+ * Carga las reseñas del libro.
+ * @param {string} idLibro
  */
 function cargarResenasLibro(idLibro) {
   const contenedor = document.getElementById("contenedorResenas");
@@ -214,7 +223,6 @@ function cargarResenasLibro(idLibro) {
 
     contenedor.innerHTML = tarjetas.join("");
 
-    // Activar eventos para mostrar spoilers
     document.querySelectorAll(".spoiler-toggle").forEach(boton => {
       boton.addEventListener("click", () => {
         boton.outerHTML = `<div class="texto-resena">${boton.dataset.texto}</div>`;
@@ -227,33 +235,11 @@ function cargarResenasLibro(idLibro) {
 }
 
 /**
- * Crea el HTML de una reseña.
- * @param {object} usuario - Usuario que ha creado la reseña.
- * @param {object} resena - Objeto reseña.
- * @returns {string} HTML generado de la reseña.
- */
-function crearEtiquetaResena(usuario, resena) {
-  const estrellas = "★".repeat(resena.valoracion) + "☆".repeat(5 - resena.valoracion);
-  return `
-    <div class="etiqueta-resena">
-      <img src="./assets/img/avatars/${usuario.avatar}" alt="Avatar">
-      <div class="contenido-resena">
-        <div class="nombre-usuario">${usuario.nombrePantalla}</div>
-        <div class="estrellas-resena">${estrellas}</div>
-        ${resena.spoilers 
-          ? `<button class="spoiler-toggle" data-texto="${resena.review}">Esta reseña contiene spoilers. Pulsa para ver.</button>` 
-          : `<div class="texto-resena">${resena.review}</div>`}
-      </div>
-    </div>
-  `;
-}
-
-/**
  * Crea el contenido principal de la vista de detalles.
- * @param {object} libro - Datos del libro.
- * @param {string} favIcon - Icono para favoritos.
- * @param {string} mostrarIcon - Icono para leer más tarde.
- * @returns {string} HTML de la tarjeta de detalles.
+ * @param {object} libro
+ * @param {string} favIcon
+ * @param {string} mostrarIcon
+ * @returns {string}
  */
 function crearTarjetaDetalle(libro, favIcon, mostrarIcon) {
   return `
@@ -282,6 +268,12 @@ function crearTarjetaDetalle(libro, favIcon, mostrarIcon) {
         <p><strong>Géneros:</strong> ${libro.generos.join(", ")}</p>
         <p><strong>Sinopsis:</strong> ${libro.sinopsis}</p>
 
+        ${libro.biografiaAutor ? `
+        <p><strong>Sobre el autor:</strong></p>
+        <p id="biografiaAutor" class="biografia-corta">${libro.biografiaAutor}</p>
+        <button id="leerMasBio" class="boton-leer-mas">Leer más</button>
+        ` : ''}
+
         <div id="contenedorResenas" class="contenedor-resenas"></div>
       </div>
     </div>
@@ -289,9 +281,31 @@ function crearTarjetaDetalle(libro, favIcon, mostrarIcon) {
 }
 
 /**
- * Muestra un modal de error con redirección opcional.
- * @param {string} mensaje - Texto del error.
- * @param {string|null} [redireccion=null] - Redirección tras cerrar modal.
+ * Crea la etiqueta de una reseña.
+ * @param {object} usuario
+ * @param {object} resena
+ * @returns {string}
+ */
+function crearEtiquetaResena(usuario, resena) {
+  const estrellas = "★".repeat(resena.valoracion) + "☆".repeat(5 - resena.valoracion);
+  return `
+    <div class="etiqueta-resena">
+      <img src="./assets/img/avatars/${usuario.avatar}" alt="Avatar">
+      <div class="contenido-resena">
+        <div class="nombre-usuario">${usuario.nombrePantalla}</div>
+        <div class="estrellas-resena">${estrellas}</div>
+        ${resena.spoilers 
+          ? `<button class="spoiler-toggle" data-texto="${resena.review}">Esta reseña contiene spoilers. Pulsa para ver.</button>` 
+          : `<div class="texto-resena">${resena.review}</div>`}
+      </div>
+    </div>
+  `;
+}
+
+/**
+ * Muestra un modal de error.
+ * @param {string} mensaje
+ * @param {string|null} [redireccion=null]
  */
 function mostrarModalError(mensaje, redireccion = null) {
   const modal = document.getElementById("modalError");
@@ -311,9 +325,9 @@ function mostrarModalError(mensaje, redireccion = null) {
 }
 
 /**
- * Desactiva temporalmente un botón para evitar múltiples clicks.
- * @param {HTMLElement} boton - Botón a desactivar.
- * @param {number} [milisegundos=1000] - Tiempo en ms.
+ * Desactiva temporalmente un botón para evitar múltiples clics rápidos.
+ * @param {HTMLElement} boton
+ * @param {number} [milisegundos=1000]
  */
 function desactivarBotonTemporalmente(boton, milisegundos = 1000) {
   if (!boton) return;
@@ -324,9 +338,9 @@ function desactivarBotonTemporalmente(boton, milisegundos = 1000) {
 }
 
 /**
- * Muestra un toast de notificación.
- * @param {string} mensaje - Texto del mensaje.
- * @param {string} [tipo="success"] - Tipo: "success" o "error".
+ * Muestra una notificación toast.
+ * @param {string} mensaje
+ * @param {string} [tipo="success"]
  */
 function mostrarToast(mensaje, tipo = "success") {
   const toast = document.getElementById("toast");

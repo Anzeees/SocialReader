@@ -65,9 +65,7 @@ Descripción: Estilos CSS para la vista de detalles de libros.
   gap: 0.8rem;
 }
 
-button.accion.btn-mostrar,
-button.accion.btn-fav,
-button.resena {
+button.accion.btn-mostrar, button.accion.btn-fav, button.resena {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -81,9 +79,7 @@ button.resena {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-button.accion.btn-mostrar:hover,
-button.accion.btn-fav:hover,
-button.resena:hover {
+button.accion.btn-mostrar:hover, button.accion.btn-fav:hover, button.resena:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
@@ -107,8 +103,7 @@ button.resena {
   border: 1px solid #008cff;
 }
 
-.accion img,
-.resena img {
+.accion img, .resena img {
   height: 60%;
   margin-right: 0.5rem;
 }
@@ -304,6 +299,33 @@ button.resena {
 /* === CLASES DE UTILIDAD === */
 .oculto {
   display: none;
+}
+
+/* === BIOGRAFÍA DEL AUTOR: Texto expandible === */
+#biografiaAutor {
+  max-height: 120px;
+  overflow: hidden;
+  position: relative;
+  transition: max-height 0.4s ease;
+}
+
+#biografiaAutor.expandido {
+  max-height: 1000px; /* Suficiente para mostrar toda la biografía */
+}
+
+.boton-leer-mas {
+  all: unset;
+  color: #007bff;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  display: inline-block;
+  font-size: 0.95rem;
+  font-style: italic;
+  text-decoration: underline;
+}
+
+.boton-leer-mas:hover {
+  color: #0056b3;
 }
 
 /* === RESPONSIVE (versión móvil) === */
