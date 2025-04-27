@@ -6,29 +6,41 @@ import { db } from "./firebase.js";
 // === CREACIÓN DE PERFIL DE USUARIO ===
 
 /**
- * Crea un perfil de usuario en Firestore al registrarse.
- * @param {object} user - Usuario de Firebase.
- * @param {string|null} nombrePantalla - Nombre a mostrar del usuario (opcional).
- * @returns {Promise} Promesa que crea el documento en Firestore.
+ * Crea el perfil de usuario en Firestore si no existe.
+ * @param {firebase.User} user - Usuario autenticado.
+ * @param {string|null} nombrePantalla - Nombre de pantalla opcional.
+ * @returns {Promise<void>}
  */
-export function crearPerfilUsuario(user, nombrePantalla = null) {
+export async function crearPerfilUsuario(user, nombrePantalla = null) {
   const uid = user.uid;
   const correo = user.email;
   const nombre = nombrePantalla || user.displayName || "Usuario sin nombre";
   const avatar = "Avatar1.png";
-  const fechaAlta = firebase.firestore.FieldValue.serverTimestamp();
 
-  return db.collection("usuarios").doc(uid).set({
-    uid,
-    nombrePantalla: nombre,
-    correo,
-    avatar,
-    librosFavoritos: [],
-    mostrarMasTarde: [],
-    amigos: [],
-    resenas: [],
-    fechaAlta
-  });
+  try {
+    const docRef = db.collection("usuarios").doc(uid);
+    const docSnap = await docRef.get();
+
+    if (!docSnap.exists) {
+      const fechaAlta = firebase.firestore.FieldValue.serverTimestamp();
+      await docRef.set({
+        uid,
+        nombrePantalla: nombre,
+        correo,
+        avatar,
+        librosFavoritos: [],
+        mostrarMasTarde: [],
+        amigos: [],
+        resenas: [],
+        fechaAlta
+      });
+      console.log("Perfil creado correctamente.");
+    } else {
+      console.log("El perfil ya existía. No se modificó.");
+    }
+  } catch (error) {
+    console.error("Error creando el perfil de usuario:", error);
+  }
 }
 
 // === OBTENER DATOS DE USUARIO ===
