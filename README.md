@@ -1,3 +1,6 @@
+# Vamos a generar el archivo README.md actualizado siguiendo toda la información proporcionada.
+
+contenido_readme = """
 ![SocialReader Banner](./assets/img/logotipos/BannerReadMe.png)
 
 # 📚 SocialReader
@@ -45,51 +48,43 @@
 
 ---
 
-## 🗂️ Estructura del proyecto
+## 📂 Estructura del Proyecto
 
-SocialReader/
-│
-├── assets/
-│   ├── img/
-│   │   ├── avatars/
-│   │   │   └── [Avatares de usuario]
-│   │   ├── interface/
-│   │   │   └── [Íconos e imágenes de la interfaz]
-│   │   └── logotipos/
-│   │       └── LogoClaro.png
-│
-├── styles/
-│   ├── login.css
-│   ├── home.css
-│   ├── search.css
-│   ├── profile.css
-│   ├── detalles.css
-│   ├── resena.css
-│
-├── views/
-│   ├── login.html
-│   ├── home.html
-│   ├── search.html
-│   ├── profile.html
-│   ├── detalles.html
-│   ├── resena.html
-│
-├── js/
-│   ├── login.js
-│   ├── home.js
-│   ├── search.js
-│   ├── profile.js
-│   ├── detalles.js
-│   ├── resena.js
-│   ├── router.js
-│   ├── firebase.js
-│   ├── services/
-│   │   ├── firestoreService.js
-│   │   ├── openlibrary.js
-│
-├── index.html
-├── README.md
-└── package.json (si lo hubieras añadido en algún momento)
+- **`/assets`**  
+  - `/img`
+    - `/avatars/` → Avatares de usuario.  
+    - `/interface/` → Iconos e imágenes de la interfaz.  
+    - `/logotipos/` → Logotipos del proyecto y banner del README.
+
+- **`/js`**  
+  - `/services/`
+    - `firestoreService.js` → Funciones para interactuar con Firebase Firestore.
+    - `openlibrary.js` → Funciones para interactuar con OpenLibrary API.
+  - `firebase.js` → Configuración de Firebase.
+  - `router.js` → Sistema de navegación entre vistas.
+  - `login.js` → Lógica de inicio de sesión y registro.
+  - `home.js` → Funcionalidad de la vista principal.
+  - `search.js` → Funcionalidad de búsqueda de libros.
+  - `detalles.js` → Funcionalidad de detalles de libros.
+  - `profile.js` → Gestión del perfil de usuario.
+
+- **`/styles`**  
+  - `login.css` → Estilos de la vista de inicio de sesión.
+  - `home.css` → Estilos de la vista principal.
+  - `search.css` → Estilos de la vista de búsqueda.
+  - `detalles.css` → Estilos de la vista de detalles de libros.
+  - `profile.css` → Estilos de la vista de perfil.
+
+- **`/views`**  
+  - `login.html` → Vista de login y registro.
+  - `home.html` → Vista de inicio.
+  - `search.html` → Vista de búsqueda de libros.
+  - `detalles.html` → Vista de detalles de libros.
+  - `profile.html` → Vista de perfil de usuario.
+
+- **Otros archivos**
+  - `index.html` → Archivo principal que inicializa la aplicación.
+  - `README.md` → Documentación del proyecto.
 
 ---
 
@@ -122,7 +117,6 @@ SocialReader/
 - **Ángel Martínez Ordiales**  
   📅 Año: 2025  
   🚀 Proyecto: **SocialReader**  
-  📫 Contacto: *(opcional, tu correo o GitHub si quieres)*
 
 ---
 
