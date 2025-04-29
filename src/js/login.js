@@ -255,7 +255,7 @@ function manejarLogin(correo, contra) {
 function activarLoginSocial() {
   const iniciarSocial = (provider) => {
     autenticacionCancelada = false;
-
+  
     auth.signInWithPopup(provider)
       .then((result) => {
         autenticacionCancelada = false;

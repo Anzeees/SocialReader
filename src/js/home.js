@@ -59,7 +59,7 @@ document.querySelector(".perfil").addEventListener("click", (e) => {
 document.addEventListener("click", (e) => {
   const menu = document.querySelector(".perfil-menu");
   const perfil = document.querySelector(".perfil");
-  if (!perfil.contains(e.target)) {
+  if (perfil && !perfil.contains(e.target)) {
     menu.style.display = "none";
   }
 });
@@ -148,7 +148,14 @@ window.moverCarrusel = function (btn, direccion) {
  * @param {HTMLElement} contenedor - Contenedor del carrusel.
  */
 function actualizarBarraProgreso(contenedor) {
-  const barra = contenedor.id.includes('vendidos') ? document.getElementById('progreso-vendidos') : document.getElementById('progreso-guardados');
+  const barra = contenedor.id.includes('vendidos') 
+    ? document.getElementById('progreso-vendidos') 
+    : document.getElementById('progreso-guardados');
+
+  if (!barra) {
+    // console.warn('No se encontró la barra de progreso para el contenedor:', contenedor.id);
+    return;
+  }
 
   const scrollMaximo = contenedor.scrollWidth - contenedor.clientWidth;
   const scrollActual = contenedor.scrollLeft;
