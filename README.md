@@ -1,5 +1,3 @@
-# Vamos a generar el archivo README.md actualizado siguiendo toda la información proporcionada.
-
 ![SocialReader Banner](src/assets/img/logotipos/BannerReadMe.png)
 
 # 📚 SocialReader
@@ -9,7 +7,6 @@
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
-![License](https://img.shields.io/badge/license-CC%20BY--NC--ND%204.0-blue.svg)
 
 ---
 
@@ -20,7 +17,7 @@
 
 ## ✨ Características principales
 
-- 🔐 Registro e inicio de sesión con correo electrónico, Google o GitHub.
+- 🔐 Registro e inicio de sesión con correo electrónico, Google o GitHub (próximamente Apple).
 - 📚 Búsqueda de libros usando OpenLibrary API.
 - 💖 Guardar libros en **Favoritos** y **Mostrar más tarde**.
 - 📝 Crear reseñas de libros con valoraciones, texto y opción de spoilers.
