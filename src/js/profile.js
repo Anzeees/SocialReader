@@ -1,6 +1,6 @@
 /* 
 ==========================================
-Script: PROFILE.JS
+Script: PROFILE.JS (Refactorizado)
 Proyecto: Social Reader
 Autor: Ángel Martínez Ordiales
 Fecha de última modificación: Abril 2025
@@ -11,53 +11,27 @@ Descripción: Lógica de la vista de perfil
 // === IMPORTACIONES ===
 import { mostrarNombre, avatarUsuario, obtenerDocumentoUsuario, obtenerTodosUsuarios, agregarAmigo, eliminarAmigo, obtenerResenasDeUsuario } from "./services/firestoreService.js";
 import { obtenerResumenLibro } from "./services/openlibrary.js";
+import { configurarMenuHamburguesa, configurarMenuPerfil } from "./utils/uiUtils.js";
+import { cerrarSesion } from "./utils/authUtils.js";
 
-// === MENÚ HAMBURGUESA: Mostrar/Ocultar ===
-document.getElementById("hamburguesa").addEventListener("click", () => {
-  document.getElementById("menuHamburguesa").classList.toggle("show");
-  document.getElementById("sombra").style.setProperty("display", "flex");
-});
+// === CONFIGURACIÓN INTERFAZ ===
+configurarMenuHamburguesa();
+configurarMenuPerfil();
 
-document.getElementById("exitMenu").addEventListener("click", (e) => {
-  e.preventDefault();
-  document.getElementById("menuHamburguesa").classList.remove("show");
-  document.getElementById("sombra").style.setProperty("display", "none");
-});
-
-// === CIERRE DE SESIÓN: Escritorio y móvil ===
 ["exitescritorio", "exitmovil"].forEach((id) => {
   const btn = document.getElementById(id);
   if (btn) {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
-      firebase.auth().signOut().then(() => {
-        localStorage.removeItem("usuarioAutenticado");
-        window.location.hash = "#login";
-        window.dispatchEvent(new HashChangeEvent("hashchange"));
-      });
+      cerrarSesion();
     });
   }
 });
 
-// === MENÚ PERFIL: Mostrar/Ocultar (escritorio) ===
-document.querySelector(".perfil").addEventListener("click", (e) => {
-  const menu = document.querySelector(".perfil-menu");
-  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
-  e.stopPropagation();
-});
-
-document.addEventListener("click", (e) => {
-  const menu = document.querySelector(".perfil-menu");
-  const perfil = document.querySelector(".perfil");
-  if (!perfil.contains(e.target)) {
-    menu.style.display = "none";
-  }
-});
-
-// === REDIRECCIÓN AL PERFIL (móvil y escritorio) ===
 document.querySelector("#nombreUsuario")?.addEventListener("click", () => {
   window.location.hash = "#profile";
 });
+
 document.querySelector(".perfil-menu a[href='#profile']")?.addEventListener("click", (e) => {
   e.preventDefault();
   window.location.hash = "#profile";
@@ -82,10 +56,6 @@ firebase.auth().onAuthStateChanged(async (user) => {
   cargarDatosUsuario(user.uid);
 });
 
-/**
- * Carga y muestra todos los datos del perfil de un usuario.
- * @param {string} uid UID del usuario autenticado
- */
 async function cargarDatosUsuario(uid) {
   const datos = await obtenerDocumentoUsuario(uid);
   if (!datos) return;
@@ -102,11 +72,6 @@ async function cargarDatosUsuario(uid) {
   await mostrarResenasUsuario(uid);
 }
 
-/**
- * Formatea una fecha de Firestore a formato legible.
- * @param {object} timestamp Marca temporal de Firestore
- * @returns {string} Fecha formateada
- */
 function formatearFecha(timestamp) {
   if (!timestamp || typeof timestamp.toDate !== "function") return "Sin fecha";
   const fecha = timestamp.toDate();
@@ -117,11 +82,6 @@ function formatearFecha(timestamp) {
   });
 }
 
-/**
- * Muestra la lista de libros de un usuario en un contenedor.
- * @param {Array} lista Lista de claves de libros
- * @param {string} contenedorId ID del contenedor donde mostrar los libros
- */
 async function mostrarLibrosUsuario(lista, contenedorId) {
   const contenedor = document.getElementById(contenedorId);
   if (!contenedor || !Array.isArray(lista)) return;
@@ -155,12 +115,6 @@ async function mostrarLibrosUsuario(lista, contenedorId) {
   }
 }
 
-/**
- * Muestra los amigos actuales del usuario.
- * @param {string} uidUsuario UID del usuario
- * @param {Array} listaUids Lista de UIDs de amigos
- * @param {string} contenedorId ID del contenedor
- */
 async function mostrarAmigos(uidUsuario, listaUids, contenedorId) {
   const contenedor = document.getElementById(contenedorId);
   contenedor.innerHTML = "";
@@ -196,12 +150,6 @@ async function mostrarAmigos(uidUsuario, listaUids, contenedorId) {
   }
 }
 
-/**
- * Muestra nuevos usuarios para agregar como amigos.
- * Implementa paginación tipo scroll infinito.
- * @param {string} uidUsuario UID del usuario actual
- * @param {Array} listaAmigos UIDs de amigos ya existentes
- */
 async function mostrarNuevosAmigos(uidUsuario, listaAmigos) {
   const contenedor = document.getElementById("contenedor-nuevos-amigos");
   const inputBusqueda = document.getElementById("input-buscar-amigos");
@@ -272,10 +220,6 @@ async function mostrarNuevosAmigos(uidUsuario, listaAmigos) {
 let pestañaActivaIndex = 0;
 const tabs = Array.from(document.querySelectorAll(".tab"));
 
-/**
- * Activa una pestaña y muestra su contenido.
- * @param {number} index Índice de la pestaña a activar
- */
 function activarTab(index) {
   tabs.forEach((t) => t.classList.remove("activo"));
   tabs[index].classList.add("activo");
@@ -291,12 +235,10 @@ function activarTab(index) {
   pestañaActivaIndex = index;
 }
 
-// Eventos de cambio de pestaña
 tabs.forEach((tab, index) => {
   tab.addEventListener("click", () => activarTab(index));
 });
 
-// Activar primera pestaña al entrar
 if (window.location.hash === "#profile") {
   activarTab(0);
 }
@@ -349,9 +291,6 @@ document.getElementById("guardarAvatar").addEventListener("click", async () => {
   avatarSeleccionado = null;
 });
 
-/**
- * Cierra el selector emergente de avatar.
- */
 function cerrarSelectorAvatar() {
   const selector = document.getElementById("selectorAvatar");
   selector.classList.remove("mostrar");
@@ -361,11 +300,6 @@ function cerrarSelectorAvatar() {
   }, 300);
 }
 
-// === MOSTRAR RESEÑAS DEL USUARIO ===
-/**
- * Muestra las reseñas publicadas por el usuario.
- * @param {string} uid UID del usuario
- */
 async function mostrarResenasUsuario(uid) {
   const contenedor = document.getElementById("mis-resenas");
   contenedor.innerHTML = "";

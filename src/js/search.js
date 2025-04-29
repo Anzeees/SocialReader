@@ -1,14 +1,39 @@
 /** 
  * SEARCH.JS -- ÁNGEL MARTÍNEZ ORDIALES -- SOCIALREADER --
- ============================================================
- Proyecto: SocialReader
- Autor: Ángel Martínez Ordiales
- Archivo: search.js
- Descripción: Módulo de búsqueda de libros en la aplicación, con paginación y gestión de favoritos y mostrar más tarde.
-*/
+ * ============================================================
+ * Proyecto: SocialReader
+ * Autor: Ángel Martínez Ordiales
+ * Archivo: search.js
+ * Descripción: Módulo de búsqueda de libros en la aplicación, con paginación y gestión de favoritos y mostrar más tarde.
+ */
 
-// === IMPORTACIONES DE SERVICIOS ===
+// === IMPORTACIONES ===
 import { mostrarNombre, avatarUsuario, agregarLibroFavorito, eliminarLibroFavorito, estaEnFavoritos, agregarMostrarMasTarde, eliminarMostrarMasTarde, estaEnMostrarMasTarde } from "./services/firestoreService.js";
+import { configurarMenuHamburguesa, configurarMenuPerfil } from "./utils/uiUtils.js";
+import { cerrarSesion } from "./utils/authUtils.js";
+
+// === CONFIGURACIÓN DE INTERFAZ ===
+configurarMenuHamburguesa();
+configurarMenuPerfil();
+
+["exitescritorio", "exitmovil"].forEach((id) => {
+  const btn = document.getElementById(id);
+  if (btn) {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      cerrarSesion();
+    });
+  }
+});
+
+document.querySelector("#nombreUsuario")?.addEventListener("click", () => {
+  window.location.hash = "#profile";
+});
+
+document.querySelector(".perfil-menu a[href='#profile']")?.addEventListener("click", (e) => {
+  e.preventDefault();
+  window.location.hash = "#profile";
+});
 
 // === VARIABLES DEL DOM ===
 const mainContent = document.getElementById("mainContent");
@@ -21,56 +46,6 @@ let abortController = null;
 let resultados = [];
 let paginaActual = 1;
 const resultadosPorPagina = 5;
-
-// === GESTIÓN DEL MENÚ HAMBURGUESA Y CIERRE DE SESIÓN ===
-function cerrarMenuHamburguesa() {
-  document.getElementById("menuHamburguesa").classList.remove("show");
-  document.getElementById("sombra").style.display = "none";
-}
-
-document.getElementById("hamburguesa").addEventListener("click", () => {
-  document.getElementById("menuHamburguesa").classList.toggle("show");
-  document.getElementById("sombra").style.display = "flex";
-});
-
-document.getElementById("exitMenu").addEventListener("click", (e) => {
-  e.preventDefault();
-  cerrarMenuHamburguesa();
-});
-
-["exitescritorio", "exitmovil"].forEach(id => {
-  document.getElementById(id)?.addEventListener("click", async (e) => {
-    e.preventDefault();
-    await firebase.auth().signOut();
-    localStorage.removeItem("usuarioAutenticado");
-    window.location.hash = "#login";
-    window.dispatchEvent(new HashChangeEvent("hashchange"));
-  });
-});
-
-// === GESTIÓN DEL PERFIL DE USUARIO EN MENÚ ===
-document.querySelector(".perfil")?.addEventListener("click", (e) => {
-  const menu = document.querySelector(".perfil-menu");
-  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
-  e.stopPropagation();
-});
-
-document.addEventListener("click", (e) => {
-  const menu = document.querySelector(".perfil-menu");
-  if (!document.querySelector(".perfil").contains(e.target)) {
-    menu.style.display = "none";
-  }
-});
-
-// === REDIRECCIÓN A PERFIL ===
-document.querySelector("#nombreUsuario")?.addEventListener("click", () => {
-  window.location.hash = "#profile";
-});
-
-document.querySelector(".perfil-menu a[href='#profile']")?.addEventListener("click", (e) => {
-  e.preventDefault();
-  window.location.hash = "#profile";
-});
 
 // === CARGA DE INFORMACIÓN DEL USUARIO AUTENTICADO ===
 firebase.auth().onAuthStateChanged((user) => {
@@ -94,14 +69,9 @@ document.getElementById("campoBusqueda").addEventListener("keypress", (e) => {
   if (e.key === "Enter") realizarBusqueda();
 });
 
-/**
- * Realiza la búsqueda de libros en OpenLibrary.
- * Aborta búsquedas anteriores si existen, muestra el spinner y bloquea el botón.
- */
 function realizarBusqueda() {
   const filtro = document.getElementById("filtroBusqueda").value;
   const termino = document.getElementById("campoBusqueda").value.trim();
-
   if (termino === "") return;
 
   if (abortController) abortController.abort();
@@ -135,10 +105,6 @@ function realizarBusqueda() {
     });
 }
 
-/**
- * Muestra los resultados correspondientes a la página actual.
- * Pagina los resultados almacenados en `resultados`.
- */
 async function mostrarPagina() {
   contenedor.innerHTML = "";
 
@@ -163,17 +129,10 @@ async function mostrarPagina() {
   crearBotonesPaginacion();
 }
 
-/**
- * Crea un elemento HTML representando un libro.
- * @param {Object} libro - Libro de OpenLibrary.
- * @param {firebase.User} user - Usuario autenticado actual.
- * @returns {HTMLElement} - Elemento HTML listo para añadir al DOM.
- */
 async function crearElementoLibro(libro, user) {
   const portada = libro.cover_i
     ? `https://covers.openlibrary.org/b/id/${libro.cover_i}-M.jpg`
     : "./assets/img/logotipos/portadaDefault.png";
-
   const autores = libro.author_name?.join(", ") || "Autor desconocido";
   const categoria = Array.isArray(libro.subject) && libro.subject.length > 0
     ? libro.subject.slice(0, 2).join(", ")
@@ -235,9 +194,6 @@ async function crearElementoLibro(libro, user) {
   return item;
 }
 
-/**
- * Crea y muestra los botones de paginación según el estado actual.
- */
 function crearBotonesPaginacion() {
   const totalPaginas = Math.ceil(resultados.length / resultadosPorPagina);
   const paginacion = document.createElement("div");
@@ -269,12 +225,10 @@ function crearBotonesPaginacion() {
   contenedor.appendChild(paginacion);
 }
 
-// === GESTIÓN DE BOTONES DE FAVORITOS Y MOSTRAR MÁS TARDE ===
 document.addEventListener("click", async (e) => {
   const btnFav = e.target.closest(".btn-fav");
   const btnMostrar = e.target.closest(".btn-mostrar");
   const user = firebase.auth().currentUser;
-
   if (!user) return;
 
   if (btnFav) {

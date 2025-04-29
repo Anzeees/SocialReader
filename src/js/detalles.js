@@ -7,28 +7,21 @@
 // ===========================================================
 
 // === IMPORTACIONES ===
-import { mostrarNombre, avatarUsuario, agregarLibroFavorito, eliminarLibroFavorito, estaEnFavoritos, agregarMostrarMasTarde, eliminarMostrarMasTarde, estaEnMostrarMasTarde, obtenerResenasLibro, obtenerUsuarioPorUID } from "./services/firestoreService.js";
+import { agregarLibroFavorito, eliminarLibroFavorito, estaEnFavoritos, agregarMostrarMasTarde, eliminarMostrarMasTarde, estaEnMostrarMasTarde, obtenerResenasLibro, obtenerUsuarioPorUID } from "./services/firestoreService.js";
 import { obtenerDetallesLibro } from "./services/openlibrary.js";
+import { configurarMenuHamburguesa, configurarMenuPerfil, desactivarBotonTemporalmente, configurarLecturaExpandida } from "./utils/uiUtils.js";
+import { cerrarSesion } from "./utils/authUtils.js";
+import { cargarDatosUsuario } from "./utils/perfilUtils.js";
+import { mostrarModalError } from "./utils/modales.js";
+import { mostrarToast } from "./utils/toastUtils.js";
 
 // === VARIABLES DEL DOM ===
 const mainContent = document.getElementById("mainContent");
 const loader = document.getElementById("loader");
 
-// === GESTIÓN DE INTERFAZ: MENÚ HAMBURGUESA ===
-function cerrarMenuHamburguesa() {
-  document.getElementById("menuHamburguesa").classList.remove("show");
-  document.getElementById("sombra").style.display = "none";
-}
-
-document.getElementById("hamburguesa").addEventListener("click", () => {
-  document.getElementById("menuHamburguesa").classList.toggle("show");
-  document.getElementById("sombra").style.display = "flex";
-});
-
-document.getElementById("exitMenu").addEventListener("click", (e) => {
-  e.preventDefault();
-  cerrarMenuHamburguesa();
-});
+// === CONFIGURACIÓN INTERFAZ ===
+configurarMenuHamburguesa();
+configurarMenuPerfil();
 
 // === GESTIÓN DE SESIÓN (Cerrar sesión escritorio y móvil) ===
 ["exitescritorio", "exitmovil"].forEach(id => {
@@ -36,67 +29,23 @@ document.getElementById("exitMenu").addEventListener("click", (e) => {
   if (btn) {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
-      firebase.auth().signOut().then(() => {
-        localStorage.removeItem("usuarioAutenticado");
-        window.location.hash = "#login";
-        window.dispatchEvent(new HashChangeEvent("hashchange"));
-      });
+      cerrarSesion();
     });
   }
-});
-
-// === GESTIÓN DE MENÚ PERFIL (escritorio) ===
-document.querySelector(".perfil").addEventListener("click", (e) => {
-  const menu = document.querySelector(".perfil-menu");
-  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
-  e.stopPropagation();
-});
-
-document.addEventListener("click", (e) => {
-  const menu = document.querySelector(".perfil-menu");
-  const perfil = document.querySelector(".perfil");
-  if (!perfil.contains(e.target)) {
-    menu.style.display = "none";
-  }
-});
-
-// === REDIRECCIÓN A PERFIL (escritorio y móvil) ===
-document.querySelector("#nombreUsuario")?.addEventListener("click", () => {
-  window.location.hash = "#profile";
-});
-document.querySelector(".perfil-menu a[href='#profile']")?.addEventListener("click", (e) => {
-  e.preventDefault();
-  window.location.hash = "#profile";
 });
 
 // === CARGA DE DATOS DEL USUARIO AUTENTICADO ===
 firebase.auth().onAuthStateChanged((user) => {
-  if (user) {
-    mostrarNombre(user.uid, (nombre) => {
-      const h5Usuario = document.querySelector(".perfil-movil h5");
-      if (h5Usuario) h5Usuario.textContent = nombre;
-    });
-    avatarUsuario(user.uid, (avatar) => {
-      const imgUsuario = document.querySelector(".perfil-movil img");
-      const imgUsuarioEscritorio = document.querySelector(".perfil img");
-      if (imgUsuarioEscritorio) imgUsuarioEscritorio.src = `./assets/img/avatars/${avatar}`;
-      if (imgUsuario) imgUsuario.src = `./assets/img/avatars/${avatar}`;
-    });
-  }
+  if (user) cargarDatosUsuario(user.uid);
 });
 
 // === FUNCIONES PRINCIPALES ===
-/**
- * Obtiene el ID del libro desde el hash de la URL.
- * @returns {string|null}
- */
 function obtenerWorkIdDesdeHash() {
   const hash = window.location.hash;
   const partes = hash.split("/");
   return partes.length === 2 ? partes[1] : null;
 }
 
-// === CARGAR DETALLES DEL LIBRO ===
 const workId = obtenerWorkIdDesdeHash();
 
 if (workId && mainContent) {
@@ -124,7 +73,7 @@ if (workId && mainContent) {
 
     configurarEventosBotones(libro, user);
     cargarResenasLibro(libro.id);
-    configurarLecturaExpandida();
+    configurarLecturaExpandida("biografiaAutor", "leerMasBio");
   }).catch((error) => {
     loader.style.display = "none";
     mostrarModalError("Error al cargar los detalles del libro. Intenta de nuevo más tarde.");
@@ -136,11 +85,6 @@ if (workId && mainContent) {
 }
 
 // === FUNCIONES AUXILIARES ===
-/**
- * Configura los eventos de los botones de acciones del libro.
- * @param {object} libro
- * @param {firebase.User} user
- */
 function configurarEventosBotones(libro, user) {
   const btnFav = document.querySelector(".btn-fav");
   const btnMostrar = document.querySelector(".btn-mostrar");
@@ -188,24 +132,6 @@ function configurarEventosBotones(libro, user) {
   }
 }
 
-/**
- * Configura el comportamiento de expandir/ocultar biografía si es muy larga.
- */
-function configurarLecturaExpandida() {
-  const bio = document.getElementById("biografiaAutor");
-  const boton = document.getElementById("leerMasBio");
-  if (!bio || !boton) return;
-
-  boton.addEventListener("click", () => {
-    bio.classList.toggle("expandido");
-    boton.textContent = bio.classList.contains("expandido") ? "Leer menos" : "Leer más";
-  });
-}
-
-/**
- * Carga las reseñas del libro.
- * @param {string} idLibro
- */
 function cargarResenasLibro(idLibro) {
   const contenedor = document.getElementById("contenedorResenas");
   if (!contenedor) return;
@@ -234,13 +160,6 @@ function cargarResenasLibro(idLibro) {
   });
 }
 
-/**
- * Crea el contenido principal de la vista de detalles.
- * @param {object} libro
- * @param {string} favIcon
- * @param {string} mostrarIcon
- * @returns {string}
- */
 function crearTarjetaDetalle(libro, favIcon, mostrarIcon) {
   return `
     <div class="detalle-libro">
@@ -280,12 +199,6 @@ function crearTarjetaDetalle(libro, favIcon, mostrarIcon) {
   `;
 }
 
-/**
- * Crea la etiqueta de una reseña.
- * @param {object} usuario
- * @param {object} resena
- * @returns {string}
- */
 function crearEtiquetaResena(usuario, resena) {
   const estrellas = "★".repeat(resena.valoracion) + "☆".repeat(5 - resena.valoracion);
   return `
@@ -300,67 +213,4 @@ function crearEtiquetaResena(usuario, resena) {
       </div>
     </div>
   `;
-}
-
-/**
- * Muestra un modal de error.
- * @param {string} mensaje
- * @param {string|null} [redireccion=null]
- */
-function mostrarModalError(mensaje, redireccion = null) {
-  const modal = document.getElementById("modalError");
-  const texto = document.getElementById("mensajeError");
-  const btnCerrar = document.getElementById("btnCerrarModal");
-
-  texto.textContent = mensaje;
-  modal.classList.remove("oculto");
-
-  btnCerrar.onclick = () => {
-    modal.classList.add("oculto");
-    if (redireccion) {
-      window.location.hash = redireccion;
-      window.dispatchEvent(new HashChangeEvent("hashchange"));
-    }
-  };
-}
-
-/**
- * Desactiva temporalmente un botón para evitar múltiples clics rápidos.
- * @param {HTMLElement} boton
- * @param {number} [milisegundos=1000]
- */
-function desactivarBotonTemporalmente(boton, milisegundos = 1000) {
-  if (!boton) return;
-  boton.disabled = true;
-  setTimeout(() => {
-    boton.disabled = false;
-  }, milisegundos);
-}
-
-/**
- * Muestra una notificación toast.
- * @param {string} mensaje
- * @param {string} [tipo="success"]
- */
-function mostrarToast(mensaje, tipo = "success") {
-  const toast = document.getElementById("toast");
-  const toastMensaje = document.getElementById("toastMensaje");
-
-  toastMensaje.textContent = mensaje;
-  toast.classList.remove("oculto", "toast-success", "toast-error");
-
-  if (tipo === "success") {
-    toast.classList.add("toast-success");
-  } else if (tipo === "error") {
-    toast.classList.add("toast-error");
-  }
-
-  toast.classList.add("mostrar");
-
-  setTimeout(() => {
-    toast.classList.remove("mostrar");
-    setTimeout(() => {
-      toast.classList.add("oculto");
-    }, 500);
-  }, 2000);
 }

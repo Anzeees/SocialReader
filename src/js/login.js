@@ -12,6 +12,13 @@ import { crearPerfilUsuario } from "./services/firestoreService.js";
 
 // === ESTADO GLOBAL ===
 let autenticacionCancelada = false;
+let popupEnCurso = false;
+
+if (performance.navigation.type === 1) {
+
+} else {
+  location.reload();
+}
 
 /**
  * Carga la vista de login inicial y asigna los eventos (Función principal).
@@ -255,7 +262,7 @@ function manejarLogin(correo, contra) {
 function activarLoginSocial() {
   const iniciarSocial = (provider) => {
     autenticacionCancelada = false;
-  
+
     auth.signInWithPopup(provider)
       .then((result) => {
         autenticacionCancelada = false;

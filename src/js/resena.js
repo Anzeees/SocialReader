@@ -1,110 +1,36 @@
-/** RESENA.JS -- ÁNGEL MARTÍNEZ ORDIALES -- SOCIALREADER --
-============================================================
-Proyecto: SocialReader
-Autor: Ángel Martínez Ordiales
-Archivo: resena.js
-Descripción: Módulo de creación de reseñas de libros.
-*/
+/**
+ * RESENA.JS -- ÁNGEL MARTÍNEZ ORDIALES -- SOCIALREADER --
+ * ============================================================
+ * Proyecto: SocialReader
+ * Autor: Ángel Martínez Ordiales
+ * Archivo: resena.js
+ * Descripción: Módulo de creación de reseñas de libros.
+ */
 
 // === IMPORTACIONES ===
 import { mostrarNombre, avatarUsuario, crearResena } from "./services/firestoreService.js";
 import { obtenerDetallesLibro } from "./services/openlibrary.js";
+import { configurarMenuHamburguesa, configurarMenuPerfil } from "./utils/uiUtils.js";
+import { cerrarSesion } from "./utils/authUtils.js";
 
 // === ELEMENTOS DEL DOM ===
 const mainContent = document.getElementById("mainContent");
 const loader = document.getElementById("loader");
 
-// === FUNCIONES UTILITARIAS ===
+// === CONFIGURACIÓN INTERFAZ ===
+configurarMenuHamburguesa();
+configurarMenuPerfil();
 
-/**
- * Muestra un modal de error con el mensaje proporcionado.
- * @function
- * @param {string} mensaje - Texto que se mostrara en el modal de error.
- * @param {Function} [callback] - Funcion opcional que se ejecuta al cerrar el modal.
- */
-function mostrarModalError(mensaje, callback) {
-  const modal = document.getElementById("modalError");
-  const texto = document.getElementById("mensajeError");
-  const btnCerrar = document.getElementById("btnCerrarModal");
-
-  if (!modal || !texto || !btnCerrar) return;
-
-  texto.textContent = mensaje;
-  modal.classList.remove("oculto");
-
-  btnCerrar.onclick = () => {
-    modal.classList.add("oculto");
-    if (typeof callback === "function") callback();
-  };
-}
-
-/**
- * Limpia todos los campos del formulario de reseña.
- * @function
- * @param {HTMLFormElement} formulario - Formulario a limpiar.
- */
-function limpiarFormulario(formulario) {
-  if (!formulario) return;
-  formulario.reset();
-
-  const estrellas = formulario.querySelectorAll(".estrella");
-  estrellas.forEach((e) => e.classList.remove("activa"));
-
-  const valoracion = formulario.querySelector("#valoracion");
-  if (valoracion) valoracion.setAttribute("data-valor", "0");
-}
-
-// === GESTIÓN DE INTERFAZ: MENÚ HAMBURGUESA ===
-/**
- * Cierra el menú hamburguesa en vista móvil.
- * @function
- */
-function cerrarMenuHamburguesa() {
-  document.getElementById("menuHamburguesa").classList.remove("show");
-  document.getElementById("sombra").style.display = "none";
-}
-
-document.getElementById("hamburguesa").addEventListener("click", () => {
-  document.getElementById("menuHamburguesa").classList.toggle("show");
-  document.getElementById("sombra").style.display = "flex";
-});
-
-document.getElementById("exitMenu").addEventListener("click", (e) => {
-  e.preventDefault();
-  cerrarMenuHamburguesa();
-});
-
-// === GESTIÓN DE SESIÓN (Cerrar sesión escritorio y móvil) ===
 ["exitescritorio", "exitmovil"].forEach((id) => {
   const btn = document.getElementById(id);
   if (btn) {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
-      firebase.auth().signOut().then(() => {
-        localStorage.removeItem("usuarioAutenticado");
-        window.location.hash = "#login";
-        window.dispatchEvent(new HashChangeEvent("hashchange"));
-      });
+      cerrarSesion();
     });
   }
 });
 
-// === GESTIÓN DE MENÚ PERFIL (escritorio) ===
-document.querySelector(".perfil").addEventListener("click", (e) => {
-  const menu = document.querySelector(".perfil-menu");
-  menu.style.display = menu.style.display === "flex" ? "none" : "flex";
-  e.stopPropagation();
-});
-
-document.addEventListener("click", (e) => {
-  const menu = document.querySelector(".perfil-menu");
-  const perfil = document.querySelector(".perfil");
-  if (!perfil.contains(e.target)) {
-    menu.style.display = "none";
-  }
-});
-
-// === REDIRECCIÓN A PERFIL (escritorio y móvil) ===
 document.querySelector("#nombreUsuario")?.addEventListener("click", () => {
   window.location.hash = "#profile";
 });
@@ -114,50 +40,39 @@ document.querySelector(".perfil-menu a[href='#profile']")?.addEventListener("cli
   window.location.hash = "#profile";
 });
 
-// === CARGA DE DATOS DEL USUARIO AUTENTICADO ===
+// === UTILIDADES ===
+function mostrarModalError(mensaje, callback) {
+  const modal = document.getElementById("modalError");
+  const texto = document.getElementById("mensajeError");
+  const btnCerrar = document.getElementById("btnCerrarModal");
+  if (!modal || !texto || !btnCerrar) return;
+  texto.textContent = mensaje;
+  modal.classList.remove("oculto");
+  btnCerrar.onclick = () => {
+    modal.classList.add("oculto");
+    if (typeof callback === "function") callback();
+  };
+}
 
-/**
- * Al detectar usuario autenticado, carga nombre y avatar.
- * @function
- */
-firebase.auth().onAuthStateChanged((user) => {
-  if (user) {
-    mostrarNombre(user.uid, (nombre) => {
-      const h5Usuario = document.querySelector(".perfil-movil h5");
-      if (h5Usuario) h5Usuario.textContent = nombre;
-    });
-    avatarUsuario(user.uid, (avatar) => {
-      const imgUsuario = document.querySelector(".perfil-movil img");
-      const imgUsuarioEscritorio = document.querySelector(".perfil img");
-      if (imgUsuarioEscritorio)
-        imgUsuarioEscritorio.src = `./assets/img/avatars/${avatar}`;
-      if (imgUsuario)
-        imgUsuario.src = `./assets/img/avatars/${avatar}`;
-    });
-  }
-});
+function limpiarFormulario(formulario) {
+  if (!formulario) return;
+  formulario.reset();
+  const estrellas = formulario.querySelectorAll(".estrella");
+  estrellas.forEach((e) => e.classList.remove("activa"));
+  const valoracion = formulario.querySelector("#valoracion");
+  if (valoracion) valoracion.setAttribute("data-valor", "0");
+}
 
-// === BLOQUES FUNCIONALES ===
-
-/**
- * Obtiene el ID del libro (workId) desde el hash de la URL.
- * @function
- * @returns {string|null} - ID del libro o null si no existe.
- */
+// === FUNCIONES ===
 function obtenerWorkIdDesdeHash() {
   const hash = window.location.hash;
   const partes = hash.split("/");
   return partes.length === 2 ? partes[1] : null;
 }
 
-/**
- * Activa la selección de estrellas y actualiza el texto de valoración.
- * @function
- */
 function activarEstrellas() {
   const estrellas = document.querySelectorAll(".estrella");
   const textoValoracion = document.getElementById("textoValoracion");
-
   estrellas.forEach((estrella) => {
     estrella.addEventListener("click", () => {
       const valorSeleccionado = parseInt(estrella.dataset.valor);
@@ -172,13 +87,7 @@ function activarEstrellas() {
   });
 }
 
-// === CARGA Y GESTIÓN DEL FORMULARIO DE RESEÑA ===
-
-/**
- * Carga los detalles del libro y muestra el formulario para crear una reseña.
- * Valida que el usuario esté logueado y maneja errores si fallan las peticiones.
- * @function
- */
+// === CARGA DE INTERFAZ Y LÓGICA DE RESEÑA ===
 firebase.auth().onAuthStateChanged(async (user) => {
   if (!user) return;
 

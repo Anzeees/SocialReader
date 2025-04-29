@@ -1,15 +1,11 @@
-// ROUTER.JS -- ÁNGEL MARTÍNEZ ORDIALES
+// ROUTER.JS -- ÁNGEL MARTÍNEZ ORDIALES -- SOCIALREADER --
 
-// === IMPORTACIONES ===
-// --- Importación del servicio de autenticación de Firebase
 import { auth } from "./services/firebase.js";
 
-// === VARIABLES GLOBALES ===
 const app = document.getElementById('app');
 const styleLink = document.getElementById('vista-style');
 let scriptActual = null;
 
-// === DEFINICIÓN DE RUTAS DISPONIBLES EN LA APP ===
 const rutas = {
   login: {
     vista: 'login.html',
@@ -58,6 +54,15 @@ export function cargarVista(nombreRuta, parametro = null) {
     .then(html => {
       app.innerHTML = html;
       styleLink.href = `./styles/${ruta.estilo}`;
+
+      // 💡 Si es la vista de login, forzar recarga solo si no venimos ya de un reload
+      if (nombreRuta === "login" && !sessionStorage.getItem("recargadoLogin")) {
+        sessionStorage.setItem("recargadoLogin", "true");
+        location.reload();
+        return;
+      }
+
+      // Si ya se ha recargado o no es login, cargar el script
       setTimeout(() => cargarScript(ruta.script, parametro), 0);
     })
     .catch(err => {
@@ -69,13 +74,13 @@ export function cargarVista(nombreRuta, parametro = null) {
 // === FUNCIÓN AUXILIAR PARA CARGAR UN SCRIPT ===
 function cargarScript(nombreScript, parametro = null) {
   if (scriptActual) {
-    scriptActual.remove(); // elimina el script anterior si existe
+    scriptActual.remove();
     scriptActual = null;
   }
 
   const nuevoScript = document.createElement("script");
   nuevoScript.type = "module";
-  nuevoScript.src = `./js/${nombreScript}?t=${Date.now()}`; // cache busting
+  nuevoScript.src = `./js/${nombreScript}?t=${Date.now()}`;
   if (parametro) {
     nuevoScript.setAttribute("data-param", parametro);
   }
@@ -84,7 +89,7 @@ function cargarScript(nombreScript, parametro = null) {
   scriptActual = nuevoScript;
 }
 
-// === INICIALIZACIÓN Y GESTIÓN DEL ENRUTADOR (router) ===
+// === INICIALIZACIÓN Y GESTIÓN DEL ENRUTADOR ===
 export function iniciarRouter() {
   auth.onAuthStateChanged(user => {
     const hash = window.location.hash || "#login";
