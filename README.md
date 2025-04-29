@@ -1,5 +1,3 @@
-# Vamos a generar el archivo README.md actualizado siguiendo toda la información proporcionada.
-
 ![SocialReader Banner](src/assets/img/logotipos/BannerReadMe.png)
 
 # 📚 SocialReader
@@ -19,7 +17,7 @@
 
 ## ✨ Características principales
 
-- 🔐 Registro e inicio de sesión con correo electrónico, Google o GitHub.
+- 🔐 Registro e inicio de sesión con correo electrónico, Google o GitHub (próximamente Apple).
 - 📚 Búsqueda de libros usando OpenLibrary API.
 - 💖 Guardar libros en **Favoritos** y **Mostrar más tarde**.
 - 📝 Crear reseñas de libros con valoraciones, texto y opción de spoilers.
