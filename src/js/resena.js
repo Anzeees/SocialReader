@@ -8,7 +8,8 @@
  */
 
 // === IMPORTACIONES ===
-import { mostrarNombre, avatarUsuario, crearResena } from "./services/firestoreService.js";
+import { crearResena } from "./services/firestoreService.js";
+import { cargarDatosUsuario } from "./utils/perfilUtils.js";
 import { obtenerDetallesLibro } from "./services/openlibrary.js";
 import { configurarMenuHamburguesa, configurarMenuPerfil } from "./utils/uiUtils.js";
 import { cerrarSesion } from "./utils/authUtils.js";
@@ -20,6 +21,8 @@ const loader = document.getElementById("loader");
 // === CONFIGURACIÓN INTERFAZ ===
 configurarMenuHamburguesa();
 configurarMenuPerfil();
+cargarDatosUsuario();
+
 
 ["exitescritorio", "exitmovil"].forEach((id) => {
   const btn = document.getElementById(id);

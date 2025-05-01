@@ -55,7 +55,6 @@ export function cargarVista(nombreRuta, parametro = null) {
       app.innerHTML = html;
       styleLink.href = `./styles/${ruta.estilo}`;
 
-      // 💡 Si es la vista de login, forzar recarga solo si no venimos ya de un reload
       if (nombreRuta === "login" && !sessionStorage.getItem("recargadoLogin")) {
         sessionStorage.setItem("recargadoLogin", "true");
         location.reload();
