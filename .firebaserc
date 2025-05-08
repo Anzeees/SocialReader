@@ -1,16 +1,5 @@
 {
   "projects": {
-    "default": "social-reader-9b7a2",
-    "thesocialreader": "social-reader-9b7a2"
-  },
-  "targets": {
-    "social-reader-9b7a2": {
-      "hosting": {
-        "thesocialreader": [
-          "thesocialreader"
-        ]
-      }
-    }
-  },
-  "etags": {}
+    "default": ""
+  }
 }

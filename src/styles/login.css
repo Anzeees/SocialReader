@@ -118,25 +118,45 @@ button.boton {
 /* === OPCIONES SOCIALES (GITHUB, GOOGLE, APPLE) === */
 .opciones {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  min-width: 210px;
-  width: 25%;
+  gap: 10px;
+  flex-wrap: wrap;
+  width: 90%;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
-.opciones img {
-  width: 22%;
-  border-radius: 50%;
-  border: 2px solid var(--color-complementario1);
-  padding: 3%;
-  transition: transform 0.3s ease;
-}
-
-.opciones img:hover {
+.btn-social {
+  flex: 1 1 30%;
+  min-width: 120px;
+  max-width: 160px;
+  text-align: center;
+  padding: 10px 20px;
+  margin: 0 5px;
+  border: none;
+  border-radius: 50px;
+  font-weight: bold;
+  color: white;
   cursor: pointer;
-  transform: scale(1.1);
-  background-color: var(--color-claro);
-  border-color: var(--color-complementario2);
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn-social.google {
+  background-color: #db4437;
+}
+
+.btn-social.github {
+  background-color: #333333;
+}
+
+.btn-social.apple {
+  background-color: #aaa;
+}
+
+.btn-social:hover {
+  opacity: 0.85;
 }
 
 /* === MODAL DE ERROR === */
@@ -189,6 +209,49 @@ button.boton {
   margin-left: 10px;
 }
 
+/* Privacidad */
+.aviso-privacidad {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #2c3e50;
+  color: white;
+  text-align: center;
+  padding: 15px 10px;
+  font-size: 0.9rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  z-index: 9999;
+}
+
+.aviso-privacidad p {
+  margin: 0;
+  flex: 1 1 auto;
+}
+
+.aviso-privacidad a {
+  color: #00c3ff;
+  text-decoration: underline;
+}
+
+.aviso-privacidad button {
+  background-color: #00c3ff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 25px;
+  cursor: pointer;
+  color: #fff;
+  font-weight: bold;
+}
+
+.aviso-privacidad.oculto {
+  display: none;
+}
+
 /* === RESPONSIVE (VISTA PEQUEÑA) === */
 @media (max-width: 1000px) {
   body {
@@ -200,6 +263,7 @@ button.boton {
     max-height: 100vh;
     width: 375px;
     max-width: 100vw;
+    min-width: 300px;
     background: linear-gradient(to bottom left, var(--color-complementario2), #ff693b);
     display: flex;
     flex-direction: column;
@@ -222,6 +286,7 @@ button.boton {
     display: flex;
     flex-direction: column;
     align-items: center;
+    flex-grow: 1;
   }
 
   #formularioMovil {
@@ -233,11 +298,12 @@ button.boton {
   }
 
   .opciones {
-    width: 60%;
-  }
-
-  .opciones img {
-    margin: 2%;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: nowrap;
+    width: 90%;
   }
 
   input {
@@ -280,10 +346,13 @@ button.boton {
     border-radius: 40px;
     border: 2px solid #ccc;
     width: 60%;
-    height: 40px;
+    min-height: 40px;
+    height: auto;
+    padding: 5px 0;
     display: flex;
+    align-items: center;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     cursor: pointer;
     font-size: small;
     margin: 4% 0 -3% 0;
@@ -314,9 +383,19 @@ button.boton {
     font-weight: bold;
     color: #999;
     transition: color 0.3s ease;
+    line-height: 1.2;
+    padding: 5px 0;
   }
 
   .switch-options .active {
     color: white;
+  }
+
+  .btn-social {
+    flex: 1 1 auto;
+    min-width: 80px;
+    max-width: 120px;
+    font-size: 0.75rem;
+    padding: 8px 12px;
   }
 }

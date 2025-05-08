@@ -13,9 +13,9 @@ Descripción: Vista de inicio de sesión y registro de usuarios (login)
   <h1>Vuelve a SocialReader</h1>
   <!-- Opciones de inicio con redes sociales -->
   <div class="opciones">
-    <img class="btn-github" src="./assets/img/actions/github.png">
-    <img class="btn-google" src="./assets/img/actions/google.png">
-    <img class="btn-apple" src="./assets/img/actions/apple.png">
+    <button class="btn-social google" aria-label="Iniciar sesión con Google">Google</button>
+    <button class="btn-social github" aria-label="Iniciar sesión con GitHub">GitHub</button>
+    <button class="btn-social apple" aria-label="Iniciar sesión con Apple">Apple</button>
   </div>
   <hr>
   <!-- Formulario de inicio de sesión -->
@@ -26,6 +26,9 @@ Descripción: Vista de inicio de sesión y registro de usuarios (login)
     <center><a id="restablecerContra">¿Olvidaste tu contraseña?</a></center>
     <center><input type="submit" value="INICIAR SESIÓN" class="boton"></center>
   </form>
+  <center style="margin-top: 1rem;">
+    <a href="privacy.html" target="_blank">Política de privacidad</a>
+  </center>
 </div>
 <!-- Lado derecho de la vista de login (escritorio) -->
 <div class="drch">
@@ -34,7 +37,7 @@ Descripción: Vista de inicio de sesión y registro de usuarios (login)
   <p>Únete a SocialReader y comienza tu viaje con nosotros</p>
   <button class="boton" id="btnRegistrarme">REGISTRARME</button>
 </div>
-  
+
 <!-- === VISTA DE REGISTRO PARA ESCRITORIO === -->
 <!-- Lado izquierdo de la vista de registro (escritorio) -->
 <div class="izq2">
@@ -48,9 +51,10 @@ Descripción: Vista de inicio de sesión y registro de usuarios (login)
   <h1>Únete a SocialReader</h1>
   <!-- Opciones de registro con redes sociales -->
   <div class="opciones">
-    <img class="btn-github" src="./assets/img/actions/github.png">
-    <img class="btn-google" src="./assets/img/actions/google.png">
-    <img class="btn-apple" src="./assets/img/actions/apple.png">
+    <button class="btn-social google" aria-label="Iniciar sesión con Google">Google</button>
+    <button class="btn-social github" aria-label="Iniciar sesión con GitHub">GitHub</button>
+    <button class="btn-social apple" aria-label="Iniciar sesión con Apple">Apple</button>
+
   </div>
   <hr>
   <!-- Formulario de registro -->
@@ -58,12 +62,17 @@ Descripción: Vista de inicio de sesión y registro de usuarios (login)
     <p>O regístrate con tu email</p>
     <input type="text" name="nombre" id="nombre" placeholder="Nombre" title="Nombre no válido" required>
     <input type="text" name="correo" id="correoregistro" placeholder="Correo Electrónico" required>
-    <input type="password" name="contra" id="contraregistro" placeholder="Contraseña" title="La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y símbolos" required>
+    <input type="password" name="contra" id="contraregistro" placeholder="Contraseña"
+      title="La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y símbolos"
+      required>
     <input type="password" name="contra2" id="contraregistro2" placeholder="Repetir Contraseña" required>
     <center><input type="submit" value="REGISTRARME" class="boton"></center>
   </form>
+  <center style="margin-top: 1rem;">
+    <a href="privacy.html" target="_blank">Política de privacidad</a>
+  </center>
 </div>
-  
+
 <!-- === VISTA DE LOGIN Y REGISTRO PARA MÓVIL (SWITCH) === -->
 <div class="movil">
   <img src="./assets/img/logotipos/LogoBlanco.png" alt="Logo SocialReader" class="logologin">
@@ -86,18 +95,22 @@ Descripción: Vista de inicio de sesión y registro de usuarios (login)
         <center><a id="restablecerContra">¿Olvidaste tu contraseña?</a></center>
         <input type="submit" value="INICIAR SESIÓN" class="boton">
       </form>
+      <center style="margin-top: 1rem;">
+        <a href="privacy.html" target="_blank">Política de privacidad</a>
+      </center>
     </div>
     <hr>
 
     <!-- Botones sociales (móvil) -->
     <div class="opciones">
-      <img class="btn-github" src="./assets/img/actions/github.png">
-      <img class="btn-google" src="./assets/img/actions/google.png">
-      <img class="btn-apple" src="./assets/img/actions/apple.png">
+      <button class="btn-social google" aria-label="Iniciar sesión con Google">Google</button>
+      <button class="btn-social github" aria-label="Iniciar sesión con GitHub">GitHub</button>
+      <button class="btn-social apple" aria-label="Iniciar sesión con Apple">Apple</button>
+
     </div>
   </div>
 </div>
-  
+
 <!-- === MODAL DE ERROR DE AUTENTICACIÓN === -->
 <!-- Contenedor flotante que indica si ha ocurrido algún error en el registro o inicio de sesión -->
 <div id="modalError" class="modal-error oculto">
@@ -118,4 +131,12 @@ Descripción: Vista de inicio de sesión y registro de usuarios (login)
       <button id="btnCerrarRecuperacion" class="margen-izquierda">Cerrar</button>
     </div>
   </div>
+</div>
+
+<div id="avisoPrivacidad" class="aviso-privacidad oculto">
+  <p>
+    Este sitio utiliza datos básicos (correo y contraseña) para ofrecer su funcionalidad. Al continuar, aceptas nuestra
+    <a href="privacidad.html" target="_blank">Política de Privacidad</a>.
+  </p>
+  <button id="aceptarPrivacidad">Aceptar</button>
 </div>

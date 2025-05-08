@@ -169,7 +169,10 @@ function activarSwitchMovil() {
           <input type="password" name="contra" id="contraregistro" placeholder="Contraseña" required>
           <input type="password" name="contra2" id="contraregistro2" placeholder="Repetir Contraseña" required>
           <input type="submit" value="REGISTRARME" class="boton">
-        </form>`;
+        </form>
+        <center style="margin-top: 1rem;">
+          <a href="privacy.html" target="_blank">Política de privacidad</a>
+        </center>`;
       agregarEventoRegistroMovil();
     } else {
       toggle.style.left = "0%";
@@ -182,7 +185,10 @@ function activarSwitchMovil() {
           <input type="password" name="contra" placeholder="Contraseña" required>
           <center><a id="restablecerContra">¿Olvidaste tu contraseña?</a></center>
           <input type="submit" value="INICIAR SESIÓN" class="boton">
-        </form>`;
+        </form>
+        <center style="margin-top: 1rem;">
+          <a href="privacy.html" target="_blank">Política de privacidad</a>
+        </center>`;
       agregarEventoLoginMovil();
     }
 
@@ -285,15 +291,15 @@ function activarLoginSocial() {
       });
   };
 
-  document.querySelectorAll(".btn-google").forEach((btn) =>
+  document.querySelectorAll(".btn-social.google").forEach((btn) =>
     btn.addEventListener("click", () => iniciarSocial(new firebase.auth.GoogleAuthProvider()))
   );
-
-  document.querySelectorAll(".btn-github").forEach((btn) =>
+  
+  document.querySelectorAll(".btn-social.github").forEach((btn) =>
     btn.addEventListener("click", () => iniciarSocial(new firebase.auth.GithubAuthProvider()))
   );
 
-  document.querySelectorAll(".btn-apple").forEach((btn) =>
+  document.querySelectorAll(".btn-social.apple").forEach((btn) =>
     btn.addEventListener("click", () => {
       mostrarModalError("Este servicio aún no está disponible.");
     })
@@ -378,5 +384,28 @@ function mostrarModalError(mensaje, redireccion = null) {
     }
   };
 }
+
+/**
+ * Muestra el aviso de privacidad si aún no se ha aceptado.
+ */
+function mostrarAvisoPrivacidad() {
+  const aviso = document.getElementById("avisoPrivacidad");
+  const botonAceptar = document.getElementById("aceptarPrivacidad");
+
+  if (!aviso || !botonAceptar) return;
+
+  // Solo se muestra si no se ha aceptado antes
+  if (!localStorage.getItem("privacidadAceptada")) {
+    aviso.classList.remove("oculto");
+
+    botonAceptar.addEventListener("click", () => {
+      localStorage.setItem("privacidadAceptada", "true");
+      aviso.classList.add("oculto");
+    });
+  }
+}
+
+// Llamada al cargar la vista
+mostrarAvisoPrivacidad();
 
 cargarVistaLogin();

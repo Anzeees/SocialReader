@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "target": "thesocialreader",
+    "site": "proyectolectura",
     "public": "src",
     "ignore": [
       "firebase.json",
