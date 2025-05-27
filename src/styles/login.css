@@ -25,9 +25,10 @@ Descripción: Estilos CSS para las vistas de autenticación (login y registro).
 }
 
 h1 {
-  font-size: 2.5em;
+  font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 1000;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
 p {
@@ -41,7 +42,7 @@ hr {
   width: 85%;
   height: 2px;
   background: var(--color-complementario1);
-  margin: 3% 0;
+  margin: 20px 0;
   border: none;
 }
 
@@ -79,9 +80,6 @@ input[type="submit"] {
   color: var(--color-complementario1);
   text-decoration: underline;
   user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   cursor: pointer;
 }
 
@@ -115,48 +113,31 @@ button.boton {
   border-radius: 100px;
 }
 
-/* === OPCIONES SOCIALES (GITHUB, GOOGLE, APPLE) === */
+/* === OPCIONES SOCIALES (ICONOS REDONDOS Y RESPONSIVOS COMPACTOS) === */
 .opciones {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: clamp(15px, 3vw, 25px);
+  margin: 10px 0 20px 0;
   flex-wrap: wrap;
-  width: 90%;
-  max-width: 500px;
-  margin: 0 auto;
 }
 
-.btn-social {
-  flex: 1 1 30%;
-  min-width: 120px;
-  max-width: 160px;
-  text-align: center;
-  padding: 10px 20px;
-  margin: 0 5px;
-  border: none;
-  border-radius: 50px;
-  font-weight: bold;
-  color: white;
+.opciones img {
+  width: clamp(40px, 6vw, 60px);
+  height: clamp(40px, 6vw, 60px);
+  border-radius: 50%;
+  border: 2px solid #bbb;
+  padding: clamp(6px, 1.5vw, 10px);
+  box-sizing: border-box;
+  background-color: white;
+  transition: transform 0.3s ease, border-color 0.3s ease;
   cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.3s ease;
 }
 
-.btn-social.google {
-  background-color: #db4437;
-}
-
-.btn-social.github {
-  background-color: #333333;
-}
-
-.btn-social.apple {
-  background-color: #aaa;
-}
-
-.btn-social:hover {
-  opacity: 0.85;
+.opciones img:hover {
+  transform: scale(1.1);
+  border-color: var(--color-complementario2);
 }
 
 /* === MODAL DE ERROR === */
@@ -298,12 +279,10 @@ button.boton {
   }
 
   .opciones {
-    flex-direction: row;
+    width: 70%;
     justify-content: center;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: nowrap;
-    width: 90%;
+    gap: clamp(12px, 4vw, 20px);
+    margin: 10px 0 20px 0;
   }
 
   input {
@@ -324,7 +303,7 @@ button.boton {
   h1 {
     font-size: 1.6em;
     font-weight: 700;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     color: var(--color-oscuro);
     text-align: center;
   }
@@ -389,13 +368,5 @@ button.boton {
 
   .switch-options .active {
     color: white;
-  }
-
-  .btn-social {
-    flex: 1 1 auto;
-    min-width: 80px;
-    max-width: 120px;
-    font-size: 0.75rem;
-    padding: 8px 12px;
   }
 }

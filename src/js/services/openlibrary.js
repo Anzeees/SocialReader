@@ -1,143 +1,152 @@
-// OPENLIBRARY.JS -- ÁNGEL MARTÍNEZ ORDIALES
+// OPENLIBRARY.JS — SOCIALREADER — Datos desde OpenLibrary (completo y optimizado)
 
 // === FUNCIONES AUXILIARES ===
 
-/**
- * Obtiene el nombre de un autor dado su key en OpenLibrary.
- * @param {string} autorKey - Ruta del autor en OpenLibrary (ej: /authors/OL12345A).
- * @returns {Promise<string>} Nombre del autor o 'Autor desconocido'.
- */
 async function obtenerNombreAutor(autorKey) {
   try {
-    const respuesta = await fetch(`https://openlibrary.org${autorKey}.json`);
-    const datos = await respuesta.json();
+    const res = await fetch(`https://openlibrary.org${autorKey}.json`);
+    const datos = await res.json();
     return datos.name || 'Autor desconocido';
   } catch {
     return 'Autor desconocido';
   }
 }
 
-/**
- * Traduce un código de idioma de OpenLibrary a su nombre en español.
- * @param {string} idiomaKey - Ruta del idioma en OpenLibrary (ej: /languages/eng).
- * @returns {Promise<string>} Nombre del idioma o el propio código si no está mapeado.
- */
-async function obtenerNombreIdioma(idiomaKey) {
-  const cod = idiomaKey.split('/').pop();
-  const nombres = {
-    eng: 'Inglés',
-    spa: 'Español',
-    fre: 'Francés',
-    ger: 'Alemán',
-    ita: 'Italiano',
-    por: 'Portugués',
-  };
-  return nombres[cod] || cod;
+async function obtenerBiografiaAutor(autorKey) {
+  try {
+    const res = await fetch(`https://openlibrary.org${autorKey}.json`);
+    const datos = await res.json();
+    return typeof datos.bio === 'string'
+      ? datos.bio
+      : datos.bio?.value || '';
+  } catch {
+    return '';
+  }
 }
 
-// === FUNCIONES PRINCIPALES ===
+function traducirIdioma(idiomaKey) {
+  const cod = idiomaKey.split('/').pop();
+  const idiomas = {
+    eng: 'Inglés', spa: 'Español', fre: 'Francés', ger: 'Alemán',
+    ita: 'Italiano', por: 'Portugués', cat: 'Catalán', glg: 'Gallego'
+  };
+  return idiomas[cod] || cod;
+}
 
-/**
- * Obtiene un resumen breve de un libro a partir de su workId.
- * @param {string} workId - ID del work en OpenLibrary.
- * @returns {Promise<object|null>} Datos básicos del libro o null si falla.
- */
+// === FUNCIÓN PARA OBTENER RESUMEN BREVE ===
+
 export async function obtenerResumenLibro(workId) {
   try {
     const res = await fetch(`https://openlibrary.org/works/${workId}.json`);
+    if (!res.ok) throw new Error('No se pudo obtener el resumen');
     const data = await res.json();
-    return {
-      id: workId,
-      titulo: data.title || 'Sin título',
-      autor: data.authors?.[0]?.author?.key
-        ? await obtenerNombreAutor(data.authors[0].author.key)
-        : 'Autor desconocido',
-      portada: data.covers?.[0]
-        ? `https://covers.openlibrary.org/b/id/${data.covers[0]}-M.jpg`
-        : './assets/img/logotipos/portadaDefault.png',
-    };
+
+    const autorKey = data.authors?.[0]?.author?.key || null;
+    const nombreAutor = autorKey ? await obtenerNombreAutor(autorKey) : 'Autor desconocido';
+    const portada = data.covers?.[0]
+      ? `https://covers.openlibrary.org/b/id/${data.covers[0]}-M.jpg`
+      : './assets/img/logotipos/portadaDefault.png';
+
+    return { id: workId, titulo: data.title || 'Sin título', autor: nombreAutor, portada };
   } catch (error) {
     console.error('Error al obtener resumen del libro:', error);
     return null;
   }
 }
 
-/**
- * Obtiene los detalles completos de un libro (autor, editorial, año, etc).
- * @param {string} workId - ID del work en OpenLibrary.
- * @returns {Promise<object|null>} Datos completos del libro o null si falla.
- */
+// === FUNCIÓN PRINCIPAL: DETALLES COMPLETOS DEL LIBRO ===
+
 export async function obtenerDetallesLibro(workId) {
   try {
+    // 1. WORK
     const resWork = await fetch(`https://openlibrary.org/works/${workId}.json`);
+    if (!resWork.ok) throw new Error('No se pudo obtener el work');
     const workData = await resWork.json();
 
-    const primeraEdicionKey = workData.edition_key?.[0];
-    let edicionData = {};
+    // 2. AUTOR
+    const autorKey = workData.authors?.[0]?.author?.key || null;
+    const nombreAutor = autorKey ? await obtenerNombreAutor(autorKey) : 'Autor desconocido';
+    const biografiaAutor = autorKey ? await obtenerBiografiaAutor(autorKey) : '';
 
-    if (primeraEdicionKey) {
-      const resEdicion = await fetch(`https://openlibrary.org/books/${primeraEdicionKey}.json`);
-      edicionData = await resEdicion.json();
+    // 3. EDICIÓN
+    let edicionData = {};
+    const editionKey = workData.edition_key?.[0];
+    if (editionKey) {
+      const resEd = await fetch(`https://openlibrary.org/books/${editionKey}.json`);
+      if (resEd.ok) edicionData = await resEd.json();
     }
 
+    // 4. DATOS GENERALES
     const isbn = edicionData.isbn_13?.[0] || edicionData.isbn_10?.[0] || 'No disponible';
     const edicion = edicionData.edition_name || 'No especificada';
-    const linkOpenLibrary = `https://openlibrary.org/works/${workId}`;
-    let biografiaAutor = '';
-    let librosRelacionados = [];
+    const añoPublicacion = edicionData.publish_date || 'Desconocido';
+    const editorial = edicionData.publishers?.[0] || 'No especificada';
+    const paginas = edicionData.number_of_pages || 'No especificado';
+    const idiomas = edicionData.languages?.map(l => traducirIdioma(l.key)) || ['No especificados'];
 
-    if (workData.authors?.[0]?.author?.key) {
-      const autorKey = workData.authors[0].author.key;
-      try {
-        const autorRes = await fetch(`https://openlibrary.org${autorKey}.json`);
-        const autorData = await autorRes.json();
-        biografiaAutor = autorData.bio?.value || autorData.bio || '';
-      } catch {
-        biografiaAutor = '';
-      }
+    // 5. OTRAS CATEGORÍAS
+    const generos = workData.subjects?.slice(0, 8) || ['Sin datos'];
+    const lugares = [...new Set(workData.subject_places || [])];
+    const personajes = [...new Set(workData.subject_people || [])];
+    const epocas = [...new Set(workData.subject_times || [])];
+
+    // 6. DESCRIPCIÓN / SINOPSIS
+    let sinopsis = 'Sin sinopsis disponible';
+    if (workData.description) {
+      sinopsis = typeof workData.description === 'string'
+        ? workData.description
+        : workData.description.value || sinopsis;
     }
 
-    if (workData.subjects?.[0]) {
+    // 7. ENLACES EXTERNOS
+    const enlacesExternos = workData.links?.map(link => ({
+      titulo: link.title || 'Enlace externo',
+      url: link.url
+    })) || [];
+
+    // 8. LIBROS RELACIONADOS
+    const librosRelacionados = await (async () => {
       try {
-        const relatedRes = await fetch(`https://openlibrary.org/subjects/${workData.subjects[0].toLowerCase()}.json?limit=3`);
-        const relatedData = await relatedRes.json();
-        librosRelacionados = (relatedData.works || []).map(libro => ({
-          id: libro.key.split("/").pop(),
+        const subject = workData.subjects?.[0];
+        if (!subject) return [];
+        const res = await fetch(`https://openlibrary.org/subjects/${subject.toLowerCase().replace(/\s/g, '_')}.json?limit=3`);
+        if (!res.ok) return [];
+        const data = await res.json();
+        return data.works.map(libro => ({
+          id: libro.key.split('/').pop(),
           portada: libro.cover_id
             ? `https://covers.openlibrary.org/b/id/${libro.cover_id}-M.jpg`
             : './assets/img/logotipos/portadaDefault.png'
         }));
       } catch {
-        librosRelacionados = [];
+        return [];
       }
-    }
+    })();
 
+    // 9. RETORNO FINAL
     return {
       id: workId,
       titulo: workData.title || 'Sin título',
-      autor: workData.authors?.[0]?.author?.key
-        ? await obtenerNombreAutor(workData.authors[0].author.key)
-        : 'Autor desconocido',
+      subtitulo: workData.subtitle || '',
+      autor: nombreAutor,
       portada: workData.covers?.[0]
         ? `https://covers.openlibrary.org/b/id/${workData.covers[0]}-L.jpg`
         : './assets/img/logotipos/portadaDefault.png',
-      añoPublicacion: edicionData.publish_date || 'Desconocido',
-      editorial: edicionData.publishers?.[0] || 'No especificada',
-      idiomas: edicionData.languages
-        ? await Promise.all(edicionData.languages.map(async l => await obtenerNombreIdioma(l.key)))
-        : ['No especificados'],
-      generos: workData.subjects?.slice(0, 5) || ['Sin datos'],
-      paginas: edicionData.number_of_pages || 'No especificado',
-      sinopsis: workData.description
-        ? typeof workData.description === 'string'
-          ? workData.description
-          : workData.description.value
-        : 'Sin sinopsis disponible',
+      añoPublicacion,
+      editorial,
+      idiomas,
+      generos,
+      paginas,
+      sinopsis,
       isbn,
       edicion,
-      linkOpenLibrary,
       biografiaAutor,
-      librosRelacionados
+      enlacesExternos,
+      librosRelacionados,
+      lugares,
+      personajes,
+      epocas,
+      linkOpenLibrary: `https://openlibrary.org/works/${workId}`
     };
   } catch (error) {
     console.error('Error al obtener los detalles del libro:', error);
@@ -145,64 +154,51 @@ export async function obtenerDetallesLibro(workId) {
   }
 }
 
-/**
- * Obtiene una lista de libros de fantasía populares (simulados como "más vendidos").
- * @returns {Promise<Array<object>>} Lista de resúmenes de libros.
- */
+// === FUNCIONES PARA VISTAS ===
+
 export async function obtenerTopMasVendidos() {
   try {
     const res = await fetch('https://openlibrary.org/subjects/fantasy.json?limit=20');
+    if (!res.ok) throw new Error('Error al obtener libros de fantasía');
     const data = await res.json();
-    return Promise.all(data.works.map(libro => {
-      const id = libro.key.split('/').pop();
-      return obtenerResumenLibro(id);
-    }));
+    return Promise.all(
+      data.works.map(libro => obtenerResumenLibro(libro.key.split('/').pop()))
+    );
   } catch (error) {
     console.error('Error al obtener el top más vendidos:', error);
     return [];
   }
 }
 
-/**
- * Obtiene una lista de libros populares mezclando búsquedas y fantasía.
- * @returns {Promise<Array<object>>} Lista de libros populares.
- */
 export async function obtenerLibrosPopulares() {
   const urls = [
-    'https://openlibrary.org/search.json?q=libro&limit=20',
-    'https://openlibrary.org/subjects/fantasy.json?limit=20'
+    'https://openlibrary.org/search.json?q=bestseller&limit=15',
+    'https://openlibrary.org/subjects/fantasy.json?limit=15'
   ];
 
   for (const url of urls) {
     try {
       const res = await fetch(url);
-      const tipo = res.headers.get("content-type") || "";
-      if (!res.ok || !tipo.includes("application/json")) {
-        console.warn(`Respuesta no válida desde ${url}`);
-        continue;
-      }
-
+      if (!res.ok) continue;
       const data = await res.json();
-      const libros = data.docs || data.works;
+      const libros = data.docs || data.works || [];
 
       return libros.map(libro => {
-        const id = libro.key.split('/').pop();
+        const id = libro.key?.split('/').pop() || libro.cover_edition_key;
         return {
           id,
-          titulo: libro.title,
+          titulo: libro.title || 'Sin título',
           autor: libro.author_name?.[0] || libro.authors?.[0]?.name || 'Autor desconocido',
-          portada: libro.cover_i
-            ? `https://covers.openlibrary.org/b/id/${libro.cover_i}-M.jpg`
-            : libro.cover_id
-              ? `https://covers.openlibrary.org/b/id/${libro.cover_id}-M.jpg`
-              : './assets/img/logotipos/portadaDefault.png',
+          portada: libro.cover_i || libro.cover_id
+            ? `https://covers.openlibrary.org/b/id/${libro.cover_i || libro.cover_id}-M.jpg`
+            : './assets/img/logotipos/portadaDefault.png'
         };
       });
     } catch (error) {
-      console.error(`Error al intentar cargar desde ${url}:`, error);
+      console.error('Error al obtener libros populares:', error);
     }
   }
 
-  console.error("No se pudieron obtener libros populares desde ninguna fuente.");
+  console.warn('No se pudo cargar ningún libro popular.');
   return [];
 }
