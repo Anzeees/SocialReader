@@ -291,15 +291,15 @@ function activarLoginSocial() {
       });
   };
 
-  document.querySelectorAll(".btn-social.google").forEach((btn) =>
+  document.querySelectorAll(".btn-google").forEach((btn) =>
     btn.addEventListener("click", () => iniciarSocial(new firebase.auth.GoogleAuthProvider()))
   );
   
-  document.querySelectorAll(".btn-social.github").forEach((btn) =>
+  document.querySelectorAll(".btn-github").forEach((btn) =>
     btn.addEventListener("click", () => iniciarSocial(new firebase.auth.GithubAuthProvider()))
   );
 
-  document.querySelectorAll(".btn-social.apple").forEach((btn) =>
+  document.querySelectorAll(".btn-apple").forEach((btn) =>
     btn.addEventListener("click", () => {
       mostrarModalError("Este servicio aún no está disponible.");
     })
